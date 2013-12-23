@@ -1,5 +1,3 @@
--- TODO: Commit into EmuLuaScripts Github repository
-
 -- Addresses
 Address =
 {
