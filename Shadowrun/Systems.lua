@@ -1,0 +1,28 @@
+Systems =
+{
+    "Aztechnology",
+    "Club Penumbra",
+    "Seattle Gen. Hospital",
+    "Ares",
+    "Gates Undersound",
+    "Hollywood (Correctional Facilities)",
+    "Mitsuhama",
+    "Renraku",
+    "Fuchi",
+    "Lone Star",
+    "Ito's Passcode (Ito's System)",
+    "A local office",
+    "A corporate branch office",
+    "A small R&D firm",
+    "A new local company",
+    "A local retail business",
+    "A local corporate office",
+    "A local shipping warehouse",
+    "A legal firm",
+    "A local stuffer shack",
+    "A local SimSense company",
+    "A local coffin hotel",
+    "The Mayor's office",
+    "A SimSense corporation",
+    "UCAS Federal Government"
+}
