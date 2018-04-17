@@ -1,4 +1,7 @@
 0 = Nothing
+1 = Weapon
+2 = Armor
+3 = Accessory
 94 = Quartz Charm
 95 = Spare
 96 = Mushroom
@@ -51,6 +54,10 @@
 143 = Lamb's Lure
 144 = Fright Bomb
 145 = Mystery Egg
+148 = Lucky Jewel
+154 = Mental Blast
 160 = Waste Basket
+174 = Bright Card
+176 = Star Egg
 254 = DUMMY
 255 = Nothing

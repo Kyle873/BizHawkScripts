@@ -33,11 +33,27 @@ Address =
 	BattleEvent = 0x7EFA1D,
 };
 
--- Menu vars
+-- Input
+Input = {}
+OldInput = {}
+InputTimer = 0
+RepeatDelay = 60
+
+-- Menu
 Open = true
 Page = 1
 Index = 1
 SubIndex = 0
+
+-- Messages
+InitMessage = "SMRPG Lua System Activated!"
+
+-- Data Tables
+ItemNames = nil
+EnemyNames = nil
+
+-- Clipboard
+Clipboard = 0
 
 -- Item/Character editing utility functions
 function EditItem(id, item)
@@ -98,7 +114,6 @@ Menu =
 	 -- { Text = "Story Events/Flags", X = 32, Y = 64 },
 	 -- { Text = "World Map Locations", X = 32, Y = 72 },
 	 -- { Text = "Battle Script Vars", X = 32, Y = 80 },
-	 -- ...
 	};
 
 	-- Items Menu
@@ -192,6 +207,30 @@ Menu =
 					SubIndex = SubIndex + 1
 				end
 			end
+            
+            -- Y/A
+			if KeyPressed('Y') then
+				if SubIndex == 0 then -- Item
+					Clipboard = memory.readbyte(Address.Items + Index - 1)
+				end
+				if SubIndex == 1 then -- Equipment
+					Clipboard = memory.readbyte(Address.Equipment + Index - 1)
+				end
+				if SubIndex == 2 then -- Special Items
+					Clipboard = memory.readbyte(Address.SpecialItems + Index - 1)
+				end
+            end
+			if KeyPressed('A') then
+				if SubIndex == 0 then -- Item
+					memory.writebyte(Address.Items + Index - 1, Clipboard)
+				end
+				if SubIndex == 1 then -- Equipment
+					memory.writebyte(Address.Equipment + Index - 1, Clipboard)
+				end
+				if SubIndex == 2 then -- Special Items
+					memory.writebyte(Address.SpecialItems + Index - 1, Clipboard)
+				end
+            end
 		end,
 		
 		-- Update
@@ -684,16 +723,6 @@ function LoadDataTable(filename)
 	return data
 end
 
-ItemNames = LoadDataTable("SMRPGItems.dat")
-EnemyNames = LoadDataTable("SMRPGEnemies.dat")
--- TODO: Spell names?
-
--- Input
-Input = {}
-OldInput = {}
-InputTimer = 0
-RepeatDelay = 60
-
 function PreInput()
 	Input = joypad.get(2)
 end
@@ -720,16 +749,6 @@ function KeyPressed(key)
 end
 
 function CheckInput()
-	-- Up - Cursor Up
-	if KeyPressed('up') and Index > 1 then
-		Index = Index - 1
-	end
-	
-	-- Down - Cursor Down
-	if KeyPressed('down') and Index < #Menu[Page] then
-		Index = Index + 1
-	end
-	
 	-- X - Toggle Menu
 	if KeyPressed('X') then
 		if Open then
@@ -737,6 +756,18 @@ function CheckInput()
 		else
 			Open = true
 		end
+	end
+    
+	if not Open then return end
+	
+    -- Up - Cursor Up
+	if KeyPressed('up') and Index > 1 then
+		Index = Index - 1
+	end
+	
+	-- Down - Cursor Down
+	if KeyPressed('down') and Index < #Menu[Page] then
+		Index = Index + 1
 	end
 	
 	-- B - Back
@@ -786,12 +817,12 @@ function Draw()
 	for item = 1, #Menu[Page] do
 		-- Cursor
 		if item == Index then
-			gui.text(Menu[Page][item].X - 24, Menu[Page][item].Y, "--->")
+			gui.text(Menu[Page][item].X - 24, Menu[Page][item].Y, "--->", 0xFFFFFFFF)
 		end
 		
 		-- Text
 		if Menu[Page][item].Text ~= nil then
-			gui.text(Menu[Page][item].X, Menu[Page][item].Y, Menu[Page][item].Text)
+			gui.text(Menu[Page][item].X, Menu[Page][item].Y, Menu[Page][item].Text, 0xCFCFFFFF)
 		end
 	end
 end
@@ -812,9 +843,12 @@ function Update()
 end
 
 -- Init messages
-InitMessage = "SMRPG Lua System Activated!"
 snes9x.message(InitMessage)
 print(InitMessage)
+
+-- Load data tables
+ItemNames = LoadDataTable("SMRPGItems.dat")
+EnemyNames = LoadDataTable("SMRPGEnemies.dat")
 
 -- Main Loop
 while true do
