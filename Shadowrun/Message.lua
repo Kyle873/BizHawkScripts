@@ -27,7 +27,7 @@ function Help()
         "  " .. Input.MaxKey .. ": Sets the currently selected value to it's maximum",
         " ",
         "Special Keys:",
-        "  " .. Input.SellFilesKey .. ": Sell All Datafiles",
+        "  " .. Input.SellFilesKey .. ": Sell all datafiles",
     }
     
     local message = ""
