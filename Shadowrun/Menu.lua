@@ -28,7 +28,7 @@ Menu =
     
     [MenuPage.Main] =
     {
-        Header = "\rShadowEdit v0.9.5",
+        Header = "\rShadowEdit v0.9.6",
         
         DefaultIndex = 2,
         

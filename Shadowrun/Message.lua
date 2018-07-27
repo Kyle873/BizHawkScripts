@@ -15,18 +15,19 @@ function Help()
     local help =
     {
         "Welcome to ShadowEdit!",
-        "",
+        " ",
         "Menu Keys:",
-        Input.MenuKey .. ": Open/Close Menu",
-        Input.UpKey .. "/" .. Input.DownKey .. "/" .. Input.LeftKey .. "/" .. Input.RightKey .. ": Move Cursor",
-        Input.UseKey .. ": Enter Sub-menu/Activate Menu Option",
-        Input.MenuKey .. ": Open/Close Menu",
-        Input.BackKey .. ": Return to Main Menu",
-        Input.SwitchCharKey .. ": Switch Active Character",
-        Input.FreezeKey .. ": Freeze Selected Option",
-        "",
+        "  " .. Input.MenuKey .. ": Open/close menu",
+        "  " .. Input.UpKey .. "/" .. Input.DownKey .. "/" .. Input.LeftKey .. "/" .. Input.RightKey .. ": Move cursor",
+        "  " .. Input.UseKey .. ": Enter sub-menu/activate menu option",
+        "  " .. Input.BackKey .. ": Return to main menu",
+        "  " .. Input.SwitchCharKey .. ": Switch active character",
+        "  " .. Input.FreezeKey .. ": Freeze selected option",
+        "  " .. Input.ZeroKey .. ": Sets the currently selected value to it's minimum",
+        "  " .. Input.MaxKey .. ": Sets the currently selected value to it's maximum",
+        " ",
         "Special Keys:",
-        Input.SellFilesKey .. ": Sell All Datafiles",
+        "  " .. Input.SellFilesKey .. ": Sell All Datafiles",
     }
     
     local message = ""
@@ -70,8 +71,10 @@ function UpdateMessage()
                 width = string.len(v)
             end
             
-            height = height + 8.4
+            height = height + 8
         end
+        
+        height = height - (#messages - 1)
         
         if Message.Timer <= 0 then
             outlineColor = ModAlpha(Color.Outline)

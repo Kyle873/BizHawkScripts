@@ -15,6 +15,8 @@ Input =
     BackKey = "NumberPad0",
     SwitchCharKey = "NumberPadPlus",
     FreezeKey = "NumberPadEnter",
+    ZeroKey = "NumberPad1",
+    MaxKey = "NumberPad3",
     SellFilesKey = "NumberPadPeriod"
 }
 
@@ -60,6 +62,38 @@ function UpdateInput()
         if KeyPressed(Input.FreezeKey) then
             entry.Frozen = not entry.Frozen
             entry.FrozenValue = ReadValue(entry.Address, entry.Type)
+        end
+        
+        if KeyPressed(Input.ZeroKey) then
+            local entry = Menu[Menu.Page][Menu.Index]
+            
+            if entry.Values ~= nil then
+                WriteValue(entry.Address, entry.Type, entry.Values[0].Value)
+            elseif entry.BitField ~= nil or entry.Enum ~= nil then
+                WriteValue(entry.Address, entry.Type, 0)
+            else
+                WriteValue(entry.Address, entry.Type, entry.Min)
+            end
+        end
+        
+        if KeyPressed(Input.MaxKey) then
+            local entry = Menu[Menu.Page][Menu.Index]
+            
+            if entry.Values ~= nil then
+                WriteValue(entry.Address, entry.Type, entry.Values[#entry.Values].Value)
+            elseif entry.BitField ~= nil then
+                local value = 0
+                
+                for i, v in pairs(entry.BitField) do
+                    value = bit.bor(value, v.Value)
+                end
+                
+                WriteValue(entry.Address, entry.Type, value)
+            elseif entry.Enum ~= nil then
+                WriteValue(entry.Address, entry.Type, #entry.Enum - 1)
+            else
+                WriteValue(entry.Address, entry.Type, entry.Max)
+            end
         end
         
         if KeyPressed(Input.UpKey) then
