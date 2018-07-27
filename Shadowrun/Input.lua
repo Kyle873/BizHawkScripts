@@ -68,7 +68,7 @@ function UpdateInput()
             local entry = Menu[Menu.Page][Menu.Index]
             
             if entry.Values ~= nil then
-                WriteValue(entry.Address, entry.Type, entry.Values[0].Value)
+                WriteValue(entry.Address, entry.Type, entry.Values[1].Value)
             elseif entry.BitField ~= nil or entry.Enum ~= nil then
                 WriteValue(entry.Address, entry.Type, 0)
             else

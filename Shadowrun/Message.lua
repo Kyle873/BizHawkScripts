@@ -18,13 +18,16 @@ function Help()
         " ",
         "Menu Keys:",
         "  " .. Input.MenuKey .. ": Open/close menu",
-        "  " .. Input.UpKey .. "/" .. Input.DownKey .. "/" .. Input.LeftKey .. "/" .. Input.RightKey .. ": Move cursor",
+        "  " .. Input.UpKey .. "/" .. Input.DownKey .. "/" .. Input.LeftKey .. "/" .. Input.RightKey .. ":",
+        "  Move cursor",
         "  " .. Input.UseKey .. ": Enter sub-menu/activate menu option",
         "  " .. Input.BackKey .. ": Return to main menu",
         "  " .. Input.SwitchCharKey .. ": Switch active character",
         "  " .. Input.FreezeKey .. ": Freeze selected option",
-        "  " .. Input.ZeroKey .. ": Sets the currently selected value to it's minimum",
-        "  " .. Input.MaxKey .. ": Sets the currently selected value to it's maximum",
+        "  " .. Input.ZeroKey .. ": Sets the currently selected value to",
+        "  it's minimum",
+        "  " .. Input.MaxKey .. ": Sets the currently selected value to",
+        "  it's maximum",
         " ",
         "Special Keys:",
         "  " .. Input.SellFilesKey .. ": Sell all datafiles",
@@ -50,7 +53,7 @@ function NewMessage(text, time, color, backgroundColor, x, y)
     Message.Color = color
     Message.BackgroundColor = backgroundColor or Color.Background
     Message.X = x or 0
-    Message.Y = y or 213
+    Message.Y = y or 211
 end
 
 function UpdateMessage()
@@ -71,7 +74,7 @@ function UpdateMessage()
                 width = string.len(v)
             end
             
-            height = height + 8
+            height = height + 10
         end
         
         height = height - (#messages - 1)
@@ -82,7 +85,7 @@ function UpdateMessage()
             messageColor = ModAlpha(Message.Color)
         end
         
-        gui.drawRectangle(Message.X, Message.Y, 4 + width * 4, height, outlineColor, backgroundColor)
+        gui.drawRectangle(Message.X, Message.Y, 4 + width * 6, height, outlineColor, backgroundColor)
         gui.pixelText(Message.X + 2, Message.Y + 2, Message.Text, messageColor, 0)
         
         Message.Timer = Message.Timer - 1
