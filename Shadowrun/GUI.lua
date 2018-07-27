@@ -8,10 +8,12 @@ function UpdateGUI()
             end
         end
         
-        gui.drawBox(0, 0, 319, 30 + entries * 8, Color.Outline, Color.Background)
+        gui.drawBox(0, 0, 319, 30 + entries * 8, Color.Outline, ColorPulse(Color.Background, 16))
         
         if Menu.Page >= MenuPage.PlayerBasic and Menu.Page <= MenuPage.PlayerStats then
             gui.pixelText(8, 8, Menu[Menu.Page].Header .. " (" .. Menu.Runner + 1 .. "/" .. "3)", Color.Header, 0)
+        elseif string.find(Menu[Menu.Page].Header, "\r") then
+            gui.pixelText(8, 8, Menu[Menu.Page].Header, ColorRainbow(), 0)
         else
             gui.pixelText(8, 8, Menu[Menu.Page].Header, Color.Header, 0)
         end
@@ -21,11 +23,11 @@ function UpdateGUI()
             local color = entry.Color or Color.Text
             
             if i == Menu.Index and entry.Frozen then
-                color = Color.HighlightFrozen
+                color = ColorPulse(Color.HighlightFrozen, 31, 8)
             elseif i == Menu.Index then
-                color = Color.Highlight
+                color = ColorPulse(Color.Highlight, 31, 8)
             elseif entry.Frozen then
-                color = Color.Frozen
+                color = ColorPulse(Color.Frozen, 31, 8, 16)
             end
             
             if entry.Text ~= nil then

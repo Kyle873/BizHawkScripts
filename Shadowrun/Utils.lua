@@ -1,3 +1,28 @@
+function ColorPulse(color, mult, time, offset)
+    time = time or 256
+    offset = offset or 0
+    
+    local mod = math.sin(emu.framecount() / time + offset) * mult
+    local a = bit.rshift(bit.band(color, 0xFF000000), 24)
+    local r = bit.rshift(bit.band(color, 0x00FF0000), 16) + mod
+    local g = bit.rshift(bit.band(color, 0x0000FF00), 8) + mod
+    local b = bit.band(color, 0x000000FF) + mod
+    
+    if r < 0 then r = 0 elseif r > 255 then r = 255 end
+    if g < 0 then g = 0 elseif g > 255 then g = 255 end
+    if b < 0 then b = 0 elseif b > 255 then b = 255 end
+    
+    return bit.lshift(a, 24) + bit.lshift(r, 16) + bit.lshift(g, 8) + b
+end
+
+function ColorRainbow()
+    local r = math.sin(emu.framecount() / 64) * 127 + 128
+    local g = math.sin((emu.framecount() / 64) + 2) * 127 + 128
+    local b = math.sin((emu.framecount() / 64) + 4) * 127 + 128
+    
+    return bit.lshift(255, 24) + bit.lshift(r, 16) + bit.lshift(g, 8) + b
+end
+
 function IsSpell()
     if ReadValue(Address.Player.Equipped.Flag + (Menu.Runner * Menu.RunnerOffset), DataType.Byte) == 255 then
         return true
