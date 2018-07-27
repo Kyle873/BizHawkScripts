@@ -1,11 +1,19 @@
-function DrawGUI()
+function UpdateGUI()
     if Menu.Open then
-        gui.box(0, 0, Menu[Menu.Page].Width, Menu[Menu.Page].Height, Color.Background, Color.Outline)
+        local entries = 0
+        
+        for i = 1, #Menu[Menu.Page] do
+            if type(Menu[Menu.Page][i]) == "table" then
+                entries = entries + 1
+            end
+        end
+        
+        gui.drawBox(0, 0, 319, 30 + entries * 8, Color.Outline, Color.Background)
         
         if Menu.Page >= MenuPage.PlayerBasic and Menu.Page <= MenuPage.PlayerStats then
-            gui.text(8, 8, Menu[Menu.Page].Header .. " (" .. Menu.Runner + 1 .. "/" .. "3)", Color.Header)
+            gui.pixelText(8, 8, Menu[Menu.Page].Header .. " (" .. Menu.Runner + 1 .. "/" .. "3)", Color.Header, 0)
         else
-            gui.text(8, 8, Menu[Menu.Page].Header, Color.Header)
+            gui.pixelText(8, 8, Menu[Menu.Page].Header, Color.Header, 0)
         end
         
         for i = 1, Menu[Menu.Page].Max do
@@ -29,7 +37,7 @@ function DrawGUI()
                         text = text .. " (" .. entry.Enum[value + 1] .. ")"
                     elseif entry.BitField ~= nil then
                         for j = 1, #entry.BitField do
-                            if value == AND(entry.BitField[j].Value) then
+                            if value > 0 and value == bit.band(value, entry.BitField[j].Value) then
                                 text = text .. " (" .. entry.BitField[j].Name .. ")"
                             end
                         end
@@ -37,14 +45,11 @@ function DrawGUI()
                         text = text .. " (" .. entry.Values[entry.Index].Name .. ")"
                     end
                     
-                    gui.text(8, 16 + (i * 8), text, color)
+                    gui.pixelText(8, 16 + (i * 8), text, color, 0)
                 else
-                    gui.text(8, 16 + (i * 8), entry.Text, color)
+                    gui.pixelText(8, 16 + (i * 8), entry.Text, color, 0)
                 end
             end
         end
     end
-    
-    UpdateMessage()
 end
-gui.register(DrawGUI)

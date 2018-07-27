@@ -3,96 +3,66 @@ Input =
     Current = {},
     Previous = {},
     
-    Clear =
-    {
-        up = false,
-        down = false,
-        left = false,
-        right = false,
-        A = false,
-        B = false,
-        C = false,
-        start = false,
-        X = false,
-        Y = false,
-        Z = false,
-        mode = false
-    },
-    
     Timer = 0,
-    RepeatDelay = 60
+    RepeatDelay = 60,
+    
+    MenuKey = "NumberPadMinus",
+    UpKey = "NumberPad8",
+    DownKey = "NumberPad2",
+    LeftKey = "NumberPad4",
+    RightKey = "NumberPad6",
+    UseKey = "NumberPad5",
+    BackKey = "NumberPad0",
+    SwitchCharKey = "NumberPadPlus",
+    FreezeKey = "NumberPadEnter",
+    SellFilesKey = "NumberPadPeriod"
 }
 
 function KeyPressed(key)
 	if Input.Current[key] then
 		Input.Timer = Input.Timer + 1
-	elseif not Input.Current[key] and Input.Previous[key] then
+	elseif Input.Current[key] == nil and Input.Previous[key] then
 		Input.Timer = 0
 	end
 	
 	if Input.Timer >= Input.RepeatDelay then
 		return Input.Current[key]
 	else
-		return Input.Current[key] and not Input.Previous[key]
+		return Input.Current[key] and Input.Previous[key] == nil
 	end
 end
 
-function CheckInput()
-    if KeyPressed("mode") then
+function UpdateInput()
+    if KeyPressed(Input.MenuKey) then
         Menu.Open = not Menu.Open
     end
     
-    if KeyPressed("X") then
-        local nuyen = ReadValue(Address.Global.Nuyen, DataType.Long)
-        local total = 0
-        
-        for i = 1, 5 do
-            local address = Address.Cyberdeck.Datafiles[i]
-            local size = ReadValue(address + 1, DataType.Byte)
-            local value = ReadValue(address + 2, DataType.Byte)
-            local amount = 0
-            
-            if value ~= 255 then
-                amount = size * 5
-                amount = amount * value
-                
-                total = total + amount
-                
-                WriteValue(address, DataType.Byte, 0xFF)
-                WriteValue(address + 1, DataType.Byte, 0)
-                WriteValue(address + 2, DataType.Byte, 0)
-            end
-        end
-        
-        NewMessage("Datafiles Cashed: " .. total .. " Nuyen Earned (" .. nuyen + total .. " Total)", 300, 0xFFFF00FF)
-        
-        WriteValue(Address.Global.Nuyen, DataType.Long, nuyen + total)
+    if KeyPressed(Input.SellFilesKey) then
+        SellFiles()
     end
     
     if Menu.Open then
         local entry = Menu[Menu.Page][Menu.Index]
         
-        joypad.set(Input.Clear)
-        
-        if KeyPressed("start") and Menu.Page ~= MenuPage.Main then
+        if KeyPressed(Input.BackKey) and Menu.Page ~= MenuPage.Main then
             Menu.Page = MenuPage.Main
             Menu.Index = Menu[Menu.Page].DefaultIndex
         end
         
-        if KeyPressed("C") and Menu.Page >= MenuPage.PlayerBasic and Menu.Page <= MenuPage.PlayerStats then
+        if KeyPressed(Input.SwitchCharKey) and Menu.Page >= MenuPage.PlayerBasic and Menu.Page <= MenuPage.PlayerStats then
             Menu.Runner = Menu.Runner + 1
             
             if Menu.Runner > 2 then
                 Menu.Runner = 0
             end
         end
-                
-        if KeyPressed("Z") then
+        
+        if KeyPressed(Input.FreezeKey) then
             entry.Frozen = not entry.Frozen
             entry.FrozenValue = ReadValue(entry.Address, entry.Type)
         end
         
-        if KeyPressed("up") then
+        if KeyPressed(Input.UpKey) then
             Menu.Index = Menu.Index - 1
             
             while Menu[Menu.Page][Menu.Index] ~= nil and Menu[Menu.Page][Menu.Index].Skip == true do
@@ -107,7 +77,7 @@ function CheckInput()
                 end
             end
         end
-        if KeyPressed("down") then
+        if KeyPressed(Input.DownKey) then
             Menu.Index = Menu.Index + 1
             
             while Menu[Menu.Page][Menu.Index] ~= nil and Menu[Menu.Page][Menu.Index].Skip == true do
@@ -125,7 +95,7 @@ function CheckInput()
         
         if entry.Address ~= nil then
             if entry.Values ~= nil then
-                if KeyPressed("left") then
+                if KeyPressed(Input.LeftKey) then
                     entry.Index = entry.Index - 1
                     
                     if entry.Index < 1 then
@@ -134,7 +104,7 @@ function CheckInput()
                     
                     WriteValue(entry.Address, entry.Type, entry.Values[entry.Index].Value)
                 end
-                if KeyPressed("right") then
+                if KeyPressed(Input.RightKey) then
                     entry.Index = entry.Index + 1
                     
                     if entry.Index > #entry.Values then
@@ -143,12 +113,18 @@ function CheckInput()
                     
                     WriteValue(entry.Address, entry.Type, entry.Values[entry.Index].Value)
                 end
-            -- TODO: Check enum 0 ~ #enum here to get rid of redundant Min/Nax properties
+            elseif entry.Enum ~= nil then
+                if KeyPressed(Input.LeftKey) then
+                    WriteValueRelative(entry.Address, entry.Type, -1, 0, #entry.Enum - 1)
+                end
+                if KeyPressed(Input.RightKey) then
+                    WriteValueRelative(entry.Address, entry.Type, 1, 0, #entry.Enum - 1)
+                end
             else
-                if KeyPressed("left") then
+                if KeyPressed(Input.LeftKey) then
                     WriteValueRelative(entry.Address, entry.Type, -1, entry.Min, entry.Max)
                 end
-                if KeyPressed("right") then
+                if KeyPressed(Input.RightKey) then
                     WriteValueRelative(entry.Address, entry.Type, 1, entry.Min, entry.Max)
                 end
             end

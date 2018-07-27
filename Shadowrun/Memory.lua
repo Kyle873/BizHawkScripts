@@ -2,9 +2,9 @@ function ReadValue(address, type)
     if type == DataType.Byte then
         return memory.readbyte(address)
     elseif type == DataType.Word then
-        return memory.readword(address)
+        return memory.read_s16_be(address)
     elseif type == DataType.Long then
-        return memory.readlong(address)
+        return memory.read_s32_be(address)
     end
 end
 
@@ -12,9 +12,9 @@ function WriteValue(address, type, value)
     if type == DataType.Byte then
         memory.writebyte(address, value)
     elseif type == DataType.Word then
-        memory.writeword(address, value)
+        memory.write_s16_be(address, value)
     elseif type == DataType.Long then
-        memory.writelong(address, value)
+        memory.write_s32_be(address, value)
     end
 end
 
@@ -27,9 +27,9 @@ function WriteValueRelative(address, type, amount, min, max)
     if type == DataType.Byte then
         value = memory.readbyte(address)
     elseif type == DataType.Word then
-        value = memory.readword(address)
+        value = memory.read_s16_be(address)
     elseif type == DataType.Long then
-        value = memory.readlong(address)
+        value = memory.read_s32_be(address)
     end
     
     value = value + amount
@@ -46,8 +46,8 @@ function WriteValueRelative(address, type, amount, min, max)
     if type == DataType.Byte then
         memory.writebyte(address, value)
     elseif type == DataType.Word then
-        memory.writeword(address, value)
+        memory.write_s16_be(address, value)
     elseif type == DataType.Long then
-        memory.writelong(address, value)
+        memory.write_s32_be(address, value)
     end
 end

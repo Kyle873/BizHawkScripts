@@ -1,10 +1,10 @@
 Color =
 {
     Text = 0xFFFFFFFF,
-    Highlight = 0x00FF00FF,
-    Frozen = 0xFFFF00FF,
-    HighlightFrozen = 0x00FFFFFF,
-    Header = 0x00FF00FF,
-    Background = 0x004F00AF,
-    Outline = 0x00FF00AF
+    Highlight = 0xFF00FF00,
+    Frozen = 0xFFFFFF00,
+    HighlightFrozen = 0xFF00FFFF,
+    Header = 0xFF00FF00,
+    Background = 0xAF004F00,
+    Outline = 0xAF00FF00
 }

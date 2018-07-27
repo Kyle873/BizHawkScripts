@@ -1,7 +1,6 @@
 GroupItems =
 {
     {
-        { Name = "Nothing", Value = 0 },
         { Name = "Map Overlay", Value = 1 },
         { Name = "Package for Current Run", Value = 2 },
         { Name = "Security Pass", Value = 4 },
@@ -12,7 +11,6 @@ GroupItems =
     },
     
     {
-        { Name = "Nothing", Value = 0 },
         { Name = "Prototype Cyber-Heart", Value = 1 },
         { Name = "Indian Lands Visa", Value = 2 },
         { Name = "Feathered Scale", Value = 4 },

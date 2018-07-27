@@ -1,7 +1,6 @@
 Cyberware =
 {
     {
-        { Name = "None", Value = 0 },
         { Name = "Muscle Replacement (4)", Value = 1 },
         { Name = "Dermal Plating (1)", Value = 2 },
         { Name = "Dermal Plating (2)", Value = 4 },
@@ -12,7 +11,6 @@ Cyberware =
     },
     
     {
-        { Name = "None", Value = 0 },
         { Name = "Datajack", Value = 1 },
         { Name = "CyberEyes", Value = 2 },
         { Name = "Hand Razors", Value = 4 },

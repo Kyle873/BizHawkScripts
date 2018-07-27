@@ -1,3 +1,15 @@
+RunType =
+{
+    GhoulBounty = 0,
+    Bodyguard = 1,
+    Courier = 2,
+    Enforcement = 3,
+    Acquisition = 4,
+    Extraction = 5,
+    MatrixRun = 6,
+    None = 255
+}
+
 RunTypes =
 {
     { Name = "Ghoul Bounty", Value = 0 },

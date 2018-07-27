@@ -1,7 +1,6 @@
 Passcodes =
 {
     {
-        { Name = "None", Value = 0 },
         { Name = "Renraku", Value = 1 },
         { Name = "Fuchi", Value = 2 },
         { Name = "Lone Star", Value = 4 },
@@ -9,7 +8,6 @@ Passcodes =
     },
     
     {
-        { Name = "None", Value = 0 },
         { Name = "Run Passcode", Value = 1 },
         { Name = "Club Penumbra", Value = 2 },
         { Name = "Seattle General Hospital", Value = 4 },

@@ -28,14 +28,12 @@ Menu =
     
     [MenuPage.Main] =
     {
-        Header = "ShadowEdit v0.9",
+        Header = "ShadowEdit v0.91",
         
-        Width = 80,
-        Height = 164,
         DefaultIndex = 2,
         
         {
-            Text = "Player", Skip = true, Color = 0xFF0000FF
+            Text = "Player", Skip = true, Color = 0xFFFF0000
         },
         {
             Text = "Basic", Page = MenuPage.PlayerBasic
@@ -50,7 +48,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Cyberdeck", Skip = true, Color = 0x00FFFFFF
+            Text = "Cyberdeck", Skip = true, Color = 0xFF00FFFF
         },
         {
             Text = "Stats", Page = MenuPage.CyberdeckStats
@@ -65,7 +63,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Global", Skip = true, Color = 0xFFFF00FF
+            Text = "Global", Skip = true, Color = 0xFFFFFF00
         },
         {
             Text = "Group Items", Page = MenuPage.GlobalGroupItems
@@ -77,7 +75,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Misc", Skip = true, Color = 0x00FF00FF
+            Text = "Misc", Skip = true, Color = 0xFF00FF00
         },
         {
             Text = "Current Run", Page = MenuPage.CurrentRun
@@ -87,7 +85,7 @@ Menu =
         },
         
         Input = function()
-            if Menu.Open and KeyPressed("A") then
+            if Menu.Open and KeyPressed(Input.UseKey) then
                 Menu.Page = Menu[MenuPage.Main][Menu.Index].Page
                 Menu.Index = Menu[Menu.Page].DefaultIndex or 1
             end
@@ -98,30 +96,24 @@ Menu =
     {
         Header = "Player - Basic",
         
-        Width = 140,
-        Height = 164,
         DefaultIndex = 2,
         
         {
-            Text = "Base", Skip = true, Color = 0xFF0000FF
+            Text = "Base", Skip = true, Color = 0xFFFF0000
         },
         {
             Text = "Race",
             Address = Address.Player.Race,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Races,
-            Min = 0,
-            Max = #Races - 1
+            Enum = Races
         },
         {
             Text = "Archetype",
             Address = Address.Player.Archetype,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Archetypes,
-            Min = 0,
-            Max = #Archetypes - 1
+            Enum = Archetypes
         },
         {
             Text = "Karma",
@@ -135,7 +127,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Offensive", Skip = true, Color = 0xFFFF00FF
+            Text = "Offensive", Skip = true, Color = 0xFFFFFF00
         },
         {
             Text = "Ammo",
@@ -158,15 +150,13 @@ Menu =
             Address = Address.Player.Stance,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Stances,
-            Min = 0,
-            Max = #Stances - 1
+            Enum = Stances
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Health", Skip = true, Color = 0x00FF00FF
+            Text = "Health", Skip = true, Color = 0xFF00FF00
         },
         {
             Text = "Physical Health",
@@ -188,7 +178,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Cyberware", Skip = true, Color = 0x00FFFFFF
+            Text = "Cyberware", Skip = true, Color = 0xFF00FFFF
         },
         {
             Text = "Set 1",
@@ -214,21 +204,17 @@ Menu =
     {
         Header = "Player - Inventory",
         
-        Width = 160,
-        Height = 220,
         DefaultIndex = 2,
         
         {
-            Text = "Equipped", Skip = true, Color = 0xFF0000FF
+            Text = "Equipped", Skip = true, Color = 0xFFFF0000
         },
         {
             Text = "Weapon",
             Address = Address.Player.Equipped.Weapon,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Weapons,
-            Min = 0,
-            Max = #Weapons - 1
+            Enum = Weapons
         },
         {
             Text = "Weapon Flag",
@@ -243,93 +229,75 @@ Menu =
             Address = Address.Player.Equipped.Armor,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Armors,
-            Min = 0,
-            Max = #Armors - 1
+            Enum = Armors
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Inventory", Skip = true, Color = 0x00FF00FF
+            Text = "Inventory", Skip = true, Color = 0xFF00FF00
         },
         {
             Text = "Slot 1",
             Address = Address.Player.Inventory.Items,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "Slot 2",
             Address = Address.Player.Inventory.Items + 1,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "Slot 3",
             Address = Address.Player.Inventory.Items + 2,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "Slot 4",
             Address = Address.Player.Inventory.Items + 3,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "Slot 5",
             Address = Address.Player.Inventory.Items + 4,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "Slot 6",
             Address = Address.Player.Inventory.Items + 5,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "Slot 7",
             Address = Address.Player.Inventory.Items + 6,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "Slot 8",
             Address = Address.Player.Inventory.Items + 7,
             PerChar = true,
             Type = DataType.Byte,
-            Enum = Items,
-            Min = 0,
-            Max = #Items - 1
+            Enum = Items
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Quantity/Flags", Skip = true, Color = 0x00FFFFFF
+            Text = "Quantity/Flags", Skip = true, Color = 0xFF00FFFF
         },
         {
             Text = "Value 1",
@@ -421,12 +389,10 @@ Menu =
     {
         Header = "Player - Stat/Skills",
         
-        Width = 120,
-        Height = 220,
         DefaultIndex = 2,
         
         {
-            Text = "Attributes", Skip = true, Color = 0xFF7F00FF
+            Text = "Attributes", Skip = true, Color = 0xFFFF7F00
         },
         {
             Text = "Body",
@@ -504,7 +470,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Skills", Skip = true, Color = 0x007FFFFF
+            Text = "Skills", Skip = true, Color = 0xFF007FFF
         },
         {
             Text = "Sorcery",
@@ -608,20 +574,16 @@ Menu =
     {
         Header = "Cyberdeck - Stats",
         
-        Width = 136,
-        Height = 164,
         DefaultIndex = 2,
         
         {
-            Text = "Base", Skip = true, Color = 0xFF0000FF
+            Text = "Base", Skip = true, Color = 0xFFFF0000
         },
         {
             Text = "Available",
             Address = Address.Cyberdeck.HaveDeck,
             Type = DataType.Byte,
-            Enum = { "No", "Yes" },
-            Min = 0,
-            Max = 1
+            Enum = { "No", "Yes" }
         },
         {
             Text = "Brand",
@@ -648,7 +610,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Memory/Storage", Skip = true, Color = 0xFFFF00FF
+            Text = "Memory/Storage", Skip = true, Color = 0xFFFFFF00
         },
         {
             Text = "Memory",
@@ -675,7 +637,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Stats", Skip = true, Color = 0x00FF00FF
+            Text = "Stats", Skip = true, Color = 0xFF00FF00
         },
         {
             Text = "Body",
@@ -718,12 +680,10 @@ Menu =
     {
         Header = "Cyberdeck - Programs",
         
-        Width = 100,
-        Height = 162,
         DefaultIndex = 2,
         
         {
-            Text = "Combat", Skip = true, Color = 0xFF0000FF
+            Text = "Combat", Skip = true, Color = 0xFFFF0000
         },
         {
             Text = "Attack",
@@ -757,7 +717,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Defense", Skip = true, Color = 0x00FF00FF
+            Text = "Defense", Skip = true, Color = 0xFF00FF00
         },
         {
             Text = "Medic",
@@ -791,7 +751,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Mask/Sense", Skip = true, Color = 0x00FFFFFF
+            Text = "Mask/Sense", Skip = true, Color = 0xFF00FFFF
         },
         {
             Text = "Sleaze",
@@ -827,12 +787,10 @@ Menu =
     {
         Header = "Cyberdeck - Data Files",
         
-        Width = 200,
-        Height = 186,
         DefaultIndex = 2,
         
         {
-            Text = "File Types", Skip = true, Color = 0x00FFFFFF
+            Text = "File Types", Skip = true, Color = 0xFF00FFFF
         },
         {
             Text = "Slot 1",
@@ -868,7 +826,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "File Sizes", Skip = true, Color = 0x00FF00FF
+            Text = "File Sizes", Skip = true, Color = 0xFF00FF00
         },
         {
             Text = "Slot 1",
@@ -909,7 +867,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "File Values", Skip = true, Color = 0xFFFF00FF
+            Text = "File Values", Skip = true, Color = 0xFFFFFF00
         },
         {
             Text = "Slot 1",
@@ -952,9 +910,6 @@ Menu =
     {
         Header = "Global - Group Items",
         
-        Width = 160,
-        Height = 68,
-        
         {
             Text = "Nuyen",
             Address = Address.Global.Nuyen,
@@ -966,7 +921,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Group Items", Skip = true, Color = 0xFF7F00FF
+            Text = "Group Items", Skip = true, Color = 0xFFFF7F00
         },
         {
             Text = "Set 1",
@@ -990,12 +945,10 @@ Menu =
     {
         Header = "Global - Group Data",
         
-        Width = 160,
-        Height = 84,
         DefaultIndex = 2,
         
         {
-            Text = "Cyberdeck Passcodes", Skip = true, Color = 0xFFFF00FF
+            Text = "Cyberdeck Passcodes", Skip = true, Color = 0xFFFFFF00
         },
         {
             Text = "Set 1",
@@ -1017,12 +970,13 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Contacts", Skip = true, Color = 0x00FFFFFF
+            Text = "Contacts", Skip = true, Color = 0xFF00FFFF
         },
         {
             Text = "Set 1",
             Address = Address.Global.Contacts,
             Type = DataType.Byte,
+            BitField = Contacts[1],
             Min = 0,
             Max = 255
         },
@@ -1030,6 +984,7 @@ Menu =
             Text = "Set 2",
             Address = Address.Global.Contacts + 1,
             Type = DataType.Byte,
+            BitField = Contacts[2],
             Min = 0,
             Max = 255
         },
@@ -1039,12 +994,10 @@ Menu =
     {
         Header = "Current Run",
         
-        Width = 300,
-        Height = 124,
         DefaultIndex = 2,
         
         {
-            Text = "Basic", Skip = true, Color = 0xFF0000FF
+            Text = "Basic", Skip = true, Color = 0xFFFF0000
         },
         {
             Text = "Johnson",
@@ -1071,6 +1024,7 @@ Menu =
             Text = "Flags",
             Address = Address.CurrentRun.Flags,
             Type = DataType.Byte,
+            BitField = RunFlags,
             Min = 0,
             Max = 255
         },
@@ -1078,7 +1032,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Parameters", Skip = true, Color = 0xFFFF00FF
+            Text = "Parameters", Skip = true, Color = 0xFFFFFF00
         },
         {
             Type = DataType.Byte
@@ -1107,75 +1061,65 @@ Menu =
             local index = 1
             
             -- TODO: Don't use magic numbers here for the runType
-            if runType >= 0 and runType <= 5 then
-                if runType == 0 then
+            if runType >= RunType.GhoulBounty and runType < RunType.MatrixRun then
+                if runType == RunType.GhoulBounty then
                     menu[params[index]].Text = "Area"
-                elseif runType ~= 1 and runType ~= 2 then
+                elseif runType ~= RunType.Bodyguard and runType ~= RunType.Courier then
                     menu[params[index]].Text = "Destination Area"
                 else
                     menu[params[index]].Text = "Source Area"
                 end
+                
                 menu[params[index]].Skip = false
                 menu[params[index]].Address = Address.CurrentRun.Area1
                 menu[params[index]].Enum = Areas
-                menu[params[index]].Min = 0
-                menu[params[index]].Max = #Areas - 1
                 index = index + 1
                 
-                if runType > 0 and runType <= 5 then
-                    if runType ~= 1 and runType ~= 2 then
+                if runType >= RunType.Bodyguard and runType < RunType.MatrixRun then
+                    if runType ~= RunType.Bodyguard and runType ~= RunType.Courier then
                         menu[params[index]].Text = "Destination Building"
                     else
                         menu[params[index]].Text = "Source Building"
                     end
+                    
                     menu[params[index]].Skip = false
                     menu[params[index]].Address = Address.CurrentRun.Building1
                     menu[params[index]].Enum = Buildings[area]
-                    menu[params[index]].Min = 0
-                    menu[params[index]].Max = #Buildings[area] - 1
                     index = index + 1
                 end
                 
-                if runType == 1 or runType == 2 then
+                if runType == RunType.Bodyguard or runType == RunType.Courier then
                     menu[params[index]].Text = "Destination Area"
                     menu[params[index]].Skip = false
                     menu[params[index]].Address = Address.CurrentRun.Area2
                     menu[params[index]].Enum = Areas
-                    menu[params[index]].Min = 0
-                    menu[params[index]].Max = #Areas - 1
                     index = index + 1
                     
                     menu[params[index]].Text = "Destination Building"
                     menu[params[index]].Skip = false
                     menu[params[index]].Address = Address.CurrentRun.Building2
                     menu[params[index]].Enum = Buildings[area2]
-                    menu[params[index]].Min = 0
-                    menu[params[index]].Max = #Buildings[area2] - 1
                     index = index + 1
                 end
                 
-                if runType == 1 or runType == 5 then
+                if runType == RunType.Bodyguard or runType == RunType.Extraction then
                     menu[params[index]].Text = "Client"
                     menu[params[index]].Skip = false
                     menu[params[index]].Address = Address.CurrentRun.Client
                     menu[params[index]].Values = Clients
                     index = index + 1
                 end
-            elseif runType == 6 then
+            elseif runType == RunType.MatrixRun then
                 menu[params[index]].Text = "Matrix Run Type"
                 menu[params[index]].Skip = false
                 menu[params[index]].Address = Address.CurrentRun.Matrix.Type
                 menu[params[index]].Enum = MatrixRunTypes
-                menu[params[index]].Min = 0
-                menu[params[index]].Max = #MatrixRunTypes - 1
                 index = index + 1
                 
                 menu[params[index]].Text = "System"
                 menu[params[index]].Skip = false
                 menu[params[index]].Address = Address.CurrentRun.Matrix.System
                 menu[params[index]].Enum = Systems
-                menu[params[index]].Min = 0
-                menu[params[index]].Max = #Systems - 1
                 index = index + 1
             end
             
@@ -1198,8 +1142,8 @@ Menu =
                     local value = ReadValue(entry.Address, entry.Type)
                     
                     if entry.Enum ~= nil then
-                        if value < entry.Min or value > entry.Max then
-                            WriteValue(entry.Address, entry.Type, entry.Min)
+                        if value < 0 or value > #entry.Enum - 1 then
+                            WriteValue(entry.Address, entry.Type, 0)
                         end
                     elseif entry.Values ~= nil then
                         local found = false
@@ -1226,12 +1170,10 @@ Menu =
     {
         Header = "Cyberspace",
         
-        Width = 100,
-        Height = 100,
         DefaultIndex = 2,
         
         {
-            Text = "ICE", Skip = true, Color = 0xFF0000FF
+            Text = "ICE", Skip = true, Color = 0xFFFF0000
         },
         {
             Text = "ICE Health",
@@ -1241,8 +1183,9 @@ Menu =
             Max = 255
         },
         
+        -- TEST STUFF
         Input = function()
-            if KeyPressed("A") then
+            if KeyPressed(Input.UseKey) then
                 for i = 0, 3 do
                     local var1 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4), DataType.Byte)
                     local var2 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4) + 1, DataType.Byte)
@@ -1324,7 +1267,7 @@ function UpdateMenuEvents()
     if Menu[Menu.Page].Input ~= nil then
         Menu[Menu.Page].Input()
     end
-    
+
     if Menu[Menu.Page].Update ~= nil then
         Menu[Menu.Page].Update()
     end
