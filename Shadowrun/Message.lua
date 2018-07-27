@@ -39,9 +39,8 @@ function Help()
     
     if ReadValue(0, DataType.Byte) ~= 0xFF then
         NewMessage(message, 1000, Color.White, Color.Black, 0, 0)
+        WriteValue(0, DataType.Byte, 0xFF)
     end
-    
-    WriteValue(0, DataType.Byte, 0xFF)
 end
 
 function NewMessage(text, time, color, backgroundColor, x, y)
