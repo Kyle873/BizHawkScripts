@@ -11,7 +11,7 @@ MenuPage =
     CyberdeckDataFiles = 7,
     
     GlobalGroupItems = 8,
-    GlobalGroupData = 9,
+    Notebook = 9,
     
     CurrentRun = 10,
     Cyberspace = 11
@@ -28,7 +28,7 @@ Menu =
     
     [MenuPage.Main] =
     {
-        Header = "ShadowEdit v0.91",
+        Header = "ShadowEdit v0.9.2",
         
         DefaultIndex = 2,
         
@@ -69,7 +69,7 @@ Menu =
             Text = "Group Items", Page = MenuPage.GlobalGroupItems
         },
         {
-            Text = "Group Data", Page = MenuPage.GlobalGroupData
+            Text = "Notebook", Page = MenuPage.Notebook
         },
         {
             Text = "", Skip = true
@@ -941,18 +941,18 @@ Menu =
         },
     },
     
-    [MenuPage.GlobalGroupData] =
+    [MenuPage.Notebook] =
     {
-        Header = "Global - Group Data",
+        Header = "Global - Notebook",
         
         DefaultIndex = 2,
         
         {
-            Text = "Cyberdeck Passcodes", Skip = true, Color = 0xFFFFFF00
+            Text = "Passcodes", Skip = true, Color = 0xFF00FFFF
         },
         {
             Text = "Set 1",
-            Address = Address.Global.Passcodes,
+            Address = Address.Global.Notebook.Passcodes,
             Type = DataType.Byte,
             BitField = Passcodes[1],
             Min = 0,
@@ -960,7 +960,7 @@ Menu =
         },
         {
             Text = "Set 2",
-            Address = Address.Global.Passcodes + 1,
+            Address = Address.Global.Notebook.Passcodes + 1,
             Type = DataType.Byte,
             BitField = Passcodes[2],
             Min = 0,
@@ -970,11 +970,47 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Contacts", Skip = true, Color = 0xFF00FFFF
+            Text = "Known Johnsons", Skip = true, Color = 0xFFFF7F00
         },
         {
             Text = "Set 1",
-            Address = Address.Global.Contacts,
+            Address = Address.Global.Notebook.KnownJohnsons,
+            Type = DataType.Byte,
+            BitField = KnownJohnsons,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Shadowrunners", Skip = true, Color = 0xfF00FF00
+        },
+        {
+            Text = "Set 1",
+            Address = Address.Global.Notebook.Shadowrunners,
+            Type = DataType.Byte,
+            BitField = Shadowrunners[1],
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Set 2",
+            Address = Address.Global.Notebook.Shadowrunners + 1,
+            Type = DataType.Byte,
+            BitField = Shadowrunners[2],
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Contacts", Skip = true, Color = 0xFFFFFF00
+        },
+        {
+            Text = "Set 1",
+            Address = Address.Global.Notebook.Contacts,
             Type = DataType.Byte,
             BitField = Contacts[1],
             Min = 0,
@@ -982,12 +1018,66 @@ Menu =
         },
         {
             Text = "Set 2",
-            Address = Address.Global.Contacts + 1,
+            Address = Address.Global.Notebook.Contacts + 1,
             Type = DataType.Byte,
             BitField = Contacts[2],
             Min = 0,
             Max = 255
         },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Tips & Tricks", Skip = true, Color = 0xFF007FFF
+        },
+        {
+            Text = "Set 1",
+            Address = Address.Global.Notebook.Clues,
+            Type = DataType.Byte,
+            -- BitField = Clues,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Set 2",
+            Address = Address.Global.Notebook.Clues + 1,
+            Type = DataType.Byte,
+            -- BitField = Clues,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Set 3",
+            Address = Address.Global.Notebook.Clues + 2,
+            Type = DataType.Byte,
+            -- BitField = Clues,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Set 4",
+            Address = Address.Global.Notebook.Clues + 3,
+            Type = DataType.Byte,
+            -- BitField = Clues,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Set 5",
+            Address = Address.Global.Notebook.Clues + 4,
+            Type = DataType.Byte,
+            -- BitField = Clues,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Set 6",
+            Address = Address.Global.Notebook.Clues + 5,
+            Type = DataType.Byte,
+            -- BitField = Clues,
+            Min = 0,
+            Max = 255
+        }
     },
     
     [MenuPage.CurrentRun] =

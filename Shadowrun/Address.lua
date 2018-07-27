@@ -116,8 +116,14 @@ Address =
         
         GroupItems = 0xFC24,
         
-        Passcodes = 0xFC27,
-        Contacts = 0xFC2D,
+        Notebook =
+        {
+            Passcodes = 0xFC26,
+            KnownJohnsons = 0xFC27,
+            Shadowrunners = 0xFC2A,
+            Contacts = 0xFC2E,
+            Clues = 0xFC30,
+        }
     },
     
     CurrentRun =
