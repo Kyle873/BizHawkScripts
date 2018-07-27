@@ -36,6 +36,7 @@ dofile("GUI.lua")
 dofile("Menu.lua")
 
 memory.usememorydomain("68K RAM")
+gui.defaultPixelFont("fceux")
 
 Help()
 MenuInit()
