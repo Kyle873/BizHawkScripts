@@ -17,10 +17,6 @@ function NewMessage(text, time, color)
 end
 
 function UpdateMessage()
-    local function GetAlpha(color)
-        return 
-    end
-    
     local function ModAlpha(color)
         return bit.band(color, 0x00FFFFFF) + bit.lshift((bit.rshift(color, 24) / Message.FadeTime) * (Message.FadeTime - math.abs(Message.Timer)), 24)
     end
