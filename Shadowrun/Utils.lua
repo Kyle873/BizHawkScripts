@@ -53,7 +53,7 @@ function SellFiles()
             end
         end
         
-        NewMessage("Datafiles Cashed: " .. total .. " Nuyen Earned (" .. nuyen + total .. " Total)", 300, 0xFFFFFF00)
+        NewMessage("Datafiles Cashed: " .. total .. " Nuyen Earned (" .. nuyen + total .. " Total)", 300, Color.Yellow)
         
         WriteValue(Address.Global.Nuyen, DataType.Long, nuyen + total)
 end

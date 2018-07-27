@@ -12,7 +12,7 @@ function UpdateGUI()
         
         if Menu.Page >= MenuPage.PlayerBasic and Menu.Page <= MenuPage.PlayerStats then
             gui.pixelText(8, 8, Menu[Menu.Page].Header .. " (" .. Menu.Runner + 1 .. "/" .. "3)", Color.Header, 0)
-        elseif string.find(Menu[Menu.Page].Header, "\r") then
+        elseif bizstring.contains(Menu[Menu.Page].Header, "\r") then
             gui.pixelText(8, 8, Menu[Menu.Page].Header, ColorRainbow(), 0)
         else
             gui.pixelText(8, 8, Menu[Menu.Page].Header, Color.Header, 0)
