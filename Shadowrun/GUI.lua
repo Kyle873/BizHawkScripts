@@ -1,11 +1,16 @@
 GUI =
 {
+    MaxEntries = 23,
+        
     FancyBars = false -- CPU intensive!
 }
 
 function UpdateGUI()
     if Menu.Open then
         local entries = 0
+        local headerText = Menu[Menu.Page].Header
+        local start = 1
+        local y = 1
         
         for i = 1, #Menu[Menu.Page] do
             if type(Menu[Menu.Page][i]) == "table" then
@@ -13,17 +18,33 @@ function UpdateGUI()
             end
         end
         
-        gui.drawBox(0, 0, 319, 30 + entries * 8, Color.Outline, ColorPulse(Color.Background, 16))
-        
-        if Menu.Page >= MenuPage.PlayerBasic and Menu.Page <= MenuPage.PlayerStats then
-            gui.pixelText(8, 8, Menu[Menu.Page].Header .. " (" .. Menu.Runner + 1 .. "/" .. "3)", Color.Header, 0)
-        elseif bizstring.contains(Menu[Menu.Page].Header, "\r") then
-            gui.pixelText(8, 8, Menu[Menu.Page].Header, ColorRainbow(), 0)
-        else
-            gui.pixelText(8, 8, Menu[Menu.Page].Header, Color.Header, 0)
+        if entries > GUI.MaxEntries and Menu.Index > GUI.MaxEntries / 2 then
+            start = math.ceil(math.abs(Menu.Index - (GUI.MaxEntries / 2)))
         end
         
-        for i = 1, Menu[Menu.Page].Max do
+        if entries > GUI.MaxEntries then
+            gui.drawBox(0, 0, 319, 223, Color.Outline, ColorPulse(Color.Background, 16))
+        else
+            gui.drawBox(0, 0, 319, 30 + entries * 8, Color.Outline, ColorPulse(Color.Background, 16))
+        end
+        
+        if Menu[Menu.Page].PerChar ~= nil and Menu[Menu.Page].PerChar then
+            headerText = headerText .. " (" .. Menu.Runner + 1 .. "/" .. "3)"
+        elseif Menu[Menu.Page].Spellbook ~= nil and Menu[Menu.Page].Spellbook then
+            headerText = headerText .. " (" .. Menu.SpellCharNames[Menu.SpellPage + 1] .. ")"
+        end
+        
+        if bizstring.contains(Menu[Menu.Page].Header, "\r") then
+            gui.pixelText(8, 8, headerText, ColorRainbow(), 0)
+        else
+            gui.pixelText(8, 8, headerText, Color.Header, 0)
+        end
+        
+        for i = start, start + GUI.MaxEntries do
+            if i > Menu[Menu.Page].Max then
+                break
+            end
+            
             local entry = Menu[Menu.Page][i]
             local color = entry.Color or Color.Text
             local value = 0
@@ -52,14 +73,14 @@ function UpdateGUI()
                 end
                 
                 if not (Input.Typing and i == Menu.Index) then
-                    gui.drawRectangle(offset, 16 + (i * 8), width, 7, color, Color.Transparent)
+                    gui.drawRectangle(offset, 16 + (y * 8), width, 7, color, Color.Transparent)
                     
                     if GUI.FancyBars then
                         for j = 1, progress - 1 do
-                            gui.drawLine(offset + j, 17 + (i * 8), offset + j, 17 + (i * 8) + 5, ColorPulse(color, 63, 32, j / 4))
+                            gui.drawLine(offset + j, 17 + (y * 8), offset + j, 17 + (i * 8) + 5, ColorPulse(color, 63, 32, j / 4))
                         end
                     else
-                        gui.drawRectangle(offset + 1, 17 + (i * 8), progress - 2, 5, color, color)
+                        gui.drawRectangle(offset + 1, 17 + (y * 8), progress - 2, 5, color, color)
                     end
                 end
             end
@@ -74,7 +95,7 @@ function UpdateGUI()
                         
                         text = text .. Input.Text
                         
-                        gui.drawRectangle(offset, 16 + (i * 8), 4, 8, color, color)
+                        gui.drawRectangle(offset, 16 + (y * 8), 4, 8, color, color)
                     else
                         text = text .. value
                         
@@ -91,11 +112,13 @@ function UpdateGUI()
                         end
                     end
                     
-                    gui.pixelText(8, 16 + (i * 8), text, color, 0)
+                    gui.pixelText(8, 16 + (y * 8), text, color, 0)
                 else
-                    gui.pixelText(8, 16 + (i * 8), entry.Text, color, 0)
+                    gui.pixelText(8, 16 + (y * 8), entry.Text, color, 0)
                 end
             end
+            
+            y = y + 1
         end
     end
 end

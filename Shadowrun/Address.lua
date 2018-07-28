@@ -60,7 +60,9 @@ Address =
             Electronics = 0x0189,
             Reputation = 0x018A,
             Negotiation = 0x018B
-        }
+        },
+        
+        Spellbook = 0xF9FB
     },
     
     Cyberdeck =

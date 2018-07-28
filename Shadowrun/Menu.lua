@@ -5,15 +5,16 @@ MenuPage =
     PlayerBasic = 2,
     PlayerInventory = 3,
     PlayerStats = 4,
+    Spellbooks = 5,
     
-    CyberdeckStats = 5,
-    CyberdeckPrograms = 6,
-    CyberdeckDataFiles = 7,
-    Cyberspace = 8,
+    CyberdeckStats = 6,
+    CyberdeckPrograms = 7,
+    CyberdeckDataFiles = 8,
+    Cyberspace = 9,
     
-    GroupItems = 9,
-    Notebook = 10,
-    CurrentRun = 11
+    GroupItems = 10,
+    Notebook = 11,
+    CurrentRun = 12
 }
 
 Menu = 
@@ -24,10 +25,20 @@ Menu =
     
     Runner = 0,
     RunnerOffset = 0x100,
+    SpellPage = 0,
+    SpellOffset = 0x22,
+    SpellCharNames =
+    {
+        "Ricky",
+        "Trent",
+        "Walking Bear",
+        "Freya",
+        "Joshua"
+    },
     
     [MenuPage.Main] =
     {
-        Header = "\rShadowEdit v0.10.0",
+        Header = "\rShadowEdit v0.11.0",
         
         DefaultIndex = 2,
         
@@ -42,6 +53,9 @@ Menu =
         },
         {
             Text = "Attributes/Skills", Page = MenuPage.PlayerStats
+        },
+        {
+            Text = "Spellbooks", Page = MenuPage.Spellbooks
         },
         {
             Text = "", Skip = true
@@ -89,6 +103,7 @@ Menu =
     {
         Header = "Player - Basic",
         
+        PerChar = true,
         DefaultIndex = 2,
         
         {
@@ -228,6 +243,7 @@ Menu =
     {
         Header = "Player - Inventory",
         
+        PerChar = true,
         DefaultIndex = 2,
         
         {
@@ -413,6 +429,7 @@ Menu =
     {
         Header = "Player - Attributes/Skills",
         
+        PerChar = true,
         DefaultIndex = 2,
         
         {
@@ -697,6 +714,248 @@ Menu =
                 Color = Color.Yellow
             }
         },
+    },
+    
+    [MenuPage.Spellbooks] =
+    {
+        Header = "Spellbooks",
+        
+        Spellbook = true,
+        DefaultIndex = 2,
+        
+        {
+            Text = "Type", Skip = true, Color = Color.Pink
+        },
+        {
+            Text = "Slot 1",
+            Address = Address.Player.Spellbook + 1,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 2",
+            Address = Address.Player.Spellbook + 3,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 3",
+            Address = Address.Player.Spellbook + 5,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 4",
+            Address = Address.Player.Spellbook + 7,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 5",
+            Address = Address.Player.Spellbook + 9,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 6",
+            Address = Address.Player.Spellbook + 11,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 7",
+            Address = Address.Player.Spellbook + 13,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 8",
+            Address = Address.Player.Spellbook + 15,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 9",
+            Address = Address.Player.Spellbook + 17,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 10",
+            Address = Address.Player.Spellbook + 19,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 11",
+            Address = Address.Player.Spellbook + 21,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 12",
+            Address = Address.Player.Spellbook + 23,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 13",
+            Address = Address.Player.Spellbook + 25,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "Slot 14",
+            Address = Address.Player.Spellbook + 27,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Values = Spells
+        },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Level", Skip = true, Color = Color.Pink
+        },
+        {
+            Text = "Slot 1",
+            Address = Address.Player.Spellbook + 2,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 2",
+            Address = Address.Player.Spellbook + 4,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 3",
+            Address = Address.Player.Spellbook + 6,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 4",
+            Address = Address.Player.Spellbook + 8,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 5",
+            Address = Address.Player.Spellbook + 10,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 6",
+            Address = Address.Player.Spellbook + 12,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 7",
+            Address = Address.Player.Spellbook + 14,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 8",
+            Address = Address.Player.Spellbook + 16,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 9",
+            Address = Address.Player.Spellbook + 18,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 10",
+            Address = Address.Player.Spellbook + 20,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 11",
+            Address = Address.Player.Spellbook + 22,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 12",
+            Address = Address.Player.Spellbook + 24,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 13",
+            Address = Address.Player.Spellbook + 26,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "Slot 14",
+            Address = Address.Player.Spellbook + 28,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
+        },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Misc", Skip = true, Color = Color.Pink
+        },
+        {
+            Text = "Total",
+            Address = Address.Player.Spellbook,
+            Spellbook = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 13
+        }
     },
     
     [MenuPage.CyberdeckStats] =
@@ -1525,7 +1784,7 @@ function MenuInit()
         for j = 1, #Menu[i] do
             Menu[i].Max = Menu[i].Max + 1
             
-            if Menu[i][j].PerChar ~= nil and Menu[i][j].PerChar then
+            if (Menu[i][j].PerChar ~= nil and Menu[i][j].PerChar) or (Menu[i][j].Spellbook ~= nil and Menu[i][j].Spellbook) then
                 Menu[i][j].BaseAddress = Menu[i][j].Address
             end
             
@@ -1558,6 +1817,8 @@ function UpdateAddresses()
         for j = 1, #Menu[i] do
             if Menu[i][j].PerChar ~= nil and Menu[i][j].PerChar then
                 Menu[i][j].Address = Menu[i][j].BaseAddress + (Menu.Runner * Menu.RunnerOffset)
+            elseif Menu[i][j].Spellbook ~= nil and Menu[i][j].Spellbook then
+                Menu[i][j].Address = Menu[i][j].BaseAddress + (Menu.SpellPage * Menu.SpellOffset)
             end
         end
     end

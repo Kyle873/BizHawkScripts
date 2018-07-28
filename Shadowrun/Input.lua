@@ -88,11 +88,19 @@ function UpdateInput()
                 Menu.Index = Menu[Menu.Page].DefaultIndex
             end
             
-            if KeyPressed(Input.SwitchCharKey) and Menu.Page >= MenuPage.PlayerBasic and Menu.Page <= MenuPage.PlayerStats then
-                Menu.Runner = Menu.Runner + 1
-                
-                if Menu.Runner > 2 then
-                    Menu.Runner = 0
+            if KeyPressed(Input.SwitchCharKey) then
+                if Menu[Menu.Page].PerChar ~= nil and Menu[Menu.Page].PerChar then
+                    Menu.Runner = Menu.Runner + 1
+                    
+                    if Menu.Runner > 2 then
+                        Menu.Runner = 0
+                    end
+                elseif Menu[Menu.Page].Spellbook ~= nil and Menu[Menu.Page].Spellbook then
+                    Menu.SpellPage = Menu.SpellPage + 1
+                    
+                    if Menu.SpellPage > #Menu.SpellCharNames - 1 then
+                        Menu.SpellPage = 0
+                    end
                 end
             end
             
