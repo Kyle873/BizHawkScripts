@@ -18,8 +18,8 @@ function UpdateGUI()
             end
         end
         
-        if entries > GUI.MaxEntries and Menu.Index > GUI.MaxEntries / 2 then
-            start = math.ceil(math.abs(Menu.Index - (GUI.MaxEntries / 2)))
+        if entries > GUI.MaxEntries + 1 and Menu.Index > GUI.MaxEntries / 2 + 1 then
+            start = math.ceil(math.abs(Menu.Index - (GUI.MaxEntries / 2 + 1)))
         end
         
         if entries > GUI.MaxEntries then
