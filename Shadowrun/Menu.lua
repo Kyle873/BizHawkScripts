@@ -6,15 +6,17 @@ MenuPage =
     PlayerInventory = 3,
     PlayerStats = 4,
     Spellbooks = 5,
+    Group = 6,
     
-    CyberdeckStats = 6,
-    CyberdeckPrograms = 7,
-    CyberdeckDataFiles = 8,
-    Cyberspace = 9,
+    CyberdeckStats = 7,
+    CyberdeckPrograms = 8,
+    CyberdeckDataFiles = 9,
+    Cyberspace = 10,
     
-    GroupItems = 10,
-    Notebook = 11,
-    CurrentRun = 12
+    PlayerActor = 11,
+    PedActor = 12,
+    Notebook = 13,
+    CurrentRun = 14
 }
 
 Menu = 
@@ -25,6 +27,8 @@ Menu =
     
     Runner = 0,
     RunnerOffset = 0x100,
+    RunnerMax = 3,
+    
     SpellPage = 0,
     SpellOffset = 0x22,
     SpellCharNames =
@@ -36,9 +40,13 @@ Menu =
         "Joshua"
     },
     
+    PedPage = 0,
+    PedOffset = 0x100,
+    PedMax = 19,
+    
     [MenuPage.Main] =
     {
-        Header = "\rShadowEdit v0.11.2",
+        Header = "\rShadowEdit v0.11.3",
         
         DefaultIndex = 2,
         
@@ -56,6 +64,9 @@ Menu =
         },
         {
             Text = "Spellbooks", Page = MenuPage.Spellbooks
+        },
+        {
+            Text = "Group", Page = MenuPage.Group
         },
         {
             Text = "", Skip = true
@@ -82,7 +93,10 @@ Menu =
             Text = "World", Skip = true, Color = Color.Yellow
         },
         {
-            Text = "Group Items", Page = MenuPage.GroupItems
+            Text = "Player", Page = MenuPage.PlayerActor
+        },
+        {
+            Text = "Peds", Page = MenuPage.PedActor
         },
         {
             Text = "Notebook", Page = MenuPage.Notebook
@@ -90,11 +104,29 @@ Menu =
         {
             Text = "Current Run", Page = MenuPage.CurrentRun
         },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Functions", Skip = true, Color = Color.Blue
+        },
+        {
+            Text = "Sell Data Files",
+            Use = function()
+                SellDataFiles()
+            end
+        },
         
         Input = function()
-            if Menu.Open and KeyPressed(Input.UseKey) then
-                Menu.Page = Menu[MenuPage.Main][Menu.Index].Page
-                Menu.Index = Menu[Menu.Page].DefaultIndex or 1
+            if KeyPressed(Input.UseKey) then
+                if Menu[MenuPage.Main][Menu.Index].Page ~= nil then
+                    Menu.Page = Menu[MenuPage.Main][Menu.Index].Page
+                    Menu.Index = Menu[Menu.Page].DefaultIndex or 1
+                end
+                
+                if Menu[Menu.Page][Menu.Index].Use ~= nil then
+                    Menu[Menu.Page][Menu.Index].Use()
+                end
             end
         end,
     },
@@ -958,6 +990,46 @@ Menu =
         }
     },
     
+    [MenuPage.Group] =
+    {
+        Header = "Group",
+        
+        DefaultIndex = 2,
+        
+        {
+            Text = "Money", Skip = true, Color = Color.Green
+        },
+        {
+            Text = "Nuyen",
+            Address = Address.Player.Group.Nuyen,
+            Type = DataType.Long,
+            Min = 0,
+            Max = 1000000000
+        },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Group Items", Skip = true, Color = Color.Green
+        },
+        {
+            Text = "Set 1",
+            Address = Address.Player.Group.Items,
+            Type = DataType.Byte,
+            BitField = GroupItems[1],
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Set 2",
+            Address = Address.Player.Group.Items + 1,
+            Type = DataType.Byte,
+            BitField = GroupItems[2],
+            Min = 0,
+            Max = 255
+        },
+    },
+    
     [MenuPage.CyberdeckStats] =
     {
         Header = "Cyberdeck - Stats",
@@ -1423,41 +1495,58 @@ Menu =
         end,
     },
     
-    [MenuPage.GroupItems] =
+    [MenuPage.PlayerActor] =
     {
-        Header = "Global - Group Items",
+        Header = "World - Player",
         
         DefaultIndex = 2,
         
         {
-            Text = "Money", Skip = true, Color = Color.Yellow
+            Text = "Position", Skip = true, Color = Color.Yellow
         },
         {
-            Text = "Nuyen",
-            Address = Address.Global.Nuyen,
-            Type = DataType.Long,
-            Min = 0,
-            Max = 1000000000
-        },
-        {
-            Text = "", Skip = true
-        },
-        {
-            Text = "Group Items", Skip = true, Color = Color.Yellow
-        },
-        {
-            Text = "Set 1",
-            Address = Address.Global.GroupItems,
+            Text = "X",
+            Address = 0x0100,
             Type = DataType.Byte,
-            BitField = GroupItems[1],
             Min = 0,
             Max = 255
         },
         {
-            Text = "Set 2",
-            Address = Address.Global.GroupItems + 1,
+            Text = "Y",
+            Address = 0x0104,
             Type = DataType.Byte,
-            BitField = GroupItems[2],
+            Min = 0,
+            Max = 255
+        }
+    },
+    
+    [MenuPage.PedActor] =
+    {
+        Header = "World - Peds",
+        
+        Ped = true,
+        
+        {
+            Text = "Health",
+            Address = Address.Ped.Health,
+            Ped = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "X",
+            Address = Address.Ped.X,
+            Ped = true,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 255
+        },
+        {
+            Text = "Y",
+            Address = Address.Ped.Y,
+            Type = DataType.Byte,
+            Ped = true,
             Min = 0,
             Max = 255
         },
@@ -1465,7 +1554,7 @@ Menu =
     
     [MenuPage.Notebook] =
     {
-        Header = "Global - Notebook",
+        Header = "Notebook",
         
         DefaultIndex = 2,
         
@@ -1474,7 +1563,7 @@ Menu =
         },
         {
             Text = "Set 1",
-            Address = Address.Global.Notebook.Passcodes,
+            Address = Address.Notebook.Passcodes,
             Type = DataType.Byte,
             BitField = Passcodes[1],
             Min = 0,
@@ -1482,7 +1571,7 @@ Menu =
         },
         {
             Text = "Set 2",
-            Address = Address.Global.Notebook.Passcodes + 1,
+            Address = Address.Notebook.Passcodes + 1,
             Type = DataType.Byte,
             BitField = Passcodes[2],
             Min = 0,
@@ -1496,7 +1585,7 @@ Menu =
         },
         {
             Text = "Set 1",
-            Address = Address.Global.Notebook.KnownJohnsons,
+            Address = Address.Notebook.KnownJohnsons,
             Type = DataType.Byte,
             BitField = KnownJohnsons,
             Min = 0,
@@ -1510,7 +1599,7 @@ Menu =
         },
         {
             Text = "Set 1",
-            Address = Address.Global.Notebook.Shadowrunners,
+            Address = Address.Notebook.Shadowrunners,
             Type = DataType.Byte,
             BitField = Shadowrunners[1],
             Min = 0,
@@ -1518,7 +1607,7 @@ Menu =
         },
         {
             Text = "Set 2",
-            Address = Address.Global.Notebook.Shadowrunners + 1,
+            Address = Address.Notebook.Shadowrunners + 1,
             Type = DataType.Byte,
             BitField = Shadowrunners[2],
             Min = 0,
@@ -1532,7 +1621,7 @@ Menu =
         },
         {
             Text = "Set 1",
-            Address = Address.Global.Notebook.Contacts,
+            Address = Address.Notebook.Contacts,
             Type = DataType.Byte,
             BitField = Contacts[1],
             Min = 0,
@@ -1540,7 +1629,7 @@ Menu =
         },
         {
             Text = "Set 2",
-            Address = Address.Global.Notebook.Contacts + 1,
+            Address = Address.Notebook.Contacts + 1,
             Type = DataType.Byte,
             BitField = Contacts[2],
             Min = 0,
@@ -1554,7 +1643,7 @@ Menu =
         },
         {
             Text = "Set 1",
-            Address = Address.Global.Notebook.Clues,
+            Address = Address.Notebook.Clues,
             Type = DataType.Byte,
             -- BitField = Clues,
             Min = 0,
@@ -1562,7 +1651,7 @@ Menu =
         },
         {
             Text = "Set 2",
-            Address = Address.Global.Notebook.Clues + 1,
+            Address = Address.Notebook.Clues + 1,
             Type = DataType.Byte,
             -- BitField = Clues,
             Min = 0,
@@ -1570,7 +1659,7 @@ Menu =
         },
         {
             Text = "Set 3",
-            Address = Address.Global.Notebook.Clues + 2,
+            Address = Address.Notebook.Clues + 2,
             Type = DataType.Byte,
             -- BitField = Clues,
             Min = 0,
@@ -1578,7 +1667,7 @@ Menu =
         },
         {
             Text = "Set 4",
-            Address = Address.Global.Notebook.Clues + 3,
+            Address = Address.Notebook.Clues + 3,
             Type = DataType.Byte,
             -- BitField = Clues,
             Min = 0,
@@ -1586,7 +1675,7 @@ Menu =
         },
         {
             Text = "Set 5",
-            Address = Address.Global.Notebook.Clues + 4,
+            Address = Address.Notebook.Clues + 4,
             Type = DataType.Byte,
             -- BitField = Clues,
             Min = 0,
@@ -1594,7 +1683,7 @@ Menu =
         },
         {
             Text = "Set 6",
-            Address = Address.Global.Notebook.Clues + 5,
+            Address = Address.Notebook.Clues + 5,
             Type = DataType.Byte,
             -- BitField = Clues,
             Min = 0,
@@ -1784,7 +1873,9 @@ function MenuInit()
         for j = 1, #Menu[i] do
             Menu[i].Max = Menu[i].Max + 1
             
-            if (Menu[i][j].PerChar ~= nil and Menu[i][j].PerChar) or (Menu[i][j].Spellbook ~= nil and Menu[i][j].Spellbook) then
+            if (Menu[i][j].PerChar ~= nil and Menu[i][j].PerChar) or
+                (Menu[i][j].Spellbook ~= nil and Menu[i][j].Spellbook) or
+                (Menu[i][j].Ped ~= nil and Menu[i][j].Ped) then
                 Menu[i][j].BaseAddress = Menu[i][j].Address
             end
             
@@ -1819,6 +1910,8 @@ function UpdateAddresses()
                 Menu[i][j].Address = Menu[i][j].BaseAddress + (Menu.Runner * Menu.RunnerOffset)
             elseif Menu[i][j].Spellbook ~= nil and Menu[i][j].Spellbook then
                 Menu[i][j].Address = Menu[i][j].BaseAddress + (Menu.SpellPage * Menu.SpellOffset)
+            elseif Menu[i][j].Ped ~= nil and Menu[i][j].Ped then
+                Menu[i][j].Address = Menu[i][j].BaseAddress + (Menu.PedPage * Menu.PedOffset)
             end
         end
     end
@@ -1854,7 +1947,7 @@ end
 function FindMenuEntry(page, text)
     for i, v in ipairs(Menu[page]) do
         if v.Text ~= nil and bizstring.contains(v.Text, text) then
-            return Menu[page][i]
+            return Menu[page][i], i
         end
     end
     

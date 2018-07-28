@@ -58,11 +58,17 @@ Address =
             Computer = 0x0187,
             BioTech = 0x0188,
             Electronics = 0x0189,
-            Reputation = 0x018b,
-            Negotiation = 0x018c
+            Reputation = 0x018B,
+            Negotiation = 0x018C
         },
         
-        Spellbook = 0xF9FB
+        Spellbook = 0xF9FB,
+        
+        Group =
+        {
+            Nuyen = 0xFBFE,
+            Items = 0xFC24,
+        }
     },
     
     Cyberdeck =
@@ -112,20 +118,25 @@ Address =
         }
     },
     
-    Global =
+    Cyberspace =
     {
-        Nuyen = 0xFBFE,
+        ICEHealth = 0x1110
+    },
         
-        GroupItems = 0xFC24,
+    Notebook =
+    {
+        Passcodes = 0xFC26,
+        KnownJohnsons = 0xFC27,
+        Shadowrunners = 0xFC2A,
+        Contacts = 0xFC2E,
+        Clues = 0xFC30,
+    },
         
-        Notebook =
-        {
-            Passcodes = 0xFC26,
-            KnownJohnsons = 0xFC27,
-            Shadowrunners = 0xFC2A,
-            Contacts = 0xFC2E,
-            Clues = 0xFC30,
-        }
+    Ped =
+    {
+        X = 0x0400,
+        Y = 0x0404,
+        Health = 0x044C
     },
     
     CurrentRun =
@@ -148,13 +159,27 @@ Address =
         }
     },
     
-    Cyberspace =
-    {
-        ICEHealth = 0x1110
-    },
-    
     Misc =
     {
         RunnerTotal = 0xFC06
     }
 }
+
+--[[
+
+RESEARCH
+
+------------------
+-- PedStructure --
+------------------
+
+- Player starts at 0x0100
+- Peds/enemies start at 0x0400, 0x0100 bytes each
+
+struct Ped
+{
+    int x;
+    int y;
+}
+
+--]]

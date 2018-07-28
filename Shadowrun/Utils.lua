@@ -31,8 +31,8 @@ function IsSpell()
     end
 end
 
-function SellFiles()
-        local nuyen = ReadValue(Address.Global.Nuyen, DataType.Long)
+function SellDataFiles()
+        local nuyen = ReadValue(Address.Player.Group.Nuyen, DataType.Long)
         local total = 0
         
         for i = 1, 5 do
@@ -55,5 +55,5 @@ function SellFiles()
         
         NewMessage("Datafiles Cashed: " .. total .. " Nuyen Earned (" .. nuyen + total .. " Total)", 300, Color.Yellow)
         
-        WriteValue(Address.Global.Nuyen, DataType.Long, nuyen + total)
+        WriteValue(Address.Player.Group.Nuyen, DataType.Long, nuyen + total)
 end

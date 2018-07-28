@@ -32,12 +32,11 @@ Input =
     RightKey = "RightArrow",
     UseKey = "A",
     BackKey = "R",
-    SwitchCharKey = "D",
+    SwitchPageKey = "D",
     FreezeKey = "Q",
     ZeroKey = "W",
     MaxKey = "E",
-    TypeKey = "S",
-    SellFilesKey = "T"
+    TypeKey = "S"
 }
 
 function KeyPressed(key)
@@ -69,10 +68,6 @@ function UpdateInput()
         end
     end
     
-    if not Input.Typing and KeyPressed(Input.SellFilesKey) then
-        SellFiles()
-    end
-    
     if Menu.Open then
         local entry = Menu[Menu.Page][Menu.Index]
         
@@ -88,11 +83,11 @@ function UpdateInput()
                 Menu.Index = Menu[Menu.Page].DefaultIndex
             end
             
-            if KeyPressed(Input.SwitchCharKey) then
+            if KeyPressed(Input.SwitchPageKey) then
                 if Menu[Menu.Page].PerChar ~= nil and Menu[Menu.Page].PerChar then
                     Menu.Runner = Menu.Runner + 1
                     
-                    if Menu.Runner > 2 then
+                    if Menu.Runner > Menu.RunnerMax - 1 then
                         Menu.Runner = 0
                     end
                 elseif Menu[Menu.Page].Spellbook ~= nil and Menu[Menu.Page].Spellbook then
@@ -100,6 +95,12 @@ function UpdateInput()
                     
                     if Menu.SpellPage > #Menu.SpellCharNames - 1 then
                         Menu.SpellPage = 0
+                    end
+                elseif Menu[Menu.Page].Ped ~= nil and Menu[Menu.Page].Ped then
+                    Menu.PedPage = Menu.PedPage + 1
+                    
+                    if Menu.PedPage > Menu.PedMax - 1 then
+                        Menu.PedPage = 0
                     end
                 end
             end

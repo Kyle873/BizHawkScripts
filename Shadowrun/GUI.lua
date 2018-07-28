@@ -29,9 +29,11 @@ function UpdateGUI()
         end
         
         if Menu[Menu.Page].PerChar ~= nil and Menu[Menu.Page].PerChar then
-            headerText = headerText .. " (" .. Menu.Runner + 1 .. "/" .. "3)"
+            headerText = headerText .. " (" .. Menu.Runner + 1 .. "/" .. Menu.RunnerMax ..")"
         elseif Menu[Menu.Page].Spellbook ~= nil and Menu[Menu.Page].Spellbook then
             headerText = headerText .. " (" .. Menu.SpellCharNames[Menu.SpellPage + 1] .. ")"
+        elseif Menu[Menu.Page].Ped ~= nil and Menu[Menu.Page].Ped then
+            headerText = headerText .. " (" .. Menu.PedPage + 1 .. "/" .. Menu.PedMax .. ")"
         end
         
         if bizstring.contains(Menu[Menu.Page].Header, "\r") then
