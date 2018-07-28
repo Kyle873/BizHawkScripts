@@ -58,8 +58,8 @@ Address =
             Computer = 0x0187,
             BioTech = 0x0188,
             Electronics = 0x0189,
-            Reputation = 0x018A,
-            Negotiation = 0x018B
+            Reputation = 0x018b,
+            Negotiation = 0x018c
         },
         
         Spellbook = 0xF9FB
