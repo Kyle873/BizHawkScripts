@@ -169,9 +169,9 @@ Address =
 
 RESEARCH
 
-------------------
--- PedStructure --
-------------------
+-------------------
+-- Ped Structure --
+-------------------
 
 - Player starts at 0x0100
 - Peds/enemies start at 0x0400, 0x0100 bytes each
