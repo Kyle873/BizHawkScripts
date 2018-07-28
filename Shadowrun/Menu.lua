@@ -9,12 +9,11 @@ MenuPage =
     CyberdeckStats = 5,
     CyberdeckPrograms = 6,
     CyberdeckDataFiles = 7,
+    Cyberspace = 8,
     
-    GlobalGroupItems = 8,
-    Notebook = 9,
-    
-    CurrentRun = 10,
-    Cyberspace = 11
+    GroupItems = 9,
+    Notebook = 10,
+    CurrentRun = 11
 }
 
 Menu = 
@@ -28,12 +27,12 @@ Menu =
     
     [MenuPage.Main] =
     {
-        Header = "\rShadowEdit v0.9.7",
+        Header = "\rShadowEdit v0.10.0",
         
         DefaultIndex = 2,
         
         {
-            Text = "Player", Skip = true, Color = 0xFFFF0000
+            Text = "Player", Skip = true, Color = Color.Green
         },
         {
             Text = "Basic", Page = MenuPage.PlayerBasic
@@ -42,46 +41,40 @@ Menu =
             Text = "Inventory", Page = MenuPage.PlayerInventory
         },
         {
-            Text = "Stats/Skills", Page = MenuPage.PlayerStats
+            Text = "Attributes/Skills", Page = MenuPage.PlayerStats
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Cyberdeck", Skip = true, Color = 0xFF00FFFF
+            Text = "Cyberspace", Skip = true, Color = Color.Cyan
         },
         {
-            Text = "Stats", Page = MenuPage.CyberdeckStats
+            Text = "Cyberdeck Stats", Page = MenuPage.CyberdeckStats
         },
         {
-            Text = "Programs", Page = MenuPage.CyberdeckPrograms
+            Text = "Cyberdeck Programs", Page = MenuPage.CyberdeckPrograms
         },
         {
             Text = "Data Files", Page = MenuPage.CyberdeckDataFiles
         },
         {
+            Text = "System", Page = MenuPage.Cyberspace
+        },
+        {
             Text = "", Skip = true
         },
         {
-            Text = "Global", Skip = true, Color = 0xFFFFFF00
+            Text = "World", Skip = true, Color = Color.Yellow
         },
         {
-            Text = "Group Items", Page = MenuPage.GlobalGroupItems
+            Text = "Group Items", Page = MenuPage.GroupItems
         },
         {
             Text = "Notebook", Page = MenuPage.Notebook
         },
         {
-            Text = "", Skip = true
-        },
-        {
-            Text = "Misc", Skip = true, Color = 0xFF00FF00
-        },
-        {
             Text = "Current Run", Page = MenuPage.CurrentRun
-        },
-        {
-            Text = "Cyberspace", Page = MenuPage.Cyberspace
         },
         
         Input = function()
@@ -99,7 +92,7 @@ Menu =
         DefaultIndex = 2,
         
         {
-            Text = "Base", Skip = true, Color = 0xFFFF0000
+            Text = "Base", Skip = true, Color = Color.Green
         },
         {
             Text = "Race",
@@ -127,7 +120,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Offensive", Skip = true, Color = 0xFFFFFF00
+            Text = "Offensive", Skip = true, Color = Color.Red
         },
         {
             Text = "Ammo",
@@ -135,7 +128,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 255
+            Max = 255,
+            
+            Bar =
+            {
+                Color = Color.White
+            }
         },
         {
             Text = "Clips",
@@ -143,7 +141,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 20
+            Max = 20,
+            
+            Bar =
+            {
+                Color = Color.Orange
+            }
         },
         {
             Text = "Stance",
@@ -156,7 +159,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Health", Skip = true, Color = 0xFF00FF00
+            Text = "Health", Skip = true, Color = Color.Green
         },
         {
             Text = "Physical Health",
@@ -164,7 +167,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 10
+            Max = 10,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Mental Health",
@@ -172,13 +180,18 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 10
+            Max = 10,
+            
+            Bar =
+            {
+                Color = Color.Green
+            }
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Cyberware", Skip = true, Color = 0xFF00FFFF
+            Text = "Cyberware", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Set 1",
@@ -198,6 +211,17 @@ Menu =
             Min = 0,
             Max = 255
         },
+        
+        Update = function()
+            local ammo = FindMenuEntry(MenuPage.PlayerBasic, "Ammo")
+            local weapon = ReadValue(Address.Player.Equipped.Weapon, DataType.Byte) + 1
+            
+            if weapon > #ItemValues then
+                ammo.Max = 255
+            else
+                ammo.Max = ItemValues[weapon]
+            end
+        end
     },
     
     [MenuPage.PlayerInventory] =
@@ -207,7 +231,7 @@ Menu =
         DefaultIndex = 2,
         
         {
-            Text = "Equipped", Skip = true, Color = 0xFFFF0000
+            Text = "Equipped", Skip = true, Color = Color.Red
         },
         {
             Text = "Weapon",
@@ -235,7 +259,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Inventory", Skip = true, Color = 0xFF00FF00
+            Text = "Inventory", Skip = true, Color = Color.Green
         },
         {
             Text = "Slot 1",
@@ -297,7 +321,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Quantity/Flags", Skip = true, Color = 0xFF00FFFF
+            Text = "Quantity/Flags", Skip = true, Color = Color.Green
         },
         {
             Text = "Value 1",
@@ -373,7 +397,7 @@ Menu =
         },
         
         Update = function()
-            local weapon = Menu[MenuPage.PlayerInventory][2]
+            local weapon = FindMenuEntry(MenuPage.PlayerInventory, "Weapon")
             
             if IsSpell() then
                 weapon.Enum = Spells
@@ -382,17 +406,17 @@ Menu =
                 weapon.Enum = Weapons
                 weapon.Max = #Weapons - 1
             end
-        end,
+        end
     },
     
     [MenuPage.PlayerStats] =
     {
-        Header = "Player - Stat/Skills",
+        Header = "Player - Attributes/Skills",
         
         DefaultIndex = 2,
         
         {
-            Text = "Attributes", Skip = true, Color = 0xFFFF7F00
+            Text = "Attributes", Skip = true, Color = Color.Orange
         },
         {
             Text = "Body",
@@ -400,7 +424,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 1,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Green
+            }
         },
         {
             Text = "Quickness",
@@ -408,7 +437,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 1,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Orange
+            }
         },
         {
             Text = "Strength",
@@ -416,7 +450,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 1,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Charisma",
@@ -424,7 +463,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 1,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Yellow
+            }
         },
         {
             Text = "Intelligence",
@@ -432,7 +476,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 1,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Cyan
+            }
         },
         {
             Text = "Willpower",
@@ -440,7 +489,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 1,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Blue
+            }
         },
         {
             Text = "Magic",
@@ -448,7 +502,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Pink
+            }
         },
         {
             Text = "Essence",
@@ -456,7 +515,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 6
+            Max = 6,
+            
+            Bar =
+            {
+                Color = Color.Pink
+            }
         },
         {
             Text = "Essence Factor",
@@ -464,13 +528,18 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 9
+            Max = 9,
+            
+            Bar =
+            {
+                Color = Color.Pink
+            }
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Skills", Skip = true, Color = 0xFF007FFF
+            Text = "Skills", Skip = true, Color = Color.Blue
         },
         {
             Text = "Sorcery",
@@ -478,7 +547,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Pink
+            }
         },
         {
             Text = "Firearms",
@@ -486,7 +560,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Orange
+            }
         },
         {
             Text = "  Pistols",
@@ -494,7 +573,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 13
+            Max = 13,
+            
+            Bar =
+            {
+                Color = Color.Orange
+            }
         },
         {
             Text = "  SMGs",
@@ -502,7 +586,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 13
+            Max = 13,
+            
+            Bar =
+            {
+                Color = Color.Orange
+            }
         },
         {
             Text = "  Shotguns",
@@ -510,7 +599,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 13
+            Max = 13,
+            
+            Bar =
+            {
+                Color = Color.Orange
+            }
         },
         {
             Text = "Melee",
@@ -518,7 +612,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Throwing",
@@ -526,7 +625,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Computer",
@@ -534,7 +638,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.White
+            }
         },
         {
             Text = "BioTech",
@@ -542,7 +651,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.White
+            }
         },
         {
             Text = "Electronics",
@@ -550,7 +664,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.White
+            }
         },
         {
             Text = "Reputation",
@@ -558,7 +677,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Yellow
+            }
         },
         {
             Text = "Negotiation",
@@ -566,7 +690,12 @@ Menu =
             PerChar = true,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Yellow
+            }
         },
     },
     
@@ -577,7 +706,7 @@ Menu =
         DefaultIndex = 2,
         
         {
-            Text = "Base", Skip = true, Color = 0xFFFF0000
+            Text = "Base", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Available",
@@ -597,20 +726,30 @@ Menu =
             Address = Address.Cyberdeck.Stats.MPCP,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.White
+            }
         },
         {
             Text = "Hardening Rating",
             Address = Address.Cyberdeck.Stats.Hardening,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.White
+            }
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Memory/Storage", Skip = true, Color = 0xFFFFFF00
+            Text = "Memory/Storage", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Memory",
@@ -637,42 +776,67 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Stats", Skip = true, Color = 0xFF00FF00
+            Text = "Stats", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Body",
             Address = Address.Cyberdeck.Stats.Body,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Evasion",
             Address = Address.Cyberdeck.Stats.Evasion,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Yellow
+            }
         },
         {
             Text = "Masking",
             Address = Address.Cyberdeck.Stats.Masking,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Green
+            }
         },
         {
             Text = "Sensor",
             Address = Address.Cyberdeck.Stats.Sensor,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Blue
+            }
         },
         {
             Text = "Response",
             Address = Address.Cyberdeck.Stats.Response,
             Type = DataType.Byte,
             Min = 0,
-            Max = 12
+            Max = 12,
+            
+            Bar =
+            {
+                Color = Color.Orange
+            }
         },
     },
     
@@ -683,103 +847,163 @@ Menu =
         DefaultIndex = 2,
         
         {
-            Text = "Combat", Skip = true, Color = 0xFFFF0000
+            Text = "Combat", Skip = true, Color = Color.Red
         },
         {
             Text = "Attack",
             Address = Address.Cyberdeck.Programs.Attack,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Slow",
             Address = Address.Cyberdeck.Programs.Slow,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Degrade",
             Address = Address.Cyberdeck.Programs.Degrade,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "Rebound",
             Address = Address.Cyberdeck.Programs.Rebound,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Red
+            }
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Defense", Skip = true, Color = 0xFF00FF00
+            Text = "Defense", Skip = true, Color = Color.Green
         },
         {
             Text = "Medic",
             Address = Address.Cyberdeck.Programs.Medic,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Green
+            }
         },
         {
             Text = "Shield",
             Address = Address.Cyberdeck.Programs.Shield,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Green
+            }
         },
         {
             Text = "Smoke",
             Address = Address.Cyberdeck.Programs.Smoke,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Green
+            }
         },
         {
             Text = "Mirrors",
             Address = Address.Cyberdeck.Programs.Mirrors,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Green
+            }
         },
         {
             Text = "", Skip = true
         },
         {
-            Text = "Mask/Sense", Skip = true, Color = 0xFF00FFFF
+            Text = "Mask/Sense", Skip = true, Color = Color.Blue
         },
         {
             Text = "Sleaze",
             Address = Address.Cyberdeck.Programs.Sleaze,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Blue
+            }
         },
         {
             Text = "Deception",
             Address = Address.Cyberdeck.Programs.Deception,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Blue
+            }
         },
         {
             Text = "Relocation",
             Address = Address.Cyberdeck.Programs.Relocation,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Blue
+            }
         },
         {
             Text = "Analyze",
             Address = Address.Cyberdeck.Programs.Analyze,
             Type = DataType.Byte,
             Min = 0,
-            Max = 8
+            Max = 8,
+            
+            Bar =
+            {
+                Color = Color.Blue
+            }
         },
     },
     
@@ -790,7 +1014,7 @@ Menu =
         DefaultIndex = 2,
         
         {
-            Text = "File Types", Skip = true, Color = 0xFF00FFFF
+            Text = "File Types", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Slot 1",
@@ -826,7 +1050,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "File Sizes", Skip = true, Color = 0xFF00FF00
+            Text = "File Sizes", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Slot 1",
@@ -867,7 +1091,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "File Values", Skip = true, Color = 0xFFFFFF00
+            Text = "File Values", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Slot 1",
@@ -906,10 +1130,49 @@ Menu =
         },
     },
     
-    [MenuPage.GlobalGroupItems] =
+    [MenuPage.Cyberspace] =
+    {
+        Header = "Cyberspace",
+        
+        DefaultIndex = 2,
+        
+        {
+            Text = "ICE", Skip = true, Color = 0xFFFF0000
+        },
+        {
+            Text = "ICE Health",
+            Address = Address.Cyberspace.ICEHealth,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 255
+        },
+        
+        -- TEST STUFF
+        Input = function()
+            if KeyPressed(Input.UseKey) then
+                for i = 0, 3 do
+                    local var1 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4), DataType.Byte)
+                    local var2 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4) + 1, DataType.Byte)
+                    local var3 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4) + 2, DataType.Byte)
+                    local var4 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4) + 3, DataType.Byte)
+                    
+                    print(var1 .. ", " .. var2 .. ", " .. var3 .. ", " .. var4)
+                end
+                
+                print("--------------------")
+            end
+        end,
+    },
+    
+    [MenuPage.GroupItems] =
     {
         Header = "Global - Group Items",
         
+        DefaultIndex = 2,
+        
+        {
+            Text = "Money", Skip = true, Color = Color.Yellow
+        },
         {
             Text = "Nuyen",
             Address = Address.Global.Nuyen,
@@ -921,7 +1184,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Group Items", Skip = true, Color = 0xFFFF7F00
+            Text = "Group Items", Skip = true, Color = Color.Yellow
         },
         {
             Text = "Set 1",
@@ -948,7 +1211,7 @@ Menu =
         DefaultIndex = 2,
         
         {
-            Text = "Passcodes", Skip = true, Color = 0xFF00FFFF
+            Text = "Passcodes", Skip = true, Color = Color.Cyan
         },
         {
             Text = "Set 1",
@@ -970,7 +1233,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Known Johnsons", Skip = true, Color = 0xFFFF7F00
+            Text = "Known Johnsons", Skip = true, Color = Color.Yellow
         },
         {
             Text = "Set 1",
@@ -984,7 +1247,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Shadowrunners", Skip = true, Color = 0xfF00FF00
+            Text = "Shadowrunners", Skip = true, Color = Color.Green
         },
         {
             Text = "Set 1",
@@ -1006,7 +1269,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Contacts", Skip = true, Color = 0xFFFFFF00
+            Text = "Contacts", Skip = true, Color = Color.Yellow
         },
         {
             Text = "Set 1",
@@ -1028,7 +1291,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Tips & Tricks", Skip = true, Color = 0xFF007FFF
+            Text = "Tips & Tricks", Skip = true, Color = Color.Blue
         },
         {
             Text = "Set 1",
@@ -1087,7 +1350,7 @@ Menu =
         DefaultIndex = 2,
         
         {
-            Text = "Basic", Skip = true, Color = 0xFFFF0000
+            Text = "Basic", Skip = true, Color = Color.Yellow
         },
         {
             Text = "Johnson",
@@ -1122,7 +1385,7 @@ Menu =
             Text = "", Skip = true
         },
         {
-            Text = "Parameters", Skip = true, Color = 0xFFFFFF00
+            Text = "Parameters", Skip = true, Color = Color.Yellow
         },
         {
             Type = DataType.Byte
@@ -1137,8 +1400,7 @@ Menu =
             Type = DataType.Byte
         },
         {
-            Type = DataType.Byte,
-            Index = 1
+            Type = DataType.Byte
         },
         
         Update = function()
@@ -1150,7 +1412,6 @@ Menu =
             local area2 = ReadValue(Address.CurrentRun.Area2, DataType.Byte) + 1
             local index = 1
             
-            -- TODO: Don't use magic numbers here for the runType
             if runType >= RunType.GhoulBounty and runType < RunType.MatrixRun then
                 if runType == RunType.GhoulBounty then
                     menu[params[index]].Text = "Area"
@@ -1253,42 +1514,8 @@ Menu =
                     end
                 end
             end
-        end,
-    },
-    
-    [MenuPage.Cyberspace] =
-    {
-        Header = "Cyberspace",
-        
-        DefaultIndex = 2,
-        
-        {
-            Text = "ICE", Skip = true, Color = 0xFFFF0000
-        },
-        {
-            Text = "ICE Health",
-            Address = Address.Cyberspace.ICEHealth,
-            Type = DataType.Byte,
-            Min = 0,
-            Max = 255
-        },
-        
-        -- TEST STUFF
-        Input = function()
-            if KeyPressed(Input.UseKey) then
-                for i = 0, 3 do
-                    local var1 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4), DataType.Byte)
-                    local var2 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4) + 1, DataType.Byte)
-                    local var3 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4) + 2, DataType.Byte)
-                    local var4 = ReadValue(Address.Cyberspace.ICEHealth + (i * 4) + 3, DataType.Byte)
-                    
-                    print(var1 .. ", " .. var2 .. ", " .. var3 .. ", " .. var4)
-                end
-                
-                print("--------------------")
-            end
-        end,
-    },
+        end
+    }
 }
 
 function MenuInit()
@@ -1361,4 +1588,14 @@ function UpdateMenuEvents()
     if Menu[Menu.Page].Update ~= nil then
         Menu[Menu.Page].Update()
     end
+end
+
+function FindMenuEntry(page, text)
+    for i, v in ipairs(Menu[page]) do
+        if v.Text ~= nil and bizstring.contains(v.Text, text) then
+            return Menu[page][i]
+        end
+    end
+    
+    return nil
 end

@@ -10,6 +10,7 @@ dofile("WeaponFlags.lua")
 dofile("Spells.lua")
 dofile("Armors.lua")
 dofile("Items.lua")
+dofile("ItemValues.lua")
 dofile("Attachments.lua")
 dofile("Cyberdecks.lua")
 dofile("Datafiles.lua")
@@ -42,14 +43,16 @@ Help()
 MenuInit()
 
 while true do
-    Input.Current = input.get()
-    
     UpdateInput()
     UpdateFrozen()
-    UpdateAddresses()
-    UpdateValues()
-    UpdateMenuEvents()
-    UpdateGUI()
+    
+    if Menu.Open then
+        UpdateAddresses()
+        UpdateValues()
+        UpdateMenuEvents()
+        UpdateGUI()
+    end
+    
     UpdateMessage()
     
     emu.frameadvance()

@@ -16,7 +16,7 @@ function Help()
     {
         "Welcome to ShadowEdit!",
         " ",
-        "Menu Keys:",
+        "Menu Keys",
         "  " .. Input.MenuKey .. ": Open/close menu",
         "  " .. Input.UpKey .. "/" .. Input.DownKey .. ": Move cursor",
         "  " .. Input.LeftKey .. "/" .. Input.RightKey .. ": Adjust values",
@@ -24,13 +24,18 @@ function Help()
         "  " .. Input.BackKey .. ": Return to main menu",
         "  " .. Input.SwitchCharKey .. ": Switch active character",
         "  " .. Input.FreezeKey .. ": Freeze selected option",
-        "  " .. Input.ZeroKey .. ": Sets the currently selected value to",
-        "  it's minimum",
-        "  " .. Input.MaxKey .. ": Sets the currently selected value to",
-        "  it's maximum",
+        "  " .. Input.ZeroKey .. ": Sets the currently selected value to it's",
+        "  maximum",
+        "  " .. Input.TypeKey .. ": Type in a specific value",
+        "  " .. Input.MaxKey .. ": Sets the currently selected value to it's",
+        "  maximum",
         " ",
-        "Special Keys:",
+        "Special Keys",
         "  " .. Input.SellFilesKey .. ": Sell all datafiles",
+        " ",
+        "Typing",
+        "- Press Enter to finalize and apply a value",
+        "- All input values will be checked before applying",
     }
     
     local message = ""
@@ -49,8 +54,8 @@ end
 
 function NewMessage(text, time, color, backgroundColor, x, y)
     Message.Text = text
-    Message.Timer = time
-    Message.Color = color
+    Message.Timer = time or 300
+    Message.Color = color or Color.White
     Message.BackgroundColor = backgroundColor or Color.Background
     Message.X = x or 0
     Message.Y = y or 211
