@@ -46,7 +46,7 @@ Menu =
     
     [MenuPage.Main] =
     {
-        Header = "\rShadowEdit v0.11.4",
+        Header = "\rShadowEdit v0.11.5",
         
         DefaultIndex = 2,
         
@@ -1506,17 +1506,30 @@ Menu =
         },
         {
             Text = "X",
-            Address = 0x0100,
+            Address = Address.Player.Position.X,
             Type = DataType.Byte,
             Min = 0,
             Max = 255
         },
         {
             Text = "Y",
-            Address = 0x0104,
+            Address = Address.Player.Position.Y,
             Type = DataType.Byte,
             Min = 0,
             Max = 255
+        },
+        {
+            Text = "", Skip = true
+        },
+        {
+            Text = "Other", Skip = true, Color = Color.Yellow
+        },
+        {
+            Text = "Criminal Record",
+            Address = Address.Player.CriminalRecord,
+            Type = DataType.Byte,
+            Min = 0,
+            Max = 8
         }
     },
     

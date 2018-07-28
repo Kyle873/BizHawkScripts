@@ -59,20 +59,20 @@ function UpdateInput()
     if KeyPressed(Input.MenuKey) then
         Menu.Open = not Menu.Open
     end
-        
-    if KeyPressed(Input.TypeKey) then
-        local entry = Menu[Menu.Page][Menu.Index]
-        
-        if entry.Address ~= nil then
-            Input.Typing = not Input.Typing
-        end
-    end
     
     if Menu.Open then
         local entry = Menu[Menu.Page][Menu.Index]
         
         if Input.DisableJoypad then
             joypad.set(Input.Clear, 1)
+        end
+        
+        if KeyPressed(Input.TypeKey) then
+            local entry = Menu[Menu.Page][Menu.Index]
+            
+            if entry.Address ~= nil then
+                Input.Typing = not Input.Typing
+            end
         end
         
         if Input.Typing then

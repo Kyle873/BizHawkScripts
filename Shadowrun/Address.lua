@@ -68,7 +68,15 @@ Address =
         {
             Nuyen = 0xFBFE,
             Items = 0xFC24,
-        }
+        },
+        
+        Position =
+        {
+            X = 0x0100,
+            Y = 0x0104
+        },
+        
+        CriminalRecord = 0xFBFA
     },
     
     Cyberdeck =
