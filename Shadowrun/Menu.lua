@@ -46,7 +46,7 @@ Menu =
     
     [MenuPage.Main] =
     {
-        Header = "\rShadowEdit v0.11.3",
+        Header = "\rShadowEdit v0.11.4",
         
         DefaultIndex = 2,
         
@@ -448,8 +448,8 @@ Menu =
             local weapon = FindMenuEntry(MenuPage.PlayerInventory, "Weapon")
             
             if IsSpell() then
-                weapon.Enum = Spells
-                weapon.Max = #Spells - 1
+                weapon.Enum = EquippedSpells
+                weapon.Max = #EquippedSpells - 1
             else
                 weapon.Enum = Weapons
                 weapon.Max = #Weapons - 1
