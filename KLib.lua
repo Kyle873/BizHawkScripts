@@ -4,6 +4,7 @@ KLib =
     {
         Transparent     = 0x00000000,
         Black           = 0xFF000000,
+        Gray            = 0xFF3F3F3F,
         Red             = 0xFFFF0000,
         Orange          = 0xFFFF7F00,
         Yellow          = 0xFFFFFF00,
@@ -20,6 +21,12 @@ KLib =
         Mouse = input.getmouse(),
         PreviousMouse = input.getmouse(),
         
+        X = 0,
+        Y = 0,
+        ForeColor = KLib.Color.White,
+        BackColor = KLib.Color.Black,
+        SubColor = { KLib.Color.Gray, KLib.Color.Black },
+        
         ActiveWindow = nil,
         Windows = {}
     }
@@ -31,23 +38,43 @@ KLib =
 --                                                    --
 -- ================================================== --
 
-function KLib.Clamp(value, min, max)
-    if value < min then
-        return min
-    elseif value > max then
-        return max
+function KLib.ValueToString(v)
+    if type(v) == "string" then
+        v = string.gsub(v, "\n", "\\n")
+        
+        if string.match(string.gsub(v, "[^'\"]", ""), '^"+$') then
+            return "'" .. v .. "'"
+        end
+        
+        return '"' .. string.gsub(v, '"', '\\"') .. '"'
     else
-        return value
+        return type(v) == "table" and KLib.TableToString(v) or tostring(v)
     end
 end
 
-function KLib.Inside(x, y, x2, y2, width, height)
-    if x >= x2 and x <= x2 + width and
-       y >= y2 and y <= y2 + height then
-        return true
+function KLib.KeyToString(k)
+    if type(k) == "string" and string.match(k, "^[_%a][_%a%d]*$") then
+        return k
     else
-        return false
+        return "[" .. KLib.ValueToString(k) .. "]"
     end
+end
+
+function KLib.TableToString(t)
+    local result, done = {}, {}
+    
+    for k, v in ipairs(t) do
+        table.insert(result, KLib.ValueToString(v))
+        done[k] = true
+    end
+    
+    for k, v in pairs(t) do
+        if not done[k] then
+            table.insert(result, KLib.KeyToString(k) .. " = " .. KLib.ValueToString(v))
+        end
+    end
+    
+    return "{" .. table.concat(result, ",") .. "}"
 end
 
 function KLib.TableFind(t, v)
@@ -58,27 +85,98 @@ function KLib.TableFind(t, v)
     end
 end
 
+function KLib.Clamp(value, min, max)
+    if value < min then
+        return min
+    elseif value > max then
+        return max
+    else
+        return value
+    end
+end
+
+function KLib.Inside(x, y, width, height, x2, y2)
+    x2 = x2 or KLib.GUI.Mouse.X
+    y2 = y2 or KLib.GUI.Mouse.Y
+    
+    if x2 >= x and x2 <= x + width and
+       y2 >= y and y2 <= y + height then
+        return true
+    else
+        return false
+    end
+end
+
+function KLib.Color.Pulse(color, mult, time, offset)
+    time = time or 256
+    offset = offset or 0
+    
+    local mod = math.sin(emu.framecount() / time + offset) * mult
+    local a = bit.rshift(bit.band(color, 0xFF000000), 24)
+    local r = bit.rshift(bit.band(color, 0x00FF0000), 16) + mod
+    local g = bit.rshift(bit.band(color, 0x0000FF00), 8) + mod
+    local b = bit.band(color, 0x000000FF) + mod
+    
+    if r < 0 then r = 0 elseif r > 255 then r = 255 end
+    if g < 0 then g = 0 elseif g > 255 then g = 255 end
+    if b < 0 then b = 0 elseif b > 255 then b = 255 end
+    
+    return bit.lshift(a, 24) + bit.lshift(r, 16) + bit.lshift(g, 8) + b
+end
+
+function KLib.Color.Rainbow(speed, alpha, offset)
+    speed = speed or 64
+    alpha = alpha or 255
+    offset = offset or 0
+    
+    local r = math.sin(emu.framecount() / speed + offset) * 127 + 128
+    local g = math.sin((emu.framecount() / speed + offset) + 2) * 127 + 128
+    local b = math.sin((emu.framecount() / speed + offset) + 4) * 127 + 128
+    
+    return bit.lshift(alpha, 24) + bit.lshift(r, 16) + bit.lshift(g, 8) + b
+end
+
 -- ================================================== --
 --                                                    --
 -- GUI                                                --
 --                                                    --
 -- ================================================== --
 
-function KLib.GUI.CreateWindow(x, y, width, height, title, backColor, lineColor)
+function KLib.GUI.Position(x, y)
+    KLib.GUI.X = x
+    KLib.GUI.Y = y
+end
+
+function KLib.GUI.Move(x, y)
+    KLib.GUI.X = KLib.GUI.X + x
+    KLib.GUI.Y = KLib.GUI.Y + y
+end
+
+function KLib.GUI.Color(fore, back, sub)
+    KLib.GUI.ForeColor = fore or KLib.Color.White
+    KLib.GUI.BackColor = back or KLib.Color.Black
+    KLib.GUI.SubColor = sub or { KLib.Color.Gray, KLib.Color.Black }
+end
+
+function KLib.GUI.Window(width, height, title)
     local window = {}
     
-    window.x = x
-    window.y = y
+    window.x = KLib.GUI.X
+    window.y = KLib.GUI.Y
     window.width = width
     window.height = height
+    window.titleHeight = 10
     window.title = title or ""
-    window.backColor = backColor or KLib.Color.Black
-    window.lineColor = lineColor or KLib.Color.White
+    window.lineColor = KLib.GUI.ForeColor
+    window.backColor = KLib.GUI.BackColor
+    window.titleColor = KLib.GUI.SubColor
     window.visible = true
-    window.draggable = false
+    window.draggable = true
     window.dragging = false
     window.controls = {}
     
+    KLib.GUI.X = KLib.GUI.X + 2
+    KLib.GUI.Y = KLib.GUI.Y + 12
     KLib.GUI.ActiveWindow = window
     
     table.insert(KLib.GUI.Windows, window)
@@ -86,36 +184,59 @@ function KLib.GUI.CreateWindow(x, y, width, height, title, backColor, lineColor)
     return window
 end
 
-function KLib.GUI.CreateText(x, y, text, foreColor, backColor)
+function KLib.GUI.PixelText(text)
     local control = {}
     
-    control.type = "text"
-    control.x = x
-    control.y = y
-    control.width = string.len(text) * 4
-    control.height = 6
+    control.type = "pixeltext"
+    control.x = KLib.GUI.X
+    control.y = KLib.GUI.Y
     control.text = text
-    control.foreColor = foreColor or KLib.Color.White
-    control.backColor = backColor or KLib.Color.Transparent
-    control.onClick = nil
+    control.color = KLib.GUI.ForeColor
     control.onUpdate = nil
     
     table.insert(KLib.GUI.ActiveWindow.controls, control)
     
+    KLib.GUI.Y = KLib.GUI.Y + 7
+    
     return control
 end
 
-function KLib.GUI.CreateImage(x, y, width, height, path)
+function KLib.GUI.Text(text, size, family, style, halign, valign)
+    local control = {}
+    
+    control.type = "text"
+    control.x = KLib.GUI.X
+    control.y = KLib.GUI.Y
+    control.text = text
+    control.size = size or 12
+    control.family = family or nil
+    control.style = style or "regular"
+    control.halign = halign or "left"
+    control.valign = valign or "bottom"
+    control.color = KLib.GUI.ForeColor
+    control.onUpdate = nil
+    
+    table.insert(KLib.GUI.ActiveWindow.controls, control)
+    
+    KLib.GUI.Y = KLib.GUI.Y + control.size + 1
+    
+    return control
+end
+
+function KLib.GUI.Image(path, width, height)
     local control = {}
     
     control.type = "image"
-    control.x = x
-    control.y = y
+    control.x = KLib.GUI.X
+    control.y = KLib.GUI.Y
     control.width = width
     control.height = height
     control.path = path
+    control.onUpdate = nil
     
     table.insert(KLib.GUI.ActiveWindow.controls, control)
+    
+    KLib.GUI.Y = KLib.GUI.Y + control.height + 1
     
     return control
 end
@@ -125,15 +246,6 @@ function KLib.GUI.Update()
         return KLib.GUI.ActiveWindow == window
     end
     
-    local function HalfAlpha(color)
-        local a = bit.rshift(bit.band(color, 0xFF000000), 24)
-        local r = bit.rshift(bit.band(color, 0x00FF0000), 16)
-        local g = bit.rshift(bit.band(color, 0x0000FF00), 8)
-        local b = bit.band(color, 0x000000FF)
-        
-        return bit.lshift(a / 2, 24) + bit.lshift(r, 16) + bit.lshift(g, 8) + b
-    end
-    
     KLib.GUI.Mouse = input.getmouse()
     
     for i = 1, #KLib.GUI.Windows do
@@ -141,20 +253,19 @@ function KLib.GUI.Update()
         
         if window.visible then
             if IsActive(window) then
-                gui.drawRectangle(window.x, window.y, window.width, window.height, window.lineColor, window.backColor)
-                gui.pixelText(window.x + 2, window.y + 2, window.title, window.lineColor, KLib.Color.Transparent)
-                gui.drawLine(window.x, window.y + 10, window.x + window.width, window.y + 10, window.lineColor)
+                gui.drawRectangle(window.x, window.y, window.width, window.titleHeight, window.lineColor, window.titleColor[1])
             else
-                gui.drawRectangle(window.x, window.y, window.width, window.height, HalfAlpha(window.lineColor), HalfAlpha(window.backColor))
-                gui.pixelText(window.x + 2, window.y + 2, window.title, HalfAlpha(window.lineColor), KLib.Color.Transparent)
-                gui.drawLine(window.x, window.y + 10, window.x + window.width, window.y + 10, HalfAlpha(window.lineColor))
+                gui.drawRectangle(window.x, window.y, window.width, window.titleHeight, window.lineColor, window.titleColor[2])
             end
+            
+            gui.drawRectangle(window.x, window.y + window.titleHeight, window.width, window.height - window.titleHeight, window.lineColor, window.backColor)
+            gui.pixelText(window.x + 2, window.y + 2, window.title, window.lineColor, KLib.Color.Transparent)
             
             for _, control in pairs(window.controls) do
                 local x = window.x + control.x
-                local y = window.y + control.y + 10
+                local y = window.y + control.y
                 
-                if control.onClick ~= nil and KLib.GUI.Mouse.Left and not KLib.GUI.PreviousMouse.Left and KLib.Inside(KLib.GUI.Mouse.X, KLib.GUI.Mouse.Y, x, y, control.width, control.height) then
+                if control.onClick ~= nil and KLib.GUI.Mouse.Left and not KLib.GUI.PreviousMouse.Left and KLib.Inside(x, y, control.width, control.height) then
                     control.onClick(control)
                 end
                 
@@ -162,12 +273,12 @@ function KLib.GUI.Update()
                     control.onUpdate(control)
                 end
                 
+                if control.type == "pixeltext" then
+                    gui.pixelText(x, y, control.text, control.color, KLib.Color.Transparent)
+                end
+                
                 if control.type == "text" then
-                    if IsActive(window) then
-                        gui.pixelText(x, y, control.text, control.foreColor, control.backColor)
-                    else
-                        gui.pixelText(x, y, control.text, HalfAlpha(control.foreColor), HalfAlpha(control.backColor))
-                    end
+                    gui.drawText(x, y, control.text, control.color, KLib.Color.Transparent, control.size, control.family, control.style, control.halign, control.valign)
                 end
                 
                 if control.type == "image" then
@@ -178,7 +289,7 @@ function KLib.GUI.Update()
             --[[ TODO: Click passthrough so that dragging/rearrangement can actually work
             if not IsActive(window) and not KLib.GUI.ActiveWindow.dragging then
                 if window ~= KLib.GUI.ActiveWindow then
-                    if KLib.GUI.Mouse.Left and not KLib.GUI.PreviousMouse.Left and KLib.Inside(KLib.GUI.Mouse.X, KLib.GUI.Mouse.Y, window.x, window.y, window.width, window.height) then
+                    if KLib.GUI.Mouse.Left and not KLib.GUI.PreviousMouse.Left and KLib.Inside(window.x, window.y, window.width, window.height) then
                         KLib.GUI.ActiveWindow = window
                         table.remove(KLib.GUI.Windows, KLib.TableFind(KLib.GUI.Windows, window))
                         table.insert(KLib.GUI.Windows, window)
@@ -188,7 +299,7 @@ function KLib.GUI.Update()
             --]]
             
             if IsActive(window) and window.draggable and KLib.GUI.Mouse.Left and
-               KLib.Inside(KLib.GUI.Mouse.X, KLib.GUI.Mouse.Y, window.x, window.y, window.width, 10) then
+               KLib.Inside(window.x, window.y, window.width, window.titleHeight) then
                 window.dragging = true
             elseif window.dragging and not KLib.GUI.Mouse.Left then
                 window.dragging = false
