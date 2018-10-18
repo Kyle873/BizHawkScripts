@@ -154,7 +154,7 @@ end
 
 function KLib.GUI.Color(fore, back, sub)
     KLib.GUI.ForeColor = fore or KLib.Color.White
-    KLib.GUI.BackColor = back or KLib.Color.Black
+    KLib.GUI.BackColor = back or KLib.Color.Transparent
     KLib.GUI.SubColor = sub or { KLib.Color.Gray, KLib.Color.Black }
 end
 
@@ -184,17 +184,26 @@ function KLib.GUI.Window(width, height, title)
     return window
 end
 
-function KLib.GUI.PixelText(text)
+function KLib.GUI.Control(type)
     local control = {}
     
-    control.type = "pixeltext"
+    control.type = type
     control.x = KLib.GUI.X
     control.y = KLib.GUI.Y
-    control.text = text
-    control.color = KLib.GUI.ForeColor
+    control.visible = true
+    control.value = nil
     control.onUpdate = nil
     
     table.insert(KLib.GUI.ActiveWindow.controls, control)
+    
+    return control
+end
+
+function KLib.GUI.PixelText(text)
+    local control = KLib.GUI.Control("pixeltext")
+    
+    control.text = text
+    control.color = KLib.GUI.ForeColor
     
     KLib.GUI.Y = KLib.GUI.Y + 7
     
@@ -202,11 +211,8 @@ function KLib.GUI.PixelText(text)
 end
 
 function KLib.GUI.Text(text, size, family, style, halign, valign)
-    local control = {}
+    local control = KLib.GUI.Control("text")
     
-    control.type = "text"
-    control.x = KLib.GUI.X
-    control.y = KLib.GUI.Y
     control.text = text
     control.size = size or 12
     control.family = family or nil
@@ -214,27 +220,34 @@ function KLib.GUI.Text(text, size, family, style, halign, valign)
     control.halign = halign or "left"
     control.valign = valign or "bottom"
     control.color = KLib.GUI.ForeColor
-    control.onUpdate = nil
-    
-    table.insert(KLib.GUI.ActiveWindow.controls, control)
     
     KLib.GUI.Y = KLib.GUI.Y + control.size + 1
     
     return control
 end
 
-function KLib.GUI.Image(path, width, height)
-    local control = {}
+function KLib.GUI.Checkbox(text, enabled)
+    local control = KLib.GUI.Control("checkbox")
     
-    control.type = "image"
-    control.x = KLib.GUI.X
-    control.y = KLib.GUI.Y
+    control.width = 6
+    control.height = 6
+    control.text = text
+    control.enabled = enabled or false
+    control.textColor = KLib.GUI.ForeColor
+    control.checkColor = KLib.GUI.ForeColor
+    control.boxColor = KLib.GUI.ForeColor
+    
+    KLib.GUI.Y = KLib.GUI.Y + 7
+    
+    return control
+end
+
+function KLib.GUI.Image(path, width, height)
+    local control = KLib.GUI.Control("image")
+    
     control.width = width
     control.height = height
     control.path = path
-    control.onUpdate = nil
-    
-    table.insert(KLib.GUI.ActiveWindow.controls, control)
     
     KLib.GUI.Y = KLib.GUI.Y + control.height + 1
     
@@ -262,27 +275,42 @@ function KLib.GUI.Update()
             gui.pixelText(window.x + 2, window.y + 2, window.title, window.lineColor, KLib.Color.Transparent)
             
             for _, control in pairs(window.controls) do
-                local x = window.x + control.x
-                local y = window.y + control.y
-                
-                if control.onClick ~= nil and KLib.GUI.Mouse.Left and not KLib.GUI.PreviousMouse.Left and KLib.Inside(x, y, control.width, control.height) then
-                    control.onClick(control)
-                end
-                
-                if control.onUpdate ~= nil then
-                    control.onUpdate(control)
-                end
-                
-                if control.type == "pixeltext" then
-                    gui.pixelText(x, y, control.text, control.color, KLib.Color.Transparent)
-                end
-                
-                if control.type == "text" then
-                    gui.drawText(x, y, control.text, control.color, KLib.Color.Transparent, control.size, control.family, control.style, control.halign, control.valign)
-                end
-                
-                if control.type == "image" then
-                    gui.drawImage(control.path, x, y, control.width, control.height)
+                if control.visible then
+                    local x = window.x + control.x
+                    local y = window.y + control.y
+                    
+                    if control.onClick ~= nil and KLib.GUI.Mouse.Left and not KLib.GUI.PreviousMouse.Left and KLib.Inside(x, y, control.width, control.height) then
+                        control.onClick(control)
+                    end
+                    
+                    if control.onUpdate ~= nil then
+                        control.onUpdate(control)
+                    end
+                    
+                    if control.type == "pixeltext" then
+                        gui.pixelText(x, y, control.text, control.color, KLib.Color.Transparent)
+                    end
+                    
+                    if control.type == "text" then
+                        gui.drawText(x, y, control.text, control.color, KLib.Color.Transparent, control.size, control.family, control.style, control.halign, control.valign)
+                    end
+                    
+                    if control.type == "checkbox" then
+                        gui.drawRectangle(x, y, control.width, control.height, control.boxColor)
+                        gui.pixelText(x + 8, y, control.text, control.textColor)
+                        
+                        if control.enabled then
+                            gui.drawRectangle(x + 2, y + 2, control.width - 4, control.height - 4, control.checkColor, control.checkColor)
+                        end
+                        
+                        if KLib.GUI.Mouse.Left and not KLib.GUI.PreviousMouse.Left and KLib.Inside(x, y, control.width, control.height) then
+                            control.enabled = not control.enabled
+                        end
+                    end
+                    
+                    if control.type == "image" then
+                        gui.drawImage(control.path, x, y, control.width, control.height)
+                    end
                 end
             end
             
