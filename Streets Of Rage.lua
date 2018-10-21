@@ -58,8 +58,6 @@ end
 while true do
     KLib.Update()
     
-    KLib.Monitor.Cheats()
-    
 	emu.frameadvance()
     
     KLib.PostUpdate()
