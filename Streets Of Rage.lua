@@ -58,7 +58,7 @@ end
 while true do
     KLib.Update()
     
-	emu.frameadvance()
+    emu.frameadvance()
     
     KLib.PostUpdate()
 end
