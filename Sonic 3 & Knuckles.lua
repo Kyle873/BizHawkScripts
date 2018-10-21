@@ -50,23 +50,13 @@ Address =
     }
 }
 
-KLib.Monitor.AddVariable("Lives",
-    function()
-        return KLib.Memory.ReadByte(Address.Lives)
-    end)
-KLib.Monitor.AddVariable("Continues",
-    function()
-        return KLib.Memory.ReadByte(Address.Continues)
-    end)
-KLib.Monitor.AddVariable("Rings",
-    function()
-        return KLib.Memory.ReadShortBig(Address.Rings)
-    end)
-KLib.Monitor.AddVariable("Score",
-    function()
-        return KLib.Memory.ReadIntBig(Address.Score)
-    end)
-KLib.Monitor.AddVariable("Time",
+memory.usememorydomain("68K RAM")
+
+KLib.Monitor.Variable("Lives", Address.Lives, "byte")
+KLib.Monitor.Variable("Continues", Address.Continues, "byte")
+KLib.Monitor.Variable("Rings", Address.Rings, "s16_be")
+KLib.Monitor.Variable("Score", Address.Score, "s32_be")
+KLib.Monitor.VariableUpdate("Time",
     function()
         if KLib.Memory.ReadByte(Address.Time.Seconds) < 10 then
             return KLib.Memory.ReadByte(Address.Time.Minutes) .. ":0" .. KLib.Memory.ReadByte(Address.Time.Seconds) .. "." .. KLib.Memory.ReadByte(Address.Time.Centiseconds)
@@ -77,8 +67,6 @@ KLib.Monitor.AddVariable("Time",
 
 while true do
     KLib.Update()
-    
-    KLib.Monitor.Registers(0, 88)
     
     -- Fire Shield
     if KLib.Input.ButtonPressed("P1 X") then

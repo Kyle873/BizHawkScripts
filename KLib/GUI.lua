@@ -2,9 +2,11 @@ KLib.GUI =
 {
     X = 0,
     Y = 0,
+    
     ForeColor = KLib.Color.White,
     BackColor = KLib.Color.Black,
     SubColor = { KLib.Color.Gray, KLib.Color.Make(32, 32, 32) },
+    
     Size = 12,
     FontFamily = nil,
     FontStyle = nil,

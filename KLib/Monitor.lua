@@ -4,7 +4,7 @@ KLib.Monitor =
     Y = 24,
     Offset = 12,
     
-    Variables = {}
+    Entries = {}
 }
 
 function KLib.Monitor.Position(x, y, offset)
@@ -19,20 +19,38 @@ function KLib.Monitor.Move(x, y, offset)
     KLib.Monitor.Offset = offset or KLib.Monitor.Offset
 end
 
-function KLib.Monitor.AddVariable(name, value)
-    local variable = {}
+function KLib.Monitor.Entry(type)
+    local entry = {}
     
-    variable.x = KLib.Monitor.X
-    variable.y = KLib.Monitor.Y
-    variable.name = name
-    variable.value = value
+    entry.type = type
+    entry.x = KLib.Monitor.X
+    entry.y = KLib.Monitor.Y
     
     KLib.Monitor.Y = KLib.Monitor.Y + KLib.Monitor.Offset
     
-    table.insert(KLib.Monitor.Variables, variable)
+    table.insert(KLib.Monitor.Entries, entry)
+    
+    return entry
+end
+
+function KLib.Monitor.Variable(name, address, size)
+    local entry = KLib.Monitor.Entry("variable")
+    
+    entry.name = name
+    entry.address = address
+    entry.size = size
+end
+
+function KLib.Monitor.VariableUpdate(name, value)
+    local entry = KLib.Monitor.Entry("variable_update")
+    
+    entry.name = name
+    entry.value = value
 end
 
 function KLib.Monitor.Registers(x, y, decimal)
+    x = x or KLib.Monitor.X
+    y = y or KLib.Monitor.Y
     decimal = decimal or false
     
     local system = emu.getsystemid()
@@ -48,10 +66,27 @@ function KLib.Monitor.Registers(x, y, decimal)
     end
 end
 
-function KLib.Monitor.Update()
-    for i = 1, #KLib.Monitor.Variables do
-        local variable = KLib.Monitor.Variables[i]
+function KLib.Monitor.Cheats(x, y)
+    x = x or KLib.Monitor.X
+    y = y or KLib.Monitor.Y
+    
+    for i = 1, #KLib.Cheat.Cheats do
+        local cheat = KLib.Cheat.Cheats[i]
         
-        gui.text(variable.x, variable.y, variable.name .. ": " .. variable.value())
+        gui.text(x, y + i * 12, cheat.name .. ": " .. KLib.Memory.GetReader(cheat.size)(cheat.address) .. " (" .. KLib.String.OnOff(cheat.enabled) .. ")")
+    end
+end
+
+function KLib.Monitor.Update()
+    for i = 1, #KLib.Monitor.Entries do
+        local entry = KLib.Monitor.Entries[i]
+        
+        if entry.type == "variable" then
+            gui.text(entry.x, entry.y, entry.name .. ": " .. KLib.Memory.GetReader(entry.size)(entry.address))
+        end
+        
+        if entry.type == "variable_update" then
+            gui.text(entry.x, entry.y, entry.name .. ": " .. entry.value())
+        end
     end
 end

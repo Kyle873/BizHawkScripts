@@ -24,9 +24,9 @@ function KLib.Input.ButtonPressed(button, hold)
         end
     end
     
-    if KLib.Input.HoldTime >= KLib.Input.HoldTimeThreshold then
+	if KLib.Input.HoldTime >= KLib.Input.HoldTimeThreshold then
 		return KLib.Input.Joypad[button]
-	else
+    else
 		return KLib.Input.Joypad[button] and not KLib.Input.PrevJoypad[button]
 	end
 end
@@ -44,7 +44,7 @@ function KLib.Input.KeyPressed(key, hold)
     
     if KLib.Input.HoldTime >= KLib.Input.HoldTimeThreshold then
 		return KLib.Input.Keyboard[key]
-	else
+    else
 		return KLib.Input.Keyboard[key] and KLib.Input.PrevKeyboard[key] == nil
 	end
 end
@@ -53,18 +53,40 @@ function KLib.Input.MousePressed(click)
     return KLib.Input.Mouse[click] and not KLib.Input.PrevMouse[click]
 end
 
-function KLib.Input.Parse(string, hold)
-    hold = hold or true
+function KLib.Input.Parse(string)
+    local start = 0
+    local hold = false
+    local prefix = ""
+    local input = ""
     
-    local prefix = string.sub(string, 1, 1)
-    local input = string.sub(string, 2, #string)
+    if string.sub(string, 1, 1) == "+" then
+        start = 3
+        hold = true
+    else
+        start = 2
+    end
+    
+    prefix = string.sub(string, start - 1, start - 1)
+    input = string.sub(string, start, #string)
     
     if prefix == "@" then
-        return KLib.Input.KeyPressed(input, hold)
+        if hold then
+            return KLib.Input.Keyboard[input]
+        else
+            return KLib.Input.KeyPressed(input)
+        end
     elseif prefix == "#" then
-        return KLib.Input.ButtonPressed(input, hold)
+        if hold then
+            return KLib.Input.Joypad[input]
+        else
+            return KLib.Input.ButtonPressed(input)
+        end
     elseif prefix == "$" then
-        return KLib.Input.MousePressed(input)
+        if hold then
+            return KLib.Input.Mouse[input]
+        else
+            return KLib.Input.MousePressed(input)
+        end
     end
 end
 
