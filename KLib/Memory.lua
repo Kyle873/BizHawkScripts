@@ -102,11 +102,11 @@ function KLib.Memory.GetReader(type)
     elseif type == "s32_le" then
         return KLib.Memory.ReadInt
     elseif type == "s32_be" then
-        return KLib.Memory.ReadIntLong
+        return KLib.Memory.ReadIntBig
     elseif type == "u32_le" then
         return KLib.Memory.ReadUnsignedInt
     elseif type == "u32_be" then
-        return KLib.Memory.ReadUnsignedIntLong
+        return KLib.Memory.ReadUnsignedIntBig
     elseif type == "float" then
         return KLib.Memory.ReadFloat
     end
@@ -126,26 +126,36 @@ function KLib.Memory.GetWriter(type)
     elseif type == "s32_le" then
         return KLib.Memory.WriteInt
     elseif type == "s32_be" then
-        return KLib.Memory.WriteIntLong
+        return KLib.Memory.WriteIntBig
     elseif type == "u32_le" then
         return KLib.Memory.WriteUnsignedInt
     elseif type == "u32_be" then
-        return KLib.Memory.WriteUnsignedIntLong
+        return KLib.Memory.WriteUnsignedIntBig
     elseif type == "float" then
         return KLib.Memory.WriteFloat
     end
 end
 
+function KLib.Memory.GetBits(type)
+    if type == "byte" then
+        return 8
+    elseif type == "s16_le" or type == "s16_be" or type == "u16_le" or type == "u16_be" then
+        return 16
+    elseif type == "s32_le" or type == "s32_be" or type == "u32_le" or type == "u32_be" then
+        return 32
+    end
+end
+
 function KLib.Memory.GetMinMax(type)
     if type == "byte" then
-        return 0, math.exp(2, 8) - 1
+        return 0, 0xFF
     elseif type == "s16_le" or type == "s16_be" then
-        return -1 * math.exp(2, 16 - 1), math.exp(2, 16 - 1) - 1
+        return -0xFFFF, 0xFFFF
     elseif type == "u16_le" or type == "u16_be" then
-        return 0, math.exp(2, 16) - 1
+        return 0, 0xFFFF
     elseif type == "s32_le" or type == "s32_be" then
-        return -1 * math.exp(2, 32 - 1), math.exp(2, 32 - 1) - 1
+        return -0xFFFFFFFF, 0xFFFFFFFF
     elseif type == "u32_le" or type == "u32_be" then
-        return 0, math.exp(2, 32) - 1
+        return 0, 0xFFFFFFFF
     end
 end
