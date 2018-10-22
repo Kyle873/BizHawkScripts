@@ -63,22 +63,14 @@ end
 
 function KLib.Cheat.Update()
     for _, cheat in pairs(KLib.Cheat.Cheats) do
-        if type(cheat.key) == "table" then
-            local toggled = true
-            
-            for _, key in pairs(cheat.key) do
-                if not KLib.Input.Parse(key) then
-                    toggled = false
-                end
-            end
-            
-            if toggled then
-                cheat:toggle()
-            end
-        else
-            if KLib.Input.Parse(cheat.key) then
-                cheat:toggle()
-            end
+        --[[
+        if (type(cheat.key) == "table" and KLib.Input.ParseTable(cheat.key) or KLib.Input.Parse(cheat.key)) then
+            cheat:toggle()
+        end
+        --]]
+        
+        if KLib.Input.Parse(cheat.key) then
+            cheat:toggle()
         end
         
         if cheat.enabled then

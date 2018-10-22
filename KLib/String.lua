@@ -1,36 +1,36 @@
 KLib.String = {}
 
-function KLib.String.Key(k)
-    if type(k) == "string" and string.match(k, "^[_%a][_%a%d]*$") then
-        return k
+function KLib.String.Key(key)
+    if type(key) == "string" and string.match(key, "^[_%a][_%a%d]*$") then
+        return key
     else
-        return "[" .. KLib.String.Value(k) .. "]"
+        return "[" .. KLib.String.Value(key) .. "]"
     end
 end
 
-function KLib.String.Value(v)
-    if type(v) == "string" then
-        v = string.gsub(v, "\n", "\\n")
+function KLib.String.Value(value)
+    if type(value) == "string" then
+        value = string.gsub(value, "\n", "\\n")
         
-        if string.match(string.gsub(v, "[^'\"]", ""), '^"+$') then
-            return "'" .. v .. "'"
+        if string.match(string.gsub(value, "[^'\"]", ""), '^"+$') then
+            return "'" .. value .. "'"
         end
         
-        return '"' .. string.gsub(v, '"', '\\"') .. '"'
+        return '"' .. string.gsub(value, '"', '\\"') .. '"'
     else
-        return type(v) == "table" and KLib.String.Table(v) or tostring(v)
+        return type(value) == "table" and KLib.String.Table(value) or tostring(value)
     end
 end
 
-function KLib.String.Table(t)
+function KLib.String.Table(table)
     local result, done = {}, {}
     
-    for k, v in ipairs(t) do
+    for k, v in ipairs(table) do
         table.insert(result, KLib.String.Value(v))
         done[k] = true
     end
     
-    for k, v in pairs(t) do
+    for k, v in pairs(table) do
         if not done[k] then
             table.insert(result, KLib.String.Key(k) .. " = " .. KLib.String.Value(v))
         end
@@ -39,8 +39,8 @@ function KLib.String.Table(t)
     return "{" .. table.concat(result, ",") .. "}"
 end
 
-function KLib.String.OnOff(b)
-    if b then
+function KLib.String.OnOff(bool)
+    if bool then
         return "On"
     elseif not b then
         return "Off"

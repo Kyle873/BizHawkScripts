@@ -53,21 +53,21 @@ function KLib.Input.MousePressed(click)
     return KLib.Input.Mouse[click] and not KLib.Input.PrevMouse[click]
 end
 
-function KLib.Input.Parse(string)
+function KLib.Input.ParseString(text)
     local start = 0
     local hold = false
     local prefix = ""
     local input = ""
     
-    if string.sub(string, 1, 1) == "+" then
+    if string.sub(text, 1, 1) == "+" then
         start = 3
         hold = true
     else
         start = 2
     end
     
-    prefix = string.sub(string, start - 1, start - 1)
-    input = string.sub(string, start, #string)
+    prefix = string.sub(text, start - 1, start - 1)
+    input = string.sub(text, start, #text)
     
     if prefix == "@" then
         if hold then
@@ -87,6 +87,27 @@ function KLib.Input.Parse(string)
         else
             return KLib.Input.MousePressed(input)
         end
+    end
+end
+
+function KLib.Input.ParseTable(t)
+    local input = true
+    
+    for _, key in ipairs(t) do
+        if not KLib.Input.ParseString(key) then
+            input = false
+            break
+        end
+    end
+    
+    return input
+end
+
+function KLib.Input.Parse(value)
+    if type(value) == "table" then
+        return KLib.Input.ParseTable(value)
+    else
+        return KLib.Input.ParseString(value)
     end
 end
 

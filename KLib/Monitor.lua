@@ -82,11 +82,11 @@ function KLib.Monitor.Update()
         local entry = KLib.Monitor.Entries[i]
         
         if entry.type == "variable" then
-            gui.text(entry.x, entry.y, entry.name .. ": " .. KLib.Memory.GetReader(entry.size)(entry.address))
+            gui.text(entry.x, entry.y, (entry.name == nil and string.format("%08X", entry.address) or entry.name) .. ": " .. KLib.Memory.GetReader(entry.size)(entry.address))
         end
         
         if entry.type == "variable_update" then
-            gui.text(entry.x, entry.y, entry.name .. ": " .. entry.value())
+            gui.text(entry.x, entry.y, (entry.name == nil and string.format("%08X", entry.address) or entry.name) .. ": " .. entry.value())
         end
     end
 end
