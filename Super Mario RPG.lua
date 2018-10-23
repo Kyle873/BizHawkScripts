@@ -32,7 +32,7 @@ function CreateCharacterPage(data)
     KLib.Menu.Offset(Characters, #Characters, Address.Character.Size)
     
     KLib.Menu.Text("Basic", KLib.Color.Green, true)
-    KLib.Menu.Field("Level", Address.Character.Base + Address.Character.Offset.Level, "byte", 0, 30, barOffset, barWidth, KLib.Color.White)
+    KLib.Menu.Field("Level", Address.Character.Base + Address.Character.Offset.Level, "byte", 1, 30, barOffset, barWidth, KLib.Color.White)
     KLib.Menu.Field("Current HP", Address.Character.Base + Address.Character.Offset.CurrentHP, "s16_le", 0, 999, barOffset, barWidth, KLib.Color.Red)
     KLib.Menu.Field("Max HP", Address.Character.Base + Address.Character.Offset.MaxHP, "s16_le", 0, 999, barOffset, barWidth, KLib.Color.Red)
     
@@ -48,8 +48,8 @@ function CreateCharacterPage(data)
     KLib.Menu.Separator()
     KLib.Menu.Text("Equipment", KLib.Color.Green, true)
     KLib.Menu.Enum("Weapon", Address.Character.Base + Address.Character.Offset.Weapon, "byte", Items)
-    KLib.Menu.Enum("Weapon", Address.Character.Base + Address.Character.Offset.Armor, "byte", Items)
-    KLib.Menu.Enum("Weapon", Address.Character.Base + Address.Character.Offset.Accessory, "byte", Items)
+    KLib.Menu.Enum("Armor", Address.Character.Base + Address.Character.Offset.Armor, "byte", Items)
+    KLib.Menu.Enum("Accessory", Address.Character.Base + Address.Character.Offset.Accessory, "byte", Items)
     
     return page
 end

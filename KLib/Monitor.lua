@@ -41,6 +41,12 @@ function KLib.Monitor.Variable(name, address, size)
     entry.size = size
 end
 
+function KLib.Monitor.VariableRange(start, length, size)
+    for i = start, start + length do
+        KLib.Monitor.Variable(nil, i, size)
+    end
+end
+
 function KLib.Monitor.VariableUpdate(name, value)
     local entry = KLib.Monitor.Entry("variable_update")
     

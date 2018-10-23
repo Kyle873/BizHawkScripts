@@ -11,6 +11,7 @@ function CreateMenu()
     KLib.Menu.Page("Yoshi's Island\r")
     
     KLib.Menu.Field("Lives", Address.Lives, "s16_le", 0, 999)
+    KLib.Menu.Field("Coins", Address.Coins, "byte", 0, 99)
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Level Completion", KLib.Color.Yellow, true)

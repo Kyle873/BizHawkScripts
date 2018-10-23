@@ -1,6 +1,7 @@
 Address =
 {
     Lives = 0x627E,
+    Coins = 0x6280,
     
     Stars = 0x6ACE,
     RedCoins = 0x6AD6,

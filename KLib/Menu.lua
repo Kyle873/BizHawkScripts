@@ -39,8 +39,6 @@ KLib.Menu =
     Typing = false,
     String = "",
     
-    FancyBars = false,
-    
     Pages = {}
 }
 
@@ -154,6 +152,12 @@ function KLib.Menu.Field(name, address, size, min, max, barOffset, barWidth, bar
     item.barColor = barColor or nil
     item.frozen = false
     item.frozenValue = 0
+    item.hex = false
+    
+    if bizstring.contains(name, "$") then
+        item.name = string.sub(name, 2, #name)
+        item.hex = true
+    end
     
     if min == nil and max == nil then
         item.min, item.max = KLib.Memory.GetMinMax(item.size)
@@ -226,7 +230,11 @@ function KLib.Menu.Update()
         local max = math.floor(page.height - 20) / 8 - 1
         local start = 1
         local stop = 1
-        local y = 20
+        local y = 0
+        
+        if emu.getsystemid() == "NES" then
+            y = y + 8
+        end
         
         if page.offset then
             if page.offsetTitles ~= nil then
@@ -236,9 +244,9 @@ function KLib.Menu.Update()
             end
         end
         
-        gui.drawRectangle(0, 0, page.width, page.height, KLib.Menu.Colors.Outline, KLib.Menu.Colors.Background)
-        gui.pixelText(4, 4, header, (bizstring.contains(page.header, "\r") and KLib.Color.Rainbow() or KLib.Menu.Colors.Text), KLib.Color.Transparent)
-        gui.drawLine(0, 16, page.width, 16, KLib.Menu.Colors.Outline)
+        gui.drawRectangle(0, y, page.width, page.height, KLib.Menu.Colors.Outline, KLib.Menu.Colors.Background)
+        gui.pixelText(4, y + 4, header, (bizstring.contains(page.header, "\r") and KLib.Color.Rainbow() or KLib.Menu.Colors.Text), KLib.Color.Transparent)
+        gui.drawLine(0, y + 16, page.width, y + 16, KLib.Menu.Colors.Outline)
         
         if page.onUpdate ~= nil then
             page:onUpdate()
@@ -252,6 +260,8 @@ function KLib.Menu.Update()
                 start = stop
             end
         end
+        
+        y = y + 20
         
         for i = start, start + max do
             if i > entries then break end
@@ -277,23 +287,21 @@ function KLib.Menu.Update()
             if item.type == "text" then
                 gui.pixelText(4, y, item.text, (item.header and (bizstring.contains(item.text, "\r") and KLib.Color.Rainbow() or item.color) or color), KLib.Color.Transparent)
             end
-        
+            
             if item.type == "field" then
-                local text = ((i == KLib.Menu.Index and KLib.Menu.Typing) and Typing(item, y) or item.name .. ": " .. value)
+                local text = ((i == KLib.Menu.Index and KLib.Menu.Typing) and Typing(item, y) or item.name .. ": " .. (item.hex and string.format("%0" .. KLib.Memory.GetBits(item.size) / 4 .. "X", value) or value))
                 
                 gui.pixelText(4, y, text, color, KLib.Color.Transparent)
                 
                 if item.barOffset ~= nil and not (KLib.Menu.Typing and i == KLib.Menu.Index) then
-                    local length = (item.barWidth / item.max) * value
+                    local length = ((item.barWidth - 2) / item.max) * value
+                    local x = item.barOffset + 1
+                    local x2 = x + length
                     
                     gui.drawRectangle(item.barOffset, y + 1, item.barWidth, 6, item.barColor, KLib.Color.Transparent)
                     
-                    if KLib.Menu.FancyBars then
-                        for j = 1, length - 1 do
-                            gui.drawLine(item.barOffset + j, y + 2, item.barOffset + j, y + 6, KLib.Color.Pulse(item.barColor, 63, 32, j / 4))
-                        end
-                    else
-                        gui.drawRectangle(item.barOffset, y + 1, length - 1, 6, item.barColor, item.barColor)
+                    for j = 1, 5 do
+                        gui.drawLine(x, y + 1 + j, x2, y + 1 + j, KLib.Color.Pulse(item.barColor, 63, 16, j / 2))
                     end
                 end
             end
@@ -412,13 +420,20 @@ function KLib.Menu.Input()
             local writer = KLib.Memory.GetWriter(item.size)
             local address = page.offset and item.address + (page.offsetAmount * (KLib.Menu.OffsetIndex - 1)) or item.address
             local value = reader(address)
+            local write = function(address, value)
+                if item.frozen then
+                    item.frozenValue = value
+                else
+                    writer(address, value)
+                end
+            end
             
             if not KLib.Menu.Typing and KLib.Input.Parse(KLib.Menu.Keys.Left) then
                 if item.type == "field" then
-                    writer(address, KLib.Math.Clamp(value - 1, item.min, item.max))
+                    write(address, KLib.Math.Clamp(value - 1, item.min, item.max))
                     
                     if value - 1 < item.min then
-                        writer(address, item.max)
+                        write(address, item.max)
                     end
                 elseif item.type == "bitfield" then
                     item.index = item.index - 1
@@ -427,18 +442,18 @@ function KLib.Menu.Input()
                         item.index = item.max
                     end
                 elseif item.type == "enum" then
-                    writer(address, KLib.Math.Clamp(value - 1, 0, item.max))
+                    write(address, KLib.Math.Clamp(value - 1, 0, item.max))
                     
                     if value - 1 < 0 then
-                        writer(address, item.max)
+                        write(address, item.max)
                     end
                 end
             elseif not KLib.Menu.Typing and KLib.Input.Parse(KLib.Menu.Keys.Right) then
                 if item.type == "field" then
-                    writer(address, KLib.Math.Clamp(value + 1, item.min, item.max))
+                    write(address, KLib.Math.Clamp(value + 1, item.min, item.max))
                     
                     if value + 1 > item.max then
-                        writer(address, item.min)
+                        write(address, item.min)
                     end
                 elseif item.type == "bitfield" then
                     item.index = item.index + 1
@@ -447,16 +462,16 @@ function KLib.Menu.Input()
                         item.index = 1
                     end
                 elseif item.type == "enum" then
-                    writer(address, KLib.Math.Clamp(value + 1, 0, item.max))
+                    write(address, KLib.Math.Clamp(value + 1, 0, item.max))
                     
                     if value + 1 > item.max then
-                        writer(address, 0)
+                        write(address, 0)
                     end
                 end
             end
             
             if not KLib.Menu.Typing and KLib.Input.Parse(KLib.Menu.Keys.Min) then
-                writer(address, item.min)
+                write(address, item.min)
             elseif not KLib.Menu.Typing and KLib.Input.Parse(KLib.Menu.Keys.Max) then
                 if item.type == "bitfield" then
                     local bits = 0
@@ -465,22 +480,20 @@ function KLib.Menu.Input()
                         bits = bit.set(bits, i)
                     end
                     
-                    writer(address, bits)
+                    write(address, bits)
                 else
-                    writer(address, item.max)
+                    write(address, item.max)
                 end
             end
             
             if not KLib.Menu.Typing and KLib.Input.Parse(KLib.Menu.Keys.ToggleBit) and item.type == "bitfield" then
-                local value = reader(address)
-                
                 if bit.check(value, item.index - 1) then
                     value = bit.clear(value, item.index - 1)
                 else
                     value = bit.set(value, item.index - 1)
                 end
                 
-                writer(address, value)
+                write(address, value)
             end
             
             if not KLib.Menu.Typing and KLib.Input.Parse(KLib.Menu.Keys.Freeze) then
