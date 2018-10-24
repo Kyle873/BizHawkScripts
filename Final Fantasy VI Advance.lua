@@ -45,7 +45,7 @@ function CreateCharacterPage(data)
     KLib.Menu.Separator()
     KLib.Menu.Text("Commands", KLib.Color.Orange, true)
     for i = 1, 4 do
-        KLib.Menu.Enum("Command " .. i, Address.Character.Base + Address.Character.Offset.Commands + (i - 1), "byte", {})
+        KLib.Menu.Enum("Command " .. i, Address.Character.Base + Address.Character.Offset.Commands + (i - 1), "byte", Commands)
     end
     
     KLib.Menu.Separator()
@@ -72,7 +72,7 @@ function CreateItemsPage(data)
     local max = 36
     local page = KLib.Menu.Page("Items")
     
-    KLib.Menu.Field("Gil", Address.Gil, "s32_le", 0, 9999999)
+    KLib.Menu.Field("Gil", Address.Gil, "s24_le", 0, 9999999)
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Items", KLib.Color.Cyan, true)

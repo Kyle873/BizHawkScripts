@@ -21,14 +21,14 @@ KLib.Menu =
     Keys =
     {
         Toggle = { "+@X1 Back", "@X1 LeftShoulder" },
-        Back = "@X1 A",
+        Back = "@X1 B",
         Up = "@X1 DpadUp",
         Down = "@X1 DpadDown",
         Left = "@X1 DpadLeft",
         Right = "@X1 DpadRight",
         OffsetUp = "@X1 RStickUp",
         OffsetDown = "@X1 RStickDown",
-        Use = "@X1 B",
+        Use = "@X1 A",
         Min = "@X1 RStickLeft",
         Max = "@X1 RStickRight",
         ToggleBit = "@X1 X",

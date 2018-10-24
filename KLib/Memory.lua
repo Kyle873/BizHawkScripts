@@ -203,7 +203,7 @@ function KLib.Memory.GetMinMax(type)
         return -0xFFFF, 0xFFFF
     elseif type == "u16_le" or type == "u16_be" then
         return 0, 0xFFFF
-    elseif type == "s16_le" or type == "s16_be" then
+    elseif type == "s24_le" or type == "s24_be" then
         return -0xFFFFFF, 0xFFFFFF
     elseif type == "u24_le" or type == "u24_be" then
         return 0, 0xFFFFFF
