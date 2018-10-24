@@ -39,7 +39,7 @@ function CreateCharacterPage(data)
     KLib.Menu.Field("Max HP", Address.Character.Base + Address.Character.Offset.MaxHP, "s16_le", 0, 9999, barOffset, barWidth, KLib.Color.Green)
     KLib.Menu.Field("Current MP", Address.Character.Base + Address.Character.Offset.CurrentMP, "s16_le", 0, 999, barOffset, barWidth, KLib.Color.Cyan)
     KLib.Menu.Field("Max MP", Address.Character.Base + Address.Character.Offset.MaxMP, "s16_le", 0, 999, barOffset, barWidth, KLib.Color.Cyan)
-    KLib.Menu.Field("Experience", Address.Character.Base + Address.Character.Offset.Experience, "s24_le")
+    KLib.Menu.Field("Experience", Address.Character.Base + Address.Character.Offset.Experience, "u24_le", 0, 9999999)
     KLib.Menu.Bitfield("Status", Address.Character.Base + Address.Character.Offset.Status, "s16_le", {})
     
     KLib.Menu.Separator()
@@ -72,7 +72,7 @@ function CreateItemsPage(data)
     local max = 36
     local page = KLib.Menu.Page("Items")
     
-    KLib.Menu.Field("Gil", Address.Gil, "s24_le", 0, 9999999)
+    KLib.Menu.Field("Gil", Address.Gil, "u24_le", 0, 9999999)
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Items", KLib.Color.Cyan, true)
