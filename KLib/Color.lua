@@ -1,17 +1,17 @@
 KLib.Color =
 {
-    Transparent     = 0x00000000,
-    Black           = 0xFF000000,
-    Gray            = 0xFF3F3F3F,
-    Red             = 0xFFFF0000,
-    Orange          = 0xFFFF7F00,
-    Yellow          = 0xFFFFFF00,
-    Green           = 0xFF00FF00,
-    Blue            = 0xFF007FFF,
-    Cyan            = 0xFF00FFFF,
-    Purple          = 0xFFFF00FF,
-    Pink            = 0xFFFF7FFF,
-    White           = 0xFFFFFFFF
+    Transparent = 0x00000000,
+    Black       = 0xFF000000,
+    Gray        = 0xFF3F3F3F,
+    Red         = 0xFFFF0000,
+    Orange      = 0xFFFF7F00,
+    Yellow      = 0xFFFFFF00,
+    Green       = 0xFF00FF00,
+    Blue        = 0xFF007FFF,
+    Cyan        = 0xFF00FFFF,
+    Purple      = 0xFFFF00FF,
+    Pink        = 0xFFFF7FFF,
+    White       = 0xFFFFFFFF
 }
 
 function KLib.Color.GetRed(color)

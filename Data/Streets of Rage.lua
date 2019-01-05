@@ -27,7 +27,7 @@ Address =
         Health = 0xDF6C,
         Lives = 0xDF8B,
         Special = 0xF617
-    },
+    }
 }
 
 Max =

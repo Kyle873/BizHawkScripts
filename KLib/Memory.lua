@@ -104,12 +104,12 @@ function KLib.Memory.WriteUnsignedIntBig(address, value)
     memory.write_u32_be(address, value)
 end
 
-function KLib.Memory.ReadFloat(address)
-    return memory.readfloat(address)
+function KLib.Memory.ReadFloat(address, big)
+    return memory.readfloat(address, big or false)
 end
 
-function KLib.Memory.WriteFloat(address, value)
-    memory.writefloat(address, value)
+function KLib.Memory.WriteFloat(address, value, big)
+    memory.writefloat(address, value, big or false)
 end
 
 function KLib.Memory.ReadRange(address, length)

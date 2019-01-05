@@ -13,7 +13,6 @@ dofile("KLib/Cheat.lua")
 -- Input/UI
 dofile("KLib/Input.lua")
 dofile("KLib/Menu.lua")
-dofile("KLib/GUI.lua")
 dofile("KLib/Message.lua")
 dofile("KLib/Monitor.lua")
 

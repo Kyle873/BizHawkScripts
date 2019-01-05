@@ -33,7 +33,6 @@ end
 function KLib.Cheat.Basic(name, key, address, value, size, message)
     local cheat = KLib.Cheat.Cheat("basic")
     
-    cheat.type = "basic"
     cheat.name = name
     cheat.key = key
     cheat.address = address
@@ -50,7 +49,6 @@ end
 function KLib.Cheat.Advanced(name, key, message, onUpdate, onEnabled, onDisabled)
     local cheat = KLib.Cheat.Cheat("advanced")
     
-    cheat.type = "advanced"
     cheat.name = name
     cheat.key = key
     cheat.message = message

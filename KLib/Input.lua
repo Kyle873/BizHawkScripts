@@ -2,20 +2,20 @@ KLib.Input =
 {
     Joypad = joypad.get(),
     PrevJoypad = joypad.get(),
-    
+
     Keyboard = input.get(),
     PrevKeyboard = input.get(),
-    
+
     Mouse = input.getmouse(),
     PrevMouse = input.getmouse(),
-    
+
     HoldTime = 0,
     HoldTimeThreshold = 60
 }
 
 function KLib.Input.ButtonPressed(button, hold)
     hold = hold or true
-    
+
     if hold then
         if KLib.Input.Joypad[button] then
             KLib.Input.HoldTime = KLib.Input.HoldTime + 1
@@ -23,7 +23,7 @@ function KLib.Input.ButtonPressed(button, hold)
             KLib.Input.HoldTime = 0
         end
     end
-    
+
 	if KLib.Input.HoldTime >= KLib.Input.HoldTimeThreshold then
 		return KLib.Input.Joypad[button]
     else
@@ -33,7 +33,7 @@ end
 
 function KLib.Input.KeyPressed(key, hold)
     hold = hold or true
-    
+
     if hold then
         if KLib.Input.Keyboard[key] then
             KLib.Input.HoldTime = KLib.Input.HoldTime + 1
@@ -41,7 +41,7 @@ function KLib.Input.KeyPressed(key, hold)
             KLib.Input.HoldTime = 0
         end
     end
-    
+
     if KLib.Input.HoldTime >= KLib.Input.HoldTimeThreshold then
 		return KLib.Input.Keyboard[key]
     else
@@ -53,22 +53,26 @@ function KLib.Input.MousePressed(click)
     return KLib.Input.Mouse[click] and not KLib.Input.PrevMouse[click]
 end
 
+function KLib.Input.BlockJoypad()
+    joypad.set(joypad.get())
+end
+
 function KLib.Input.ParseString(text)
     local start = 0
     local hold = false
     local prefix = ""
     local input = ""
-    
+
     if string.sub(text, 1, 1) == "+" then
         start = 3
         hold = true
     else
         start = 2
     end
-    
+
     prefix = string.sub(text, start - 1, start - 1)
     input = string.sub(text, start, #text)
-    
+
     if prefix == "@" then
         if hold then
             return KLib.Input.Keyboard[input]
@@ -92,14 +96,14 @@ end
 
 function KLib.Input.ParseTable(t)
     local input = true
-    
+
     for _, key in ipairs(t) do
         if not KLib.Input.ParseString(key) then
             input = false
             break
         end
     end
-    
+
     return input
 end
 
