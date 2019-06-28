@@ -39,9 +39,7 @@ function KLib.Cheat.Basic(name, key, address, value, size, message)
     cheat.value = value
     cheat.size = size
     cheat.message = message or false
-    cheat.enabled = false
     cheat.initialValue = KLib.Memory.GetReader(size)(address)
-    cheat.toggle = KLib.Cheat.Toggle
     
     return cheat
 end
