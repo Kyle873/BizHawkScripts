@@ -1,5 +1,12 @@
 dofile("KLib/KLib.lua")
-dofile("Data/Fear Effect 2.lua")
+
+Address =
+{
+    Position = 0x1D7F72,
+    Fear = 0x1D7F9C,
+
+    Cheats = 0x7B4F8
+}
 
 function Draw()
     local fear = KLib.Memory.ReadByte(Address.Fear)

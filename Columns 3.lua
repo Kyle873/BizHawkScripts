@@ -1,17 +1,39 @@
 dofile("KLib/KLib.lua")
-dofile("Data/Columns 3.lua")
 
-memory.usememorydomain("68K RAM")
+Address =
+{
+    Board = 0x1260,
+    Items = 0x4000
+}
+
+Tiles =
+{
+    [0] = "Nothing",
+
+    "Red Gem",
+    "Purple Gem",
+    "Blue Gem",
+    "Green Gem",
+    "Yellow Gem",
+    "Orange Gem",
+    "Rainbow Up",
+    "Rainbow Middle",
+    "Rainbow Down"
+}
+
+Items =
+{
+    [0] = "Nothing",
+
+    "Hourglass",
+    "Heavy Weight",
+    "Magic Bell",
+    "Barrier",
+    "Magic Gem",
+    "Antidote"
+}
 
 Board = {}
-
-for y = 0, 13 - 1 do
-    Board[y] = {}
-
-    for x = 0, 6 - 1 do
-        Board[y][x] = Address.Board + 0x01 + (x * 0x02) + (y * 0x10)
-    end
-end
 
 BoardEdit =
 {
@@ -23,6 +45,16 @@ BoardEdit =
     Y = 0,
     Tile = 0
 }
+
+memory.usememorydomain("68K RAM")
+
+for y = 0, 13 - 1 do
+    Board[y] = {}
+
+    for x = 0, 6 - 1 do
+        Board[y][x] = Address.Board + 0x01 + (x * 0x02) + (y * 0x10)
+    end
+end
 
 function BoardEdit.Update()
     local x = 14 + (BoardEdit.X * BoardEdit.TileSize)
