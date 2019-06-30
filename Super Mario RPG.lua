@@ -277,10 +277,9 @@ function CreateMenu()
     KLib.Menu.SubPage("Counters", CreateCountersPage)
 end
 
-function CreateCharacterPage(data)
+function CreateCharacterPage()
     local barOffset = 120
     local barWidth = 128
-    local page = KLib.Menu.Page("Characters")
     
     KLib.Menu.Offset(Characters, #Characters, Address.Character.Size)
     
@@ -303,14 +302,11 @@ function CreateCharacterPage(data)
     KLib.Menu.Enum("Weapon", Address.Character.Base + Address.Character.Offset.Weapon, "byte", Items)
     KLib.Menu.Enum("Armor", Address.Character.Base + Address.Character.Offset.Armor, "byte", Items)
     KLib.Menu.Enum("Accessory", Address.Character.Base + Address.Character.Offset.Accessory, "byte", Items)
-    
-    return page
 end
 
-function CreateItemsPage(data)
+function CreateItemsPage()
     local barOffset = 140
     local barWidth = 108
-    local page = KLib.Menu.Page("Items")
     
     KLib.Menu.Field("Coins", Address.Coins, "s16_le", 0, 999, barOffset, barWidth, KLib.Color.Yellow)
     KLib.Menu.Field("Frog Coins", Address.FrogCoins, "byte", 0, 255, barOffset, barWidth, KLib.Color.Green)
@@ -320,30 +316,19 @@ function CreateItemsPage(data)
     KLib.Menu.Separator()
     KLib.Menu.Text("Items", KLib.Color.Cyan, true)
     KLib.Menu.EnumGroup(30, "Item", Address.Items, "byte", Items)
-    
-    return page
 end
 
-function CreateEquipmentPage(data)
-    local page = KLib.Menu.Page("Equipment")
-    
+function CreateEquipmentPage()
     KLib.Menu.EnumGroup(30, "Item", Address.Equipment, "byte", Items)
-    
-    return page
 end
 
-function CreateSpecialItemsPage(data)
-    local page = KLib.Menu.Page("Special Items")
-    
+function CreateSpecialItemsPage()
     KLib.Menu.EnumGroup(14, "Item", Address.SpecialItems, "byte", Items)
-    
-    return page
 end
 
 function CreateEnemiesPage()
     local barOffset = 120
     local barWidth = 128
-    local page = KLib.Menu.Page("Battle")
     
     KLib.Menu.Offset(nil, Address.Enemy.Max, Address.Enemy.Size)
     
@@ -364,13 +349,9 @@ function CreateEnemiesPage()
     KLib.Menu.Field("Magic Defense", Address.Enemy.Base + Address.Enemy.Offset.MagicDefense, "byte", 0, 255, barOffset, barWidth, KLib.Color.Pink)
     KLib.Menu.Field("Evade %", Address.Enemy.Base + Address.Enemy.Offset.Evade, "byte", 0, 100, barOffset, barWidth, KLib.Color.Blue)
     KLib.Menu.Field("Magic Evade %", Address.Enemy.Base + Address.Enemy.Offset.MagicEvade, "byte", 0, 100, barOffset, barWidth, KLib.Color.Purple)
-    
-    return page
 end
 
 function CreateBattleVariablesPage()
-    local page = KLib.Menu.Page("Battle Variables")
-    
     KLib.Menu.Field("Formation", Address.Battle.Formation, "s16_le")
     KLib.Menu.Field("Total XP", Address.Battle.TotalXP, "s16_le")
     KLib.Menu.Field("Total Coins", Address.Battle.TotalCoins, "s16_le")
@@ -380,19 +361,13 @@ function CreateBattleVariablesPage()
     KLib.Menu.Text("Battle Event", KLib.Color.Yellow, true)
     KLib.Menu.Field("Event", Address.Battle.Event, "byte")
     KLib.Menu.FieldGroup(10, "Variable", Address.Battle.EventVars, "byte")
-        
-    return page
 end
 
 function CreateCountersPage()
-    local page = KLib.Menu.Page("Counters")
-    
     KLib.Menu.Field("Super Jumps", Address.Counters.Jump, "byte")
     KLib.Menu.Field("Mystery Egg", Address.Counters.MysteryEgg, "byte")
     KLib.Menu.Field("Lamb's Lure", Address.Counters.LambsLure, "byte")
     KLib.Menu.Field("Lucky Jewel", Address.Counters.LuckyJewel, "byte")
-    
-    return page
 end
 
 CreateMenu()

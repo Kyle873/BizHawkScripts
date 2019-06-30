@@ -1,6 +1,6 @@
 KLib.Menu =
 {
-    Open = true,
+    Open = false,
     Index = 1,
     OffsetIndex = 1,
     PageIndex = 1,
@@ -86,9 +86,11 @@ function KLib.Menu.Page(header, width, height, onUpdate)
     return #KLib.Menu.Pages
 end
 
-function KLib.Menu.SubPage(name, create, data)
+function KLib.Menu.SubPage(name, create, width, height, onUpdate, data)
     local base = KLib.Menu.CreateIndex
-    local page = create(data)
+    local page = KLib.Menu.Page(name, width or nil, height or nil, onUpdate or nil)
+    
+    create(data or nil)
 
     KLib.Menu.CreateIndex = base
 

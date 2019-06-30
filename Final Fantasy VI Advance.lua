@@ -496,10 +496,9 @@ function CreateMenu()
     KLib.Menu.Field("Main Menu Index", Address.MenuIndex, "byte")
 end
 
-function CreateCharacterPage(data)
+function CreateCharacterPage()
     local barOffset = 112
     local barWidth = 120
-    local page = KLib.Menu.Page("Characters")
     
     KLib.Menu.Offset(nil, Address.Character.Max, Address.Character.Size)
     
@@ -535,33 +534,22 @@ function CreateCharacterPage(data)
     KLib.Menu.Field("Body", Address.Character.Base + Address.Character.Offset.Body, "byte")
     KLib.Menu.Field("Relic 1", Address.Character.Base + Address.Character.Offset.Relic1, "byte")
     KLib.Menu.Field("Relic 2", Address.Character.Base + Address.Character.Offset.Relic2, "byte")
-    
-    return page
 end
 
-function CreateItemsPage(data)
+function CreateItemsPage()
     local max = 36
-    local page = KLib.Menu.Page("Items")
     
     KLib.Menu.Field("Gil", Address.Gil, "u24_le", 0, 9999999)
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Items", KLib.Color.Cyan, true)
     KLib.Menu.SubPage("Items", function()
-            local page = KLib.Menu.Page("Items")
-            
             KLib.Menu.Offset(nil, 8, 36)
             KLib.Menu.EnumGroup(36, "Item", Address.Items.Base, "byte", Items)
-            
-            return page
         end)
     KLib.Menu.SubPage("Quantities", function()
-            local page = KLib.Menu.Page("Quantities")
-            
             KLib.Menu.Offset(nil, 8, 36)
             KLib.Menu.FieldGroup(36, "Quantity", Address.Items.Quantity, "byte")
-            
-            return page
         end)
     
     KLib.Menu.Separator()
@@ -571,8 +559,6 @@ function CreateItemsPage(data)
     KLib.Menu.Separator()
     KLib.Menu.Text("Magicite", KLib.Color.Pink, true)
     KLib.Menu.BitfieldGroup(2, "Magicite", Address.Items.Magicite, "s16_le", Magicite)
-    
-    return page
 end
 
 CreateMenu()
