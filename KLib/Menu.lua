@@ -86,7 +86,7 @@ function KLib.Menu.Page(header, width, height, onUpdate)
     return #KLib.Menu.Pages
 end
 
-function KLib.Menu.SubPage(name, create, width, height, onUpdate, data)
+function KLib.Menu.SubPage(name, create, onUpdate, data, width, height)
     local base = KLib.Menu.CreateIndex
     local page = KLib.Menu.Page(name, width or nil, height or nil, onUpdate or nil)
     
@@ -334,8 +334,8 @@ function KLib.Menu.Update()
             end
 
             if item.type == "enum" then
-                local text = ((i == KLib.Menu.Index and KLib.Menu.Typing) and Typing(item, y) or item.name .. ": " .. value .. " (" .. (item.values[value] ~= nil and item.values[value] or "Unknown") .. ")")
-
+                local text = ((i == KLib.Menu.Index and KLib.Menu.Typing) and Typing(item, y) or item.name .. ": " .. value .. " (" .. (item.values[item.values.wrap ~= nil and value % item.values.wrap or value] ~= nil and item.values[item.values.wrap ~= nil and value % item.values.wrap or value] or "Unknown") .. ")")
+                
                 gui.pixelText(4, y, text, color, KLib.Color.Transparent)
             end
 
