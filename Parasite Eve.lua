@@ -403,10 +403,10 @@ function CreateMenu()
     KLib.Menu.Page("Parasite Eve\r")
     
     KLib.Menu.SubPage("Stats", CreateStatsPage)
-    KLib.Menu.SubPage("Items", CreateItemsPage, UpdateItemsPage, { type = "inventory", address = Address.Items, max = MaxItems })
+    KLib.Menu.SubPage("Items", CreateItemsPage, nil, { type = "inventory", address = Address.Items, max = MaxItems })
     KLib.Menu.SubPage("Equipment", CreateEquipmentPage, UpdateEquipmentPage)
-    KLib.Menu.SubPage("Item Storage", CreateItemsPage, UpdateItemsPage, { type = "item_storage", address = Address.ItemStorage, max = MaxItemStorage })
-    KLib.Menu.SubPage("Equipment Storage", CreateItemsPage, UpdateItemsPage, { type = "equipment_storage", address = Address.EquipmentStorage, max = MaxEquipmentStorage })
+    KLib.Menu.SubPage("Item Storage", CreateItemsPage, nil, { type = "item_storage", address = Address.ItemStorage, max = MaxItemStorage })
+    KLib.Menu.SubPage("Equipment Storage", CreateItemsPage, nil, { type = "equipment_storage", address = Address.EquipmentStorage, max = MaxEquipmentStorage })
     KLib.Menu.SubPage("Crates", CreateCratesPage)
     KLib.Menu.SubPage("Battle", CreateBattlePage)
     KLib.Menu.SubPage("World", CreateWorldPage)
@@ -418,10 +418,14 @@ end
 function CreateStatsPage()
     KLib.Menu.Field("Level", Address.Level, "byte", 1, 99)
     KLib.Menu.Field("EXP", Address.EXP, "s32_le", 0, 999999)
+    
+    KLib.Menu.Separator()
     KLib.Menu.Field("HP", Address.HP, "s16_le", 0, 999)
     KLib.Menu.Field("Max HP", Address.MaxHP, "s16_le", 0, 999)
     KLib.Menu.Field("PE", Address.PE, "s16_le")
     KLib.Menu.Field("Max PE", Address.MaxPE, "s16_le")
+    
+    KLib.Menu.Separator()
     KLib.Menu.Field("Offense", Address.Offense, "s16_le", 1, 999)
     KLib.Menu.Field("Defense", Address.Defense, "s16_le", 1, 999)
     KLib.Menu.Field("P.Energy", Address.PEnergy, "s16_le", 1, 999)
@@ -430,34 +434,22 @@ function CreateStatsPage()
     KLib.Menu.Field("Item Capacity", Address.ItemCapacity, "s16_le", 1, 999)
     KLib.Menu.Field("Item Slots", Address.ItemSlots, "byte", 1, 50)
     KLib.Menu.Field("Bonus Points", Address.BonusPoints, "s32_le", 0, 99999)
+    
+    KLib.Menu.Separator()
     KLib.Menu.Bitfield("Known PE", Address.PEFlags, "s32_le", PEs)
 end
 
 function CreateItemsPage(data)
-    for i = 0, data.max - 1 do
-        KLib.Menu.Enum("Type " .. i + 1, data.address + (i * 2) + 1, "byte", ItemTypes)
-        KLib.Menu.Field("Item " .. i + 1, data.address + (i * 2), "byte").onUse = function(self)
-            if data.type == "inventory" then
-                TransferItem("inventory", self.address)
-            else
-                TransferItem("storage", self.address)
-            end
-        end
-    end
-end
-
-function UpdateItemsPage(page)
-    for i = 2, #page.items, 2 do
-        local item = page.items[i]
-        local id = KLib.Memory.ReadByte(page.items[i].address)
-        local type = KLib.Memory.ReadByte(page.items[i - 1].address)
+    local function UpdateItem(self)
+        local id = KLib.Memory.ReadByte(self.address)
+        local type = KLib.Memory.ReadByte(self.address + 1)
         
         if type == 0 then
-            item.type = "enum"
-            item.suffix = ""
-            item.values = Items
+            self.type = "enum"
+            self.suffix = ""
+            self.values = Items
         elseif type == 1 then
-            local address = Address.Equipment + (KLib.Memory.ReadByte(page.items[i].address) * MaxEquipStructSize)
+            local address = Address.Equipment + (KLib.Memory.ReadByte(self.address) * MaxEquipStructSize)
             local params = 
             {
                 KLib.Memory.ReadByte(address + 3),
@@ -468,28 +460,54 @@ function UpdateItemsPage(page)
                 KLib.Memory.ReadShort(address + 14)
             }
             
-            item.type = "field"
+            self.type = "field"
             
-            item.suffix = " (" .. GetItemName(id, type) .. ") ["
+            self.suffix = " (" .. GetItemName(id, type) .. ") ["
             for i = 1, #params do
-                item.suffix = item.suffix .. params[i] .. "/"
+                self.suffix = self.suffix .. params[i] .. "/"
             end
-            item.suffix = item.suffix:sub(1, -2) .. "]"
+            self.suffix = self.suffix:sub(1, -2) .. "]"
             
-            item.values = {}
+            self.values = {}
         elseif type == 2 then
-            item.type = "enum"
-            item.suffix = ""
-            item.values = Crates
+            self.type = "enum"
+            self.suffix = ""
+            self.values = Crates
         else
-            item.type = "field"
-            item.suffix = ""
-            item.values = {}
+            self.type = "field"
+            self.suffix = ""
+            self.values = {}
         end
+    end
+    
+    local function UseItem(self)
+        if data.type == "inventory" then
+            TransferItem("inventory", self.address)
+        else
+            TransferItem("storage", self.address)
+        end
+    end
+    
+    for i = 0, data.max - 1 do
+        KLib.Menu.Enum("Type " .. i + 1, data.address + (i * 2) + 1, "byte", ItemTypes)
+        
+        local item = KLib.Menu.Field("Item " .. i + 1, data.address + (i * 2), "byte")
+        item.onUpdate = UpdateItem
+        item.onUse = UseItem
     end
 end
 
 function CreateEquipmentPage()
+    local function UpdateAbility(self)
+        local id = KLib.Memory.ReadByte(Address.Equipment + ((KLib.Menu.OffsetIndex - 1) * MaxEquipStructSize))
+        
+        if IsWeapon(id) then
+            self.values = WeaponAbilities
+        elseif IsArmor(id) then
+            self.values = ArmorAbilities
+        end
+    end
+    
     KLib.Menu.Offset(nil, MaxEquipment, MaxEquipStructSize)
     
     KLib.Menu.Enum("ID", Address.Equipment, "byte", Items)
@@ -510,34 +528,27 @@ function CreateEquipmentPage()
     KLib.Menu.Separator()
     KLib.Menu.Text("Abilities", KLib.Color.Green, true)
     KLib.Menu.Field("Slots", Address.Equipment + 16, "byte")
-    KLib.Menu.EnumGroup(MaxAbilitySlots, "Slot", Address.Equipment + 17, "byte", WeaponAbilities)
+    local abilities = KLib.Menu.EnumGroup(MaxAbilitySlots, "Slot", Address.Equipment + 17, "byte", WeaponAbilities)
+    for _, ability in ipairs(abilities) do
+        ability.onUpdate = UpdateAbility
+    end
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Unknown", KLib.Color.Yellow, true)
     KLib.Menu.FieldGroup(5, "Unknown", Address.Equipment + 27, "byte")
 end
 
-function UpdateEquipmentPage(page)
-    local id = KLib.Memory.ReadByte(Address.Equipment + ((KLib.Menu.OffsetIndex - 1) * MaxEquipStructSize))
-    
-    for i = #page.items, #page.items - MaxAbilitySlots, -1 do
-        local item = page.items[i]
-        
-        if IsWeapon(id) then
-            item.values = WeaponAbilities
-        elseif IsArmor(id) then
-            item.values = ArmorAbilities
-        end
-    end
-end
-
 function CreateCratesPage()
+    KLib.Menu.Text("Inventory", KLib.Color.Green, true)
     KLib.Menu.Field("Bullets", Address.Crates, "s16_le", 0, 999)
     KLib.Menu.Field("Rockets", Address.Crates + 0x20, "s16_le", 0, 999)
     KLib.Menu.Field("DNA", Address.Crates + 0x40, "s16_le", 0, 999)
-    KLib.Menu.Field("Bullets (Storage)", Address.Crates + 0x60, "s16_le", 0, 999)
-    KLib.Menu.Field("Rockets (Storage)", Address.Crates + 0x80, "s16_le", 0, 999)
-    KLib.Menu.Field("DNA (Storage)", Address.Crates + 0xA0, "s16_le", 0, 999)
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Storage", KLib.Color.Cyan, true)
+    KLib.Menu.Field("Bullets", Address.Crates + 0x60, "s16_le", 0, 999)
+    KLib.Menu.Field("Rockets", Address.Crates + 0x80, "s16_le", 0, 999)
+    KLib.Menu.Field("DNA", Address.Crates + 0xA0, "s16_le", 0, 999)
 end
 
 function CreateBattlePage()

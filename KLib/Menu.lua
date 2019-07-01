@@ -112,6 +112,7 @@ function KLib.Menu.Item(type)
     local item = {}
 
     item.type = type
+    item.onUpdate = nil
     item.onUse = nil
 
     table.insert(KLib.Menu.Pages[KLib.Menu.CreateIndex].items, item)
@@ -169,9 +170,13 @@ function KLib.Menu.Field(name, address, size, min, max, barOffset, barWidth, bar
 end
 
 function KLib.Menu.FieldGroup(amount, name, address, size, min, max, barOffset, barWidth, barColor)
+    local fields = {}
+    
     for i = 1, amount do
-        KLib.Menu.Field(name .. " " .. i, address + ((KLib.Memory.GetBits(size) / 8) * (i - 1)), size, min, max, barOffset, barWidth, barColor)
+        table.insert(fields, KLib.Menu.Field(name .. " " .. i, address + ((KLib.Memory.GetBits(size) / 8) * (i - 1)), size, min, max, barOffset, barWidth, barColor))
     end
+    
+    return fields
 end
 
 function KLib.Menu.Bitfield(name, address, size, values)
@@ -188,12 +193,18 @@ function KLib.Menu.Bitfield(name, address, size, values)
     item.frozenValue = 0
 
     KLib.Menu.Separator()
+    
+    return item
 end
 
 function KLib.Menu.BitfieldGroup(amount, name, address, size, values)
+    local bitfields = {}
+    
     for i = 1, amount do
-        KLib.Menu.Bitfield(name .. " " .. i, address + ((KLib.Memory.GetBits(size) / 8) * (i - 1)), size, (type(values[1]) == "table" and values[i] or values))
+        table.insert(bitfields, KLib.Menu.Bitfield(name .. " " .. i, address + ((KLib.Memory.GetBits(size) / 8) * (i - 1)), size, (type(values[1]) == "table" and values[i] or values)))
     end
+    
+    return bitfields
 end
 
 function KLib.Menu.Enum(name, address, size, values)
@@ -206,12 +217,18 @@ function KLib.Menu.Enum(name, address, size, values)
     item.values = values
     item.frozen = false
     item.frozenValue = 0
+    
+    return item
 end
 
 function KLib.Menu.EnumGroup(amount, name, address, size, values)
+    local enums = {}
+    
     for i = 1, amount do
-        KLib.Menu.Enum(name .. " " .. i, address + ((KLib.Memory.GetBits(size) / 8) * (i - 1)), size, (type(values[1]) == "table" and values[i] or values))
+        table.insert(enums, KLib.Menu.Enum(name .. " " .. i, address + ((KLib.Memory.GetBits(size) / 8) * (i - 1)), size, (type(values[1]) == "table" and values[i] or values)))
     end
+    
+    return enums
 end
 
 function KLib.Menu.Update()
@@ -286,6 +303,10 @@ function KLib.Menu.Update()
                 color = KLib.Color.Pulse(KLib.Menu.Colors.Frozen, 32, 8, 16)
             end
 
+            if item.onUpdate ~= nil then
+                item:onUpdate()
+            end
+            
             if item.type == "text" then
                 gui.pixelText(4, y, item.text, (item.header and (bizstring.contains(item.text, "\r") and KLib.Color.Rainbow() or item.color) or color), KLib.Color.Transparent)
             end
