@@ -22,21 +22,21 @@ function KLib.String.Value(value)
     end
 end
 
-function KLib.String.Table(table)
+function KLib.String.Table(t)
     local result, done = {}, {}
     
-    for k, v in ipairs(table) do
+    for k, v in ipairs(t) do
         table.insert(result, KLib.String.Value(v))
         done[k] = true
     end
     
-    for k, v in pairs(table) do
+    for k, v in pairs(t) do
         if not done[k] then
             table.insert(result, KLib.String.Key(k) .. " = " .. KLib.String.Value(v))
         end
     end
     
-    return "{" .. table.concat(result, ",") .. "}"
+    return "{ " .. table.concat(result, ",") .. " }"
 end
 
 function KLib.String.OnOff(bool)
