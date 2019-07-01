@@ -293,6 +293,10 @@ function KLib.Menu.Update()
             if item.type == "field" then
                 local text = ((i == KLib.Menu.Index and KLib.Menu.Typing) and Typing(item, y) or item.name .. ": " .. (item.hex and string.format("%0" .. KLib.Memory.GetBits(item.size) / 4 .. "X", value) or value))
 
+                if item.suffix ~= nil then
+                    text = text .. item.suffix
+                end
+                
                 gui.pixelText(4, y, text, color, KLib.Color.Transparent)
 
                 if item.barOffset ~= nil and not (KLib.Menu.Typing and i == KLib.Menu.Index) then
@@ -335,6 +339,10 @@ function KLib.Menu.Update()
 
             if item.type == "enum" then
                 local text = ((i == KLib.Menu.Index and KLib.Menu.Typing) and Typing(item, y) or item.name .. ": " .. value .. " (" .. (item.values[item.values.wrap ~= nil and value % item.values.wrap or value] ~= nil and item.values[item.values.wrap ~= nil and value % item.values.wrap or value] or "Unknown") .. ")")
+                
+                if item.suffix ~= nil then
+                    text = text .. item.suffix
+                end
                 
                 gui.pixelText(4, y, text, color, KLib.Color.Transparent)
             end
