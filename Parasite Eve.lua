@@ -23,6 +23,7 @@ Address =
     Equipment = 0x0C0EB0,
     ItemStorage = 0x0C1EB8,
     EquipmentStorage = 0x0C1F80,
+    Crates = 0x0A1E6E,
     
     Junk = 0x0A78B0,
     
@@ -396,15 +397,6 @@ PEs =
     "Liberate"
 }
 
---[[
-KLib.Monitor.Variable("AT", Address.AT, "s16_le")
-KLib.Monitor.Variable("PE", Address.PE, "s16_le")
-KLib.Monitor.Variable("Max PE", Address.MaxPE, "s16_le")
-KLib.Monitor.Variable("PE Timer", Address.PETimer, "u16_le")
-KLib.Monitor.Variable("PE Flags", Address.PEFlags, "u16_le")
-KLib.Monitor.Variable("Junk", Address.Junk, "u16_le")
---]]
-
 function CreateMenu()
     KLib.Menu.Color(KLib.Color.White, KLib.Color.Make(0, 0, 0, 192))
     
@@ -415,6 +407,7 @@ function CreateMenu()
     KLib.Menu.SubPage("Equipment", CreateEquipmentPage, UpdateEquipmentPage)
     KLib.Menu.SubPage("Item Storage", CreateItemsPage, UpdateItemsPage, { type = "item_storage", address = Address.ItemStorage, max = MaxItemStorage })
     KLib.Menu.SubPage("Equipment Storage", CreateItemsPage, UpdateItemsPage, { type = "equipment_storage", address = Address.EquipmentStorage, max = MaxEquipmentStorage })
+    KLib.Menu.SubPage("Crates", CreateCratesPage)
     KLib.Menu.SubPage("Battle", CreateBattlePage)
     KLib.Menu.SubPage("World", CreateWorldPage)
     
@@ -488,6 +481,10 @@ function UpdateItemsPage(page)
             item.type = "enum"
             item.suffix = ""
             item.values = Crates
+        else
+            item.type = "field"
+            item.suffix = ""
+            item.values = {}
         end
     end
 end
@@ -534,6 +531,15 @@ function UpdateEquipmentPage(page)
     end
 end
 
+function CreateCratesPage()
+    KLib.Menu.Field("Bullets", Address.Crates, "s16_le", 0, 999)
+    KLib.Menu.Field("Rockets", Address.Crates + 0x20, "s16_le", 0, 999)
+    KLib.Menu.Field("DNA", Address.Crates + 0x40, "s16_le", 0, 999)
+    KLib.Menu.Field("Bullets (Storage)", Address.Crates + 0x60, "s16_le", 0, 999)
+    KLib.Menu.Field("Rockets (Storage)", Address.Crates + 0x80, "s16_le", 0, 999)
+    KLib.Menu.Field("DNA (Storage)", Address.Crates + 0xA0, "s16_le", 0, 999)
+end
+
 function CreateBattlePage()
     KLib.Menu.Field("AT", Address.AT, "s16_le", 0, 9000)
 end
@@ -565,7 +571,7 @@ function IsArmor(id)
 end
 
 function IsJunk(id, type)
-    return id == 0x14 and type == 0
+    return id == 0x14 and type == 0x00
 end
 
 function GetItemName(id, type)
@@ -573,6 +579,8 @@ function GetItemName(id, type)
         return Items[id]
     elseif type == 1 then
         return Items[KLib.Memory.ReadByte(Address.Equipment + (id * MaxEquipStructSize))]
+    elseif type == 2 then
+        return Crates[id]
     end
 end
 
