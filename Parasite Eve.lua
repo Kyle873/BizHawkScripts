@@ -18,6 +18,7 @@ Address =
     BonusPoints = 0x0C0E10,
     
     AT = 0x0B8A30,
+    BattleEXP = 0x09CFE8,
     
     Items = 0x0C0E48,
     Equipment = 0x0C0EB0,
@@ -34,13 +35,6 @@ Address =
     
     CurrentRoom = 0x09D280
 }
-
-MaxItems = 50
-MaxEquipment = 128
-MaxItemStorage = 100
-MaxEquipmentStorage = 80
-MaxAbilitySlots = 10
-MaxEquipStructSize = 32
 
 ItemTypes =
 {
@@ -75,7 +69,7 @@ Items =
     [0x07] = "Medicine 2",
     [0x08] = "Medicine 3",
     [0x09] = "Medicine 4",
-    [0x0A] = "Full Recovery",
+    [0x0A] = "Full Recover",
     [0x0B] = "Super Junk",
     [0x0C] = "Duper Junk",
     [0x0D] = "Cure-P",
@@ -397,6 +391,37 @@ PEs =
     "Liberate"
 }
 
+EquipmentFlags =
+{
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Engraved",
+    "Unknown",
+    "Unknown",
+    "Unknown"
+}
+
+MaxItems = 50
+MaxEquipment = 128
+MaxItemStorage = 100
+MaxEquipmentStorage = 80
+MaxAbilitySlots = 10
+MaxEquipStructSize = 32
+
+ShowPE = true
+PERegen = true
+BPGeneration = true
+PEThresholdTimer = 0
+PEThresholdTimerMax = 60 * 5
+PERegenTimer = 0
+PERegenTimerMax = 60
+CurrentEXP = 0
+PrevEXP = 999999
+
+KLib.Message.Color(KLib.Color.Yellow, KLib.Color.Transparent)
+
 function CreateMenu()
     KLib.Menu.Color(KLib.Color.White, KLib.Color.Make(0, 0, 0, 192))
     
@@ -410,6 +435,7 @@ function CreateMenu()
     KLib.Menu.SubPage("Crates", CreateCratesPage)
     KLib.Menu.SubPage("Battle", CreateBattlePage)
     KLib.Menu.SubPage("World", CreateWorldPage)
+    KLib.Menu.SubPage("BP Shop", CreateBPShopPage, UpdateBPShopPage)
     
     KLib.Menu.Separator()
     
@@ -420,18 +446,18 @@ function CreateStatsPage()
     KLib.Menu.Field("EXP", Address.EXP, "s32_le", 0, 999999)
     
     KLib.Menu.Separator()
-    KLib.Menu.Field("HP", Address.HP, "s16_le", 0, 999)
-    KLib.Menu.Field("Max HP", Address.MaxHP, "s16_le", 0, 999)
-    KLib.Menu.Field("PE", Address.PE, "s16_le")
-    KLib.Menu.Field("Max PE", Address.MaxPE, "s16_le")
+    KLib.Menu.Field("HP", Address.HP, "s16_le", 0, 9999)
+    KLib.Menu.Field("Max HP", Address.MaxHP, "s16_le", 0, 9999)
+    KLib.Menu.Field("PE", Address.PE, "s16_le", 0, 9999)
+    KLib.Menu.Field("Max PE", Address.MaxPE, "s16_le", 0, 9999)
     
     KLib.Menu.Separator()
-    KLib.Menu.Field("Offense", Address.Offense, "s16_le", 1, 999)
-    KLib.Menu.Field("Defense", Address.Defense, "s16_le", 1, 999)
-    KLib.Menu.Field("P.Energy", Address.PEnergy, "s16_le", 1, 999)
-    KLib.Menu.Field("Status Recover", Address.StatusRecover, "s16_le", 1, 999)
-    KLib.Menu.Field("Active Time", Address.ActiveTime, "s16_le", 1, 999)
-    KLib.Menu.Field("Item Capacity", Address.ItemCapacity, "s16_le", 1, 999)
+    KLib.Menu.Field("Offense", Address.Offense, "s16_le", 1, 1000)
+    KLib.Menu.Field("Defense", Address.Defense, "s16_le", 1, 1000)
+    KLib.Menu.Field("P.Energy", Address.PEnergy, "s16_le", 1, 1000)
+    KLib.Menu.Field("Status Recover", Address.StatusRecover, "s16_le", 1, 1000)
+    KLib.Menu.Field("Active Time", Address.ActiveTime, "s16_le", 1, 1000)
+    KLib.Menu.Field("Item Capacity", Address.ItemCapacity, "s16_le", 1, 1000)
     KLib.Menu.Field("Item Slots", Address.ItemSlots, "byte", 1, 50)
     KLib.Menu.Field("Bonus Points", Address.BonusPoints, "s32_le", 0, 99999)
     
@@ -512,8 +538,8 @@ function CreateEquipmentPage()
     
     KLib.Menu.Enum("ID", Address.Equipment, "byte", Items)
     KLib.Menu.Enum("Type", Address.Equipment + 2, "byte", EquipmentTypes)
-    KLib.Menu.Field("Flags", Address.Equipment + 1, "byte")
-    KLib.Menu.Field("Clip", Address.Equipment + 6, "s16_le")
+    KLib.Menu.Bitfield("Flags", Address.Equipment + 1, "byte", EquipmentFlags)
+    KLib.Menu.Field("Clip", Address.Equipment + 6, "s16_le", 0, 999)
     KLib.Menu.Field("Unknown", Address.Equipment + 8, "s16_le")
     
     KLib.Menu.Separator()
@@ -527,7 +553,7 @@ function CreateEquipmentPage()
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Abilities", KLib.Color.Green, true)
-    KLib.Menu.Field("Slots", Address.Equipment + 16, "byte")
+    KLib.Menu.Field("Slots", Address.Equipment + 16, "byte", 0, MaxAbilitySlots)
     local abilities = KLib.Menu.EnumGroup(MaxAbilitySlots, "Slot", Address.Equipment + 17, "byte", WeaponAbilities)
     for _, ability in ipairs(abilities) do
         ability.onUpdate = UpdateAbility
@@ -553,10 +579,128 @@ end
 
 function CreateBattlePage()
     KLib.Menu.Field("AT", Address.AT, "s16_le", 0, 9000)
+    KLib.Menu.Field("Gained EXP", Address.BattleEXP, "s16_le", 0, 999999)
 end
 
 function CreateWorldPage()
-    KLib.Menu.Field("Junk", Address.Junk, "s16_le")
+    KLib.Menu.Field("Junk", Address.Junk, "s16_le", 0, 9999)
+end
+
+function CreateBPShopPage()
+    local function CheckPrice(price)
+        if KLib.Memory.ReadShort(Address.BonusPoints) >= price then
+            return true
+        else
+            return false
+        end
+    end
+    
+    local function SubtractBP(amount)
+        KLib.Memory.WriteShort(Address.BonusPoints, KLib.Memory.ReadShort(Address.BonusPoints) - amount)
+    end
+    
+    local function BuyItem(id, price)
+        local slot = GetFreeItemSlot(Address.Items, KLib.Memory.ReadByte(Address.ItemSlots))
+        
+        if slot ~= nil then
+            if CheckPrice(price) then
+                KLib.Memory.WriteByte(Address.Items + (slot * 2), id)
+                KLib.Memory.WriteByte(Address.Items + (slot * 2) + 1, 0)
+                
+                SubtractBP(price)
+                
+                KLib.Message.Add("Bought " .. GetItemName(id, 0))
+            else
+                KLib.Message.Add("Not enough BP!")
+            end
+        else
+            KLib.Message.Add("No space in inventory!")
+        end
+    end
+    
+    local items =
+    {
+        medicine =
+        {
+            { "Medicine 1", 10 },
+            { "Medicine 2", 25 },
+            { "Medicine 3", 50 },
+            { "Medicine 4", 100 },
+            { "Cure-P", 20 },
+            { "Cure-D", 20 },
+            { "Cure-C", 20 },
+            { "Cure-M", 20 },
+            { "Cure-P", 20 },
+            { "Full Recover", 200 },
+            { "Full Cure", 50 },
+            { "Revive", 300 }
+        },
+        
+        equipment =
+        {
+            { "Tool", 100 },
+            { "Super Tool", 200 },
+            { "Mod Permit", 100 }
+        },
+        
+        misc =
+        {
+            { "Junk", 10 }
+        }
+    }
+    
+    KLib.Menu.Text("Medicine", KLib.Color.Green, true)
+    for _, item in ipairs(items.medicine) do
+        KLib.Menu.Text(item[1] .. " - " .. item[2] .. " BP").onUse = function() BuyItem(KLib.Table.FindIndex(Items, item[1]), item[2]) end
+    end
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Equipment", KLib.Color.Red, true)
+    for _, item in ipairs(items.equipment) do
+        KLib.Menu.Text(item[1] .. " - " .. item[2] .. " BP").onUse = function() BuyItem(KLib.Table.FindIndex(Items, item[1]), item[2]) end
+    end
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Ammo", KLib.Color.Orange, true)
+    KLib.Menu.Text("Bullets - 30 BP").onUse = function()
+        if CheckPrice(30) then
+            KLib.Memory.WriteShort(Address.Crates, KLib.Memory.ReadShort(Address.Crates) + 30)
+            
+            SubtractBP(30)
+            
+            KLib.Message.Add("Bought 30 Bullets")
+        else
+            KLib.Message.Add("Not enough BP!")
+        end
+    end
+    KLib.Menu.Text("Rockets - 90 BP").onUse = function()
+        if CheckPrice(90) then
+            KLib.Memory.WriteShort(Address.Crates + 0x20, KLib.Memory.ReadShort(Address.Crates + 0x20) + 9)
+            
+            SubtractBP(90)
+            
+            KLib.Message.Add("Bought 9 Rockets")
+        else
+            KLib.Message.Add("Not enough BP!")
+        end
+    end
+
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Misc", KLib.Color.Cyan, true)
+    for _, item in ipairs(items.misc) do
+        KLib.Menu.Text(item[1] .. " - " .. item[2] .. " BP").onUse = function() BuyItem(KLib.Table.FindIndex(Items, item[1]), item[2]) end
+    end
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Random\r", KLib.Color.White, true)
+    KLib.Menu.Text("Random Weapon - 100 BP").onUse = function() BuyItem(math.random(0x3F, 0x94), 100) end
+    KLib.Menu.Text("Random Armor - 100 BP").onUse = function() BuyItem(math.random(0x95, 0xC7), 100) end
+end
+
+function UpdateBPShopPage(page)
+    local BP = KLib.Memory.ReadShort(Address.BonusPoints)
+    
+    page.header = "BP Shop - " .. BP .. " BP"
 end
 
 function IsItemSlotEmpty(address)
@@ -678,6 +822,68 @@ function Mods()
         KLib.Message.Add("Discarded " .. total .. " Junk (" .. junk + total .. " Total)")
     end
     
+    local function DrawPE()
+        local PE = KLib.Memory.ReadShort(Address.PE)
+        local maxPE = KLib.Memory.ReadShort(Address.MaxPE)
+        local timer = KLib.Memory.ReadShort(Address.PETimer)
+        local AT = KLib.Memory.ReadShort(Address.AT)
+        local color = KLib.Color.Black
+        local transition = 0xFF / maxPE
+        local byte = KLib.Math.Clamp(math.floor(PE * transition), 1, 255)
+        
+        color = color + bit.lshift(byte, 8)
+        color = color - bit.lshift(byte, 16)
+        
+        gui.drawText(client.bufferwidth() - 12, client.bufferheight() - 14, PE .. "/" .. maxPE, color, KLib.Color.Transparent, nil, nil, nil, "right")
+        
+        if AT > 0 then
+            gui.drawPie(client.bufferwidth() - 12, client.bufferheight() - 11, 9, 9, 270, (PE < maxPE and (timer / (65535 / 2)) * 360 or 360), KLib.Color.Transparent, color)
+        else
+            gui.drawPie(client.bufferwidth() - 12, client.bufferheight() - 11, 9, 9, 270, (PE < maxPE and (PERegenTimer / PERegenTimerMax) * 360 or 360), KLib.Color.Transparent, color)
+        end
+    end
+    
+    local function RegenPE()
+        local PE = KLib.Memory.ReadShort(Address.PE)
+        local maxPE = KLib.Memory.ReadShort(Address.MaxPE)
+        local AT = KLib.Memory.ReadShort(Address.AT)
+        
+        if AT == 0 and PEThresholdTimer < PEThresholdTimerMax then
+            PEThresholdTimer = PEThresholdTimer + 1
+        elseif AT ~= 0 then
+            PEThresholdTimer = 0
+            PERegenTimer = 0
+        end
+        
+        if PEThresholdTimer >= PEThresholdTimerMax and PE < maxPE then
+            if PERegenTimer > PERegenTimerMax then
+                KLib.Memory.WriteShort(Address.PE, PE + 1)
+                PERegenTimer = 0
+            else
+                PERegenTimer = PERegenTimer + 1
+            end
+        end
+    end
+    
+    local function GenerateBP()
+        CurrentEXP = KLib.Memory.ReadShort(Address.EXP)
+        
+        if CurrentEXP > PrevEXP then
+            local BP = KLib.Memory.ReadShort(Address.BonusPoints)
+            local bonus = math.floor((CurrentEXP - PrevEXP) / 10)
+            
+            if bonus <= 0 then
+                bonus = 1
+            end
+            
+            KLib.Memory.WriteShort(Address.BonusPoints, BP + bonus)
+            
+            KLib.Message.Add("+" .. bonus .. " BP")
+        end
+        
+        PrevEXP = CurrentEXP
+    end
+    
     -- Activate all menus
     KLib.Memory.WriteShort(Address.MenuFlags, 0xFFFF)
     
@@ -687,10 +893,21 @@ function Mods()
             KLib.Memory.WriteInt(Address.CurrentRoom, 0x00066048)
         end
         
-        -- Discard Junk
         if KLib.Input.ButtonPressed("P1 Square") then
             DiscardJunk()
         end
+    end
+    
+    if ShowPE then
+        DrawPE()
+    end
+    
+    if PERegen then
+        RegenPE()
+    end
+    
+    if BPGeneration then
+        GenerateBP()
     end
 end
 
