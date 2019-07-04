@@ -18,6 +18,7 @@ Address =
     BonusPoints = 0x0C0E10,
     
     AT = 0x0B8A30,
+    PETimer = 0x0B8A28,
     BattleEXP = 0x09CFE8,
     
     Items = 0x0C0E48,
@@ -31,9 +32,8 @@ Address =
     MenuFlags = 0x09CEF0,
     PEFlags = 0x0C0E24,
     
-    PETimer = 0x0B8A28,
-    
-    CurrentRoom = 0x09D280
+    CurrentRoom = 0x09D280,
+    ArmoryChest = 0x0A7A70
 }
 
 ItemTypes =
@@ -413,10 +413,14 @@ MaxEquipStructSize = 32
 ShowPE = true
 PERegen = true
 BPGeneration = true
+EquipmentCrafting = true
 PEThresholdTimer = 0
 PEThresholdTimerMax = 60 * 5
 PERegenTimer = 0
 PERegenTimerMax = 60
+BPGenTimer = 0
+BPGenTimerMax = 60 * 60 * 5
+BPGenAccum = 0
 CurrentEXP = 0
 PrevEXP = 999999
 
@@ -579,6 +583,7 @@ end
 
 function CreateBattlePage()
     KLib.Menu.Field("AT", Address.AT, "s16_le", 0, 9000)
+    KLib.Menu.Field("PE Timer", Address.PETimer, "s16_le")
     KLib.Menu.Field("Gained EXP", Address.BattleEXP, "s16_le", 0, 999999)
 end
 
@@ -622,30 +627,27 @@ function CreateBPShopPage()
     {
         medicine =
         {
-            { "Medicine 1", 10 },
-            { "Medicine 2", 25 },
-            { "Medicine 3", 50 },
-            { "Medicine 4", 100 },
-            { "Cure-P", 20 },
-            { "Cure-D", 20 },
-            { "Cure-C", 20 },
-            { "Cure-M", 20 },
-            { "Cure-P", 20 },
-            { "Full Recover", 200 },
-            { "Full Cure", 50 },
-            { "Revive", 300 }
+            { "Medicine 1", 45 },
+            { "Medicine 2", 90 },
+            { "Medicine 3", 180 },
+            { "Medicine 4", 400 },
+            { "Full Recover", 1000 },
+            { "Cure-P", 100 },
+            { "Cure-D", 100 },
+            { "Cure-C", 100 },
+            { "Cure-M", 100 },
+            { "Cure-P", 100 },
+            { "Full Cure", 500 },
+            { "Revive", 2000 }
         },
         
         equipment =
         {
-            { "Tool", 100 },
-            { "Super Tool", 200 },
-            { "Mod Permit", 100 }
-        },
-        
-        misc =
-        {
-            { "Junk", 10 }
+            { "Tool", 500 },
+            { "Super Tool", 1000 },
+            { "Mod Permit", 1000 },
+            { "Junk", 100 },
+            { "Super Junk", 2000 }
         }
     }
     
@@ -661,7 +663,7 @@ function CreateBPShopPage()
     end
     
     KLib.Menu.Separator()
-    KLib.Menu.Text("Ammo", KLib.Color.Orange, true)
+    KLib.Menu.Text("Ammo", KLib.Color.Yellow, true)
     KLib.Menu.Text("Bullets - 30 BP").onUse = function()
         if CheckPrice(30) then
             KLib.Memory.WriteShort(Address.Crates, KLib.Memory.ReadShort(Address.Crates) + 30)
@@ -684,23 +686,10 @@ function CreateBPShopPage()
             KLib.Message.Add("Not enough BP!")
         end
     end
-
-    KLib.Menu.Separator()
-    KLib.Menu.Text("Misc", KLib.Color.Cyan, true)
-    for _, item in ipairs(items.misc) do
-        KLib.Menu.Text(item[1] .. " - " .. item[2] .. " BP").onUse = function() BuyItem(KLib.Table.FindIndex(Items, item[1]), item[2]) end
-    end
-    
-    KLib.Menu.Separator()
-    KLib.Menu.Text("Random\r", KLib.Color.White, true)
-    KLib.Menu.Text("Random Weapon - 100 BP").onUse = function() BuyItem(math.random(0x3F, 0x94), 100) end
-    KLib.Menu.Text("Random Armor - 100 BP").onUse = function() BuyItem(math.random(0x95, 0xC7), 100) end
 end
 
 function UpdateBPShopPage(page)
-    local BP = KLib.Memory.ReadShort(Address.BonusPoints)
-    
-    page.header = "BP Shop - " .. BP .. " BP"
+    page.header = "BP Shop - " .. KLib.Memory.ReadShort(Address.BonusPoints) .. " BP"
 end
 
 function IsItemSlotEmpty(address)
@@ -718,15 +707,15 @@ function GetFreeItemSlot(address, max)
 end
 
 function IsWeapon(id)
-    return id >= 0x3F and id <= 0x94
+    return id >= KLib.Table.FindIndex(Items, "Club 1") and id <= KLib.Table.FindIndex(Items, "M92F")
 end
 
 function IsArmor(id)
-    return id >= 0x95 and id <= 0xC7
+    return id >= KLib.Table.FindIndex(Items, "Dress") and id <= KLib.Table.FindIndex(Items, "Cm Suit 2")
 end
 
 function IsJunk(id, type)
-    return id == 0x14 and type == 0x00
+    return id == KLib.Table.FindIndex(Items, "Junk") and type == 0x00
 end
 
 function GetItemName(id, type)
@@ -777,7 +766,7 @@ function TransferItem(location, address)
             end
         end
     elseif location == "storage" then
-        local slot = GetFreeItemSlot(Address.Items, MaxItems)
+        local slot = GetFreeItemSlot(Address.Items, KLib.Memory.ReadByte(Address.ItemSlots))
         
         if slot ~= nil then
             Send(address, Address.Items, slot, id, type)
@@ -869,19 +858,67 @@ function Mods()
         CurrentEXP = KLib.Memory.ReadShort(Address.EXP)
         
         if CurrentEXP > PrevEXP then
-            local BP = KLib.Memory.ReadShort(Address.BonusPoints)
             local bonus = math.floor((CurrentEXP - PrevEXP) / 10)
             
             if bonus <= 0 then
                 bonus = 1
             end
             
-            KLib.Memory.WriteShort(Address.BonusPoints, BP + bonus)
-            
-            KLib.Message.Add("+" .. bonus .. " BP")
+            BPGenAccum = BPGenAccum + bonus
         end
         
+        if BPGenTimer > BPGenTimerMax then
+            KLib.Memory.WriteShort(Address.BonusPoints, KLib.Memory.ReadShort(Address.BonusPoints) + BPGenAccum)
+            
+            if BPGenAccum > 0 then
+                KLib.Message.Add("+" .. BPGenAccum .. " BP")
+            end
+            
+            BPGenTimer = 0
+            BPGenAccum = 0
+        end
+        
+        gui.drawText(client.bufferwidth() - 12, client.bufferheight() - 24, BPGenAccum, KLib.Color.Yellow, KLib.Color.Transparent, nil, nil, nil, "right")
+        gui.drawPie(client.bufferwidth() - 12, client.bufferheight() - 21, 9, 9, 270, (BPGenTimer / BPGenTimerMax) * 360, KLib.Color.Transparent, KLib.Color.Yellow)
+        
+        BPGenTimer = BPGenTimer + 1
         PrevEXP = CurrentEXP
+    end
+    
+    local function CraftEquipment()
+        local function RollItem()
+            return math.random(KLib.Table.FindIndex(Items, "Club 1"), KLib.Table.FindIndex(Items, "Cm Suit 2"))
+        end
+        
+        local chest = KLib.Memory.ReadByte(Address.ArmoryChest)
+        
+        if chest == KLib.Table.FindIndex(Items, "Super Junk") then
+            local exceptions =
+            {
+                KLib.Table.FindIndex(Items, "Maeda's Gun"),
+                KLib.Table.FindIndex(Items, "Maeda's Gun w/Bullets"),
+                KLib.Table.FindIndex(Items, "Debug SMG"),
+                KLib.Table.FindIndex(Items, "Cm Suit 2")
+            }
+            
+            local item = RollItem()
+            local done = false
+            
+            while not done do
+                done = true
+                
+                for _, exception in ipairs(exceptions) do
+                    if item == exception then
+                        item = RollItem()
+                        done = false
+                    end
+                end
+            end
+
+            KLib.Memory.WriteByte(Address.ArmoryChest, item)
+            
+            KLib.Message.Add("Crafted " .. GetItemName(item, 0))
+        end
     end
     
     -- Activate all menus
@@ -896,6 +933,10 @@ function Mods()
         if KLib.Input.ButtonPressed("P1 Square") then
             DiscardJunk()
         end
+        
+        if KLib.Input.ButtonPressed("P1 R1") then
+            CraftEquipment()
+        end
     end
     
     if ShowPE then
@@ -908,6 +949,10 @@ function Mods()
     
     if BPGeneration then
         GenerateBP()
+    end
+    
+    if EquipmentCrafting then
+        CraftEquipment()
     end
 end
 
