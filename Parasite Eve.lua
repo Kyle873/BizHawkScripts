@@ -19,7 +19,8 @@ Address =
     
     AT = 0x0B8A30,
     PETimer = 0x0B8A28,
-    BattleEXP = 0x09CFE8,
+    BattleEXPAccum = 0x09CFE8,
+    BattleEXPTotal = 0x09CFEC,
     
     Items = 0x0C0E48,
     Equipment = 0x0C0EB0,
@@ -185,7 +186,7 @@ Items =
     [0x7B] = "SG550",
     [0x7C] = "SAR",
     [0x7D] = "G3A3",
-    [0x7E] = "Type 64",
+    [0x7E] = "Type64",
     [0x7F] = "XM177E2",
     [0x80] = "PSG-1",
     [0x81] = "FA-MAS",
@@ -324,7 +325,7 @@ WeaponAbilities =
     [0x0A] = "Add Frost Effect to Bullets",
     [0x0B] = "Add Cyanide to Bullets",
     [0x0C] = "Add Acid Effect to Bullets",
-    [0x0D] = "Add Tranquizler to Bullets",
+    [0x0D] = "Add Tranquilizer to Bullets",
     [0x0E] = "Counterattack Enemy",
     [0x0F] = "Quickdraw: First Attack",
     [0x10] = "Steal Items, but Halves Attack Power",
@@ -407,7 +408,7 @@ MaxItems = 50
 MaxEquipment = 128
 MaxItemStorage = 100
 MaxEquipmentStorage = 80
-MaxAbilitySlots = 10
+MaxAbilitySlots = 11
 MaxEquipStructSize = 32
 
 ShowPE = true
@@ -420,6 +421,8 @@ PERegenTimer = 0
 PERegenTimerMax = 60
 BPGenTimer = 0
 BPGenTimerMax = 60 * 60 * 5
+BPGenLevelThreshold = 98
+BPGenMaxLevelAmount = 1000
 BPGenAccum = 0
 CurrentEXP = 0
 PrevEXP = 999999
@@ -446,14 +449,14 @@ function CreateMenu()
 end
 
 function CreateStatsPage()
-    KLib.Menu.Field("Level", Address.Level, "byte", 1, 99)
-    KLib.Menu.Field("EXP", Address.EXP, "s32_le", 0, 999999)
+    KLib.Menu.Field("Level", Address.Level, "byte", 0, 98)
+    KLib.Menu.Field("EXP", Address.EXP, "u32_le")
     
     KLib.Menu.Separator()
-    KLib.Menu.Field("HP", Address.HP, "s16_le", 0, 9999)
-    KLib.Menu.Field("Max HP", Address.MaxHP, "s16_le", 0, 9999)
-    KLib.Menu.Field("PE", Address.PE, "s16_le", 0, 9999)
-    KLib.Menu.Field("Max PE", Address.MaxPE, "s16_le", 0, 9999)
+    KLib.Menu.Field("HP", Address.HP, "s16_le", 0, 999)
+    KLib.Menu.Field("Max HP", Address.MaxHP, "s16_le", 0, 999)
+    KLib.Menu.Field("PE", Address.PE, "s16_le", 0, 3000)
+    KLib.Menu.Field("Max PE", Address.MaxPE, "s16_le", 0, 3000)
     
     KLib.Menu.Separator()
     KLib.Menu.Field("Offense", Address.Offense, "s16_le", 1, 1000)
@@ -463,7 +466,7 @@ function CreateStatsPage()
     KLib.Menu.Field("Active Time", Address.ActiveTime, "s16_le", 1, 1000)
     KLib.Menu.Field("Item Capacity", Address.ItemCapacity, "s16_le", 1, 1000)
     KLib.Menu.Field("Item Slots", Address.ItemSlots, "byte", 1, 50)
-    KLib.Menu.Field("Bonus Points", Address.BonusPoints, "s32_le", 0, 99999)
+    KLib.Menu.Field("Bonus Points", Address.BonusPoints, "u32_le")
     
     KLib.Menu.Separator()
     KLib.Menu.Bitfield("Known PE", Address.PEFlags, "s32_le", PEs)
@@ -565,7 +568,7 @@ function CreateEquipmentPage()
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Unknown", KLib.Color.Yellow, true)
-    KLib.Menu.FieldGroup(5, "Unknown", Address.Equipment + 27, "byte")
+    KLib.Menu.FieldGroup(4, "Unknown", Address.Equipment + 28, "byte")
 end
 
 function CreateCratesPage()
@@ -584,7 +587,8 @@ end
 function CreateBattlePage()
     KLib.Menu.Field("AT", Address.AT, "s16_le", 0, 9000)
     KLib.Menu.Field("PE Timer", Address.PETimer, "s16_le")
-    KLib.Menu.Field("Gained EXP", Address.BattleEXP, "s16_le", 0, 999999)
+    KLib.Menu.Field("Battle EXP Accum", Address.BattleEXPAccum, "u16_le")
+    KLib.Menu.Field("Battle EXP Total", Address.BattleEXPTotal, "u32_le")
 end
 
 function CreateWorldPage()
@@ -855,31 +859,40 @@ function Mods()
     end
     
     local function GenerateBP()
+        local level = KLib.Memory.ReadByte(Address.Level)
+        local BP = KLib.Memory.ReadInt(Address.BonusPoints)
+        
         CurrentEXP = KLib.Memory.ReadShort(Address.EXP)
         
-        if CurrentEXP > PrevEXP then
-            local bonus = math.floor((CurrentEXP - PrevEXP) / 10)
-            
-            if bonus <= 0 then
-                bonus = 1
+        if level < BPGenLevelThreshold then
+            if CurrentEXP > PrevEXP then
+                local bonus = math.floor((CurrentEXP - PrevEXP) / 10)
+                
+                if bonus <= 0 then
+                    bonus = 1
+                end
+                
+                BPGenAccum = BPGenAccum + bonus
             end
             
-            BPGenAccum = BPGenAccum + bonus
+            gui.drawText(client.bufferwidth() - 12, client.bufferheight() - 24, BPGenAccum, (level < BPGenLevelThreshold and KLib.Color.Yellow or KLib.Color.Pulse(KLib.Color.Yellow, 128, 8)), KLib.Color.Transparent, nil, nil, nil, "right")
+        else
+            BPGenAccum = BPGenMaxLevelAmount
+            color = KLib.Color.Pulse(KLib.Color.Yellow, 32)
         end
         
         if BPGenTimer > BPGenTimerMax then
-            KLib.Memory.WriteShort(Address.BonusPoints, KLib.Memory.ReadShort(Address.BonusPoints) + BPGenAccum)
+            KLib.Memory.WriteInt(Address.BonusPoints, BP + BPGenAccum)
             
             if BPGenAccum > 0 then
-                KLib.Message.Add("+" .. BPGenAccum .. " BP")
+                KLib.Message.Add("+" .. BPGenAccum .. " BP" .. " (" .. BP + BPGenAccum .. " Total)")
             end
             
             BPGenTimer = 0
             BPGenAccum = 0
         end
         
-        gui.drawText(client.bufferwidth() - 12, client.bufferheight() - 24, BPGenAccum, KLib.Color.Yellow, KLib.Color.Transparent, nil, nil, nil, "right")
-        gui.drawPie(client.bufferwidth() - 12, client.bufferheight() - 21, 9, 9, 270, (BPGenTimer / BPGenTimerMax) * 360, KLib.Color.Transparent, KLib.Color.Yellow)
+        gui.drawPie(client.bufferwidth() - 12, client.bufferheight() - 21, 9, 9, 270, (BPGenTimer / BPGenTimerMax) * 360, KLib.Color.Transparent, (level < BPGenLevelThreshold and KLib.Color.Yellow or KLib.Color.Pulse(KLib.Color.Yellow, 128, 8)))
         
         BPGenTimer = BPGenTimer + 1
         PrevEXP = CurrentEXP
