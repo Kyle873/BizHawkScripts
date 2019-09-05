@@ -90,9 +90,9 @@ Address =
             SMGs = 0x0183,
             Shotguns = 0x0184,
             Melee = 0x0185,
-            Throwing = 0x0186,
-            Computer = 0x0187,
-            BioTech = 0x0188,
+            Throwing = 0x0187,
+            Computer = 0x0188,
+            BioTech = 0x0189,
             Electronics = 0x018A,
             Reputation = 0x018B,
             Negotiation = 0x018C
@@ -1002,6 +1002,7 @@ Shop =
         { 32, "Gas Vent III", 1400 }
     },
     
+    Clip = 20,
     Karma = 1000
 }
 
@@ -1147,6 +1148,27 @@ function CreateShopPage()
         end
     end
     
+    local function BuyClip()
+        local current = KLib.Memory.ReadByte(Address.RunnerIndex) - 1
+        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
+        local clips = KLib.Memory.ReadByte(Address.Character.Clips + (current * Address.Character.Offset))
+        local cost = GetPriceMod(Shop.Clip)
+        
+        if nuyen >= cost and clips < 20 then
+            nuyen = nuyen - cost
+            clips = clips + 1
+            
+            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen)
+            KLib.Memory.WriteByte(Address.Character.Clips, clips)
+            
+            KLib.Message.Add("+1 Clip")
+        elseif clips >= 20 then
+            KLib.Message.Add("Your clips are already at the maximum!", KLib.Color.Red)
+        else
+            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
+        end
+    end
+    
     local function BuyKarma()
         local current = KLib.Memory.ReadByte(Address.RunnerIndex) - 1
         local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
@@ -1160,7 +1182,7 @@ function CreateShopPage()
             KLib.Memory.WriteIntBig(Address.Nuyen, nuyen)
             KLib.Memory.WriteByte(Address.Character.Karma, karma)
             
-            KLib.Message.Add("+1 Karma (" .. nuyen .. " Nuyen Remaining)")
+            KLib.Message.Add("+1 Karma")
         elseif karma == 255 then
             KLib.Message.Add("Your Karma is already at the maximum!", KLib.Color.Red)
         else
@@ -1223,6 +1245,7 @@ function CreateShopPage()
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Misc", KLib.Color.Blue, true)
+    KLib.Menu.Text("Clip").onUse = BuyClip
     KLib.Menu.Text("Karma").onUse = BuyKarma
 end
 
@@ -1236,6 +1259,8 @@ function UpdateShopPage(page)
             item.suffix = " - " .. GetItemPrice(item.itemID) .. " Nuyen"
         elseif item.attachmentID ~= nil then
             item.suffix = " - " .. GetPriceMod(Shop.Attachments[item.attachmentID][3]) .. " Nuyen"
+        elseif item.name == "Clip" then
+            item.suffix = " - " .. GetPriceMod(Shop.Clip) .. " Nuyen"
         elseif item.name == "Karma" then
             item.suffix = " - " .. GetPriceMod(Shop.Karma) .. " Nuyen"
         end
@@ -1340,22 +1365,22 @@ function CreateAttributesSkillsPage()
         Upgrade(14)
     end
     KLib.Menu.Field("Throwing", Address.Character.Skills.Throwing, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Red).onUse = function()
-        Upgrade(15)
-    end
-    KLib.Menu.Field("Computer", Address.Character.Skills.Computer, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
         Upgrade(16)
     end
-    KLib.Menu.Field("BioTech", Address.Character.Skills.BioTech, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
+    KLib.Menu.Field("Computer", Address.Character.Skills.Computer, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
         Upgrade(17)
     end
-    KLib.Menu.Field("Electronics", Address.Character.Skills.Electronics, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
+    KLib.Menu.Field("BioTech", Address.Character.Skills.BioTech, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
         Upgrade(18)
     end
-    KLib.Menu.Field("Reputation", Address.Character.Skills.Reputation, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
+    KLib.Menu.Field("Electronics", Address.Character.Skills.Electronics, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
         Upgrade(19)
     end
-    KLib.Menu.Field("Negotiation", Address.Character.Skills.Negotiation, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
+    KLib.Menu.Field("Reputation", Address.Character.Skills.Reputation, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
         Upgrade(20)
+    end
+    KLib.Menu.Field("Negotiation", Address.Character.Skills.Negotiation, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
+        Upgrade(21)
     end
 end
 
@@ -1699,8 +1724,6 @@ function SellDatafiles()
     local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
     local total = GetDatafilesValue()
     
-    if total == 0 then return end
-    
     for i = 0, MaxDataFiles - 1 do
         local address = Address.Cyberdeck.Datafiles[i]
         
@@ -1713,7 +1736,7 @@ function SellDatafiles()
     
     KLib.Memory.WriteIntBig(Address.Nuyen, nuyen + total)
     
-    KLib.Message.Add("+" .. total .. " (" .. nuyen + total .. ")")
+    KLib.Message.Add("+" .. total .. " Nuyen")
 end
 
 function AddCHERNOBYLPasscode()
