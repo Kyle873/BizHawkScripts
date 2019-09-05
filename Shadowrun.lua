@@ -1130,8 +1130,8 @@ function CreateGenerateRunPage()
     KLib.Menu.Text("Enforcement").onUse = function()
         GenerateRun(RunType.Enforcement, "Basic")
     end
-    KLib.Menu.Text("Basic Acquisition").onUse = function()
-        GenerateRun(RunType.Acquisition, "Basic")
+    KLib.Menu.Text("Simple Acquisition").onUse = function()
+        GenerateRun(RunType.Acquisition, "Simple")
     end
     KLib.Menu.Text("Moderate Acquisition").onUse = function()
         GenerateRun(RunType.Acquisition, "Moderate")
@@ -1139,8 +1139,8 @@ function CreateGenerateRunPage()
     KLib.Menu.Text("Expert Acquisition").onUse = function()
         GenerateRun(RunType.Acquisition, "Expert")
     end
-    KLib.Menu.Text("Basic Extraction").onUse = function()
-        GenerateRun(RunType.Extraction, "Basic")
+    KLib.Menu.Text("Simple Extraction").onUse = function()
+        GenerateRun(RunType.Extraction, "Simple")
     end
     KLib.Menu.Text("Moderate Acquisition").onUse = function()
         GenerateRun(RunType.Extraction, "Moderate")
@@ -1148,8 +1148,8 @@ function CreateGenerateRunPage()
     KLib.Menu.Text("Expert Acquisition").onUse = function()
         GenerateRun(RunType.Extraction, "Expert")
     end
-    KLib.Menu.Text("Basic Matrix Run").onUse = function()
-        GenerateRun(RunType.MatrixRun, "Basic")
+    KLib.Menu.Text("Simple Matrix Run").onUse = function()
+        GenerateRun(RunType.MatrixRun, "Simple")
     end
     KLib.Menu.Text("Moderate Matrix Run").onUse = function()
         GenerateRun(RunType.MatrixRun, "Moderate")
