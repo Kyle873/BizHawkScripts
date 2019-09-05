@@ -937,7 +937,7 @@ function CreateMenu()
     KLib.Menu.Text("Party", KLib.Color.Green, true)
     KLib.Menu.SubPage("Basic", CreateBasicPage)
     KLib.Menu.SubPage("Inventory", CreateInventoryPage)
-    KLib.Menu.SubPage("Attributes/Skills", CreateAttributesSkillsPage)
+    KLib.Menu.SubPage("Attributes/Skills", CreateAttributesSkillsPage, UpdateAttributesSkillsPage)
     KLib.Menu.SubPage("Group Items", CreateGroupItemsPage)
     KLib.Menu.SubPage("Notebook", CreateNotebookPage)
     KLib.Menu.SubPage("Spellbooks", CreateSpellbooksPage)
@@ -1025,33 +1025,124 @@ function CreateInventoryPage()
 end
 
 function CreateAttributesSkillsPage()
+    local function Upgrade(index)
+        local function IsMax(index, value)
+            if index >= 0 and index <= 6 or index == 8 then
+                if value >= 8 then
+                    return true
+                end
+            elseif index == 7 then
+                if value >= 6 then
+                    return true
+                end
+            elseif index > 8 then
+                if value >= 12 then
+                    return true
+                end
+            end
+            
+            return false
+        end
+        
+        local karmaAddress = Address.Character.Karma + KLib.Menu.GetOffset()
+        local valueAddress = Address.Character.Attributes.Body + KLib.Menu.GetOffset() + index
+        local karma = KLib.Memory.ReadByte(karmaAddress)
+        local value = KLib.Memory.ReadByte(valueAddress)
+        local cost = 0
+        
+        if index > 8 then
+            cost = (value + 1) * 2
+        else
+            cost = value + 1
+        end
+        
+        if karma >= cost and not IsMax(index, value) then
+            KLib.Memory.WriteByte(karmaAddress, karma - cost)
+            KLib.Memory.WriteByte(valueAddress, value + 1)
+            
+            if index == 7 then
+                KLib.Memory.WriteByte(Address.Character.Attributes.Essence2 + KLib.Menu.GetOffset(), 0)
+            end
+            
+            KLib.Message.Add("Upgrade complete!")
+        elseif IsMax(index, value) then
+            KLib.Message.Add("Already at maximum!", KLib.Color.Red)
+        else
+            KLib.Message.Add("Not enough Karma! (Need " .. cost .. ")", KLib.Color.Red)
+        end
+    end
+    
     KLib.Menu.Offset(CharacterNames, Address.Character.Max, Address.Character.Offset)
     
     KLib.Menu.Text("Attributes", KLib.Color.Orange, true)
-    KLib.Menu.Field("Body", Address.Character.Attributes.Body, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Green)
-    KLib.Menu.Field("Quickness", Address.Character.Attributes.Quickness, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Orange)
-    KLib.Menu.Field("Strength", Address.Character.Attributes.Strength, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Red)
-    KLib.Menu.Field("Charisma", Address.Character.Attributes.Charisma, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Yellow)
-    KLib.Menu.Field("Intelligence", Address.Character.Attributes.Intelligence, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Cyan)
-    KLib.Menu.Field("Willpower", Address.Character.Attributes.Willpower, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Blue)
-    KLib.Menu.Field("Magic", Address.Character.Attributes.Magic, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Pink)
-    KLib.Menu.Field("Essence", Address.Character.Attributes.Essence, "byte", 0, 6, BarOffset, BarWidth, KLib.Color.Pink)
+    KLib.Menu.Field("Body", Address.Character.Attributes.Body, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Green).onUse = function()
+        Upgrade(0)
+    end
+    KLib.Menu.Field("Quickness", Address.Character.Attributes.Quickness, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+        Upgrade(1)
+    end
+    KLib.Menu.Field("Strength", Address.Character.Attributes.Strength, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Red).onUse = function()
+        Upgrade(2)
+    end
+    KLib.Menu.Field("Charisma", Address.Character.Attributes.Charisma, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
+        Upgrade(3)
+    end
+    KLib.Menu.Field("Intelligence", Address.Character.Attributes.Intelligence, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Cyan).onUse = function()
+        Upgrade(4)
+    end
+    KLib.Menu.Field("Willpower", Address.Character.Attributes.Willpower, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Blue).onUse = function()
+        Upgrade(5)
+    end
+    KLib.Menu.Field("Essence", Address.Character.Attributes.Essence, "byte", 0, 6, BarOffset, BarWidth, KLib.Color.Pink).onUse = function()
+        Upgrade(7)
+    end
+    KLib.Menu.Field("Magic", Address.Character.Attributes.Magic, "byte", 0, 8, BarOffset, BarWidth, KLib.Color.Pink).onUse = function()
+        Upgrade(8)
+    end
     KLib.Menu.Field("Essence Factor", Address.Character.Attributes.Essence2, "byte", 0, 9)
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Skills", KLib.Color.Blue, true)
-    KLib.Menu.Field("Sorcery", Address.Character.Skills.Sorcery, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Pink)
-    KLib.Menu.Field("Firearms", Address.Character.Skills.Firearms, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Orange)
-    KLib.Menu.Field("  Pistols", Address.Character.Skills.Pistols, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Orange)
-    KLib.Menu.Field("  SMGS", Address.Character.Skills.SMGs, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Orange)
-    KLib.Menu.Field("  Shotguns", Address.Character.Skills.Shotguns, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Orange)
-    KLib.Menu.Field("Melee", Address.Character.Skills.Melee, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Red)
-    KLib.Menu.Field("Throwing", Address.Character.Skills.Throwing, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Red)
-    KLib.Menu.Field("Computer", Address.Character.Skills.Computer, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.White)
-    KLib.Menu.Field("BioTech", Address.Character.Skills.BioTech, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.White)
-    KLib.Menu.Field("Electronics", Address.Character.Skills.Electronics, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.White)
-    KLib.Menu.Field("Reputation", Address.Character.Skills.Reputation, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Yellow)
-    KLib.Menu.Field("Negotiation", Address.Character.Skills.Negotiation, "byte", 0, 9, BarOffset, BarWidth, KLib.Color.Yellow)
+    KLib.Menu.Field("Sorcery", Address.Character.Skills.Sorcery, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Pink).onUse = function()
+        Upgrade(9)
+    end
+    KLib.Menu.Field("Firearms", Address.Character.Skills.Firearms, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+        Upgrade(10)
+    end
+    KLib.Menu.Field("  Pistols", Address.Character.Skills.Pistols, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+        Upgrade(11)
+    end
+    KLib.Menu.Field("  SMGS", Address.Character.Skills.SMGs, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+        Upgrade(12)
+    end
+    KLib.Menu.Field("  Shotguns", Address.Character.Skills.Shotguns, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+        Upgrade(13)
+    end
+    KLib.Menu.Field("Melee", Address.Character.Skills.Melee, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Red).onUse = function()
+        Upgrade(14)
+    end
+    KLib.Menu.Field("Throwing", Address.Character.Skills.Throwing, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Red).onUse = function()
+        Upgrade(15)
+    end
+    KLib.Menu.Field("Computer", Address.Character.Skills.Computer, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
+        Upgrade(16)
+    end
+    KLib.Menu.Field("BioTech", Address.Character.Skills.BioTech, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
+        Upgrade(17)
+    end
+    KLib.Menu.Field("Electronics", Address.Character.Skills.Electronics, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.White).onUse = function()
+        Upgrade(18)
+    end
+    KLib.Menu.Field("Reputation", Address.Character.Skills.Reputation, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
+        Upgrade(19)
+    end
+    KLib.Menu.Field("Negotiation", Address.Character.Skills.Negotiation, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
+        Upgrade(20)
+    end
+end
+
+function UpdateAttributesSkillsPage()
+    gui.pixelText(255, 4, "Karma: " .. KLib.Memory.ReadByte(Address.Character.Karma + KLib.Menu.GetOffset()), KLib.Menu.Colors.Text, KLib.Color.Transparent)
 end
 
 function CreateGroupItemsPage()
@@ -1117,6 +1208,7 @@ function CreateCurrentRunPage()
     end
 end
 
+-- TODO: Basic/Moderate/Expert Ghoul/Bodyguard/Courier runs.
 function CreateGenerateRunPage()
     KLib.Menu.Text("Ghoul Bounty").onUse = function()
         GenerateRun(RunType.GhoulBounty)
@@ -1376,6 +1468,8 @@ function SellDatafiles()
     local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
     local total = GetDatafilesValue()
     
+    if total == 0 then return end
+    
     for i = 0, MaxDataFiles - 1 do
         local address = Address.Cyberdeck.Datafiles[i]
         
@@ -1477,7 +1571,7 @@ function GenerateRun(type, difficulty, johnson)
         end
         
         if type >= RunType.Bodyguard and type < RunType.MatrixRun and not bit.check(KLib.Memory.ReadByte(Address.GroupItems), 6) then
-            payment = payment + 40
+            payment = payment + 50 + math.random(0, 5) * 10
         end
         
         return payment, karma
