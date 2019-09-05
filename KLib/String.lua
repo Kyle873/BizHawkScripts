@@ -36,7 +36,7 @@ function KLib.String.Table(t)
         end
     end
     
-    return "{ " .. table.concat(result, ",") .. " }"
+    return "{\n" .. table.concat(result, ",\n") .. "\n}"
 end
 
 function KLib.String.OnOff(bool)
@@ -47,4 +47,38 @@ function KLib.String.OnOff(bool)
     else
         return "Unknown"
     end
+end
+
+function KLib.String.ShortenNumber(amount, places)
+    local suffix = ""
+    
+    if amount >= 1000000000000 then
+        amount = amount / 1000000000000
+        suffix = "T"
+    elseif amount >= 1000000000 then
+        amount = amount / 1000000000
+        suffix = "B"
+    elseif amount >= 1000000 then
+        amount = amount / 1000000
+        suffix = "M"
+    elseif amount >= 1000 then
+        amount = amount / 1000
+        suffix = "K"
+    end
+    
+    return string.format("%.2f", amount) .. suffix
+end
+
+function KLib.String.CommaNumber(amount)
+    local formatted = amount
+
+    while true do
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+        
+        if k == 0 then
+            break
+        end
+    end
+    
+    return formatted
 end

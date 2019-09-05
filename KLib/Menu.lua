@@ -77,6 +77,7 @@ function KLib.Menu.Page(header, width, height, onUpdate)
     page.height = height or client.bufferheight() - 1
     page.onUpdate = onUpdate or nil
     page.offset = false
+    page.offsetAmount = 0
     page.items = {}
 
     table.insert(KLib.Menu.Pages, page)
@@ -112,6 +113,10 @@ function KLib.Menu.Item(type)
     local item = {}
 
     item.type = type
+    item.tag = ""
+    item.realAddress = nil
+    item.frozen = false
+    item.frozenValue = 0
     item.onUpdate = nil
     item.onUse = nil
 
@@ -121,7 +126,7 @@ function KLib.Menu.Item(type)
 end
 
 function KLib.Menu.Separator()
-    KLib.Menu.Item("separator")
+    return KLib.Menu.Item("separator")
 end
 
 function KLib.Menu.Text(text, color, header)
@@ -131,7 +136,7 @@ function KLib.Menu.Text(text, color, header)
     item.color = color or KLib.Menu.Colors.Text
     item.header = header or false
 
-    if item.header and #KLib.Menu.Pages[#KLib.Menu.Pages].items == 1 then
+    if #KLib.Menu.Pages[#KLib.Menu.Pages].items == 1 and item.header then
         KLib.Menu.IndexMemory[#KLib.Menu.Pages] = 2
 
         if #KLib.Menu.Pages == KLib.Menu.PageIndex then
@@ -150,11 +155,10 @@ function KLib.Menu.Field(name, address, size, min, max, barOffset, barWidth, bar
     item.size = size
     item.min = min or nil
     item.max = max or nil
+    item.barVisible = barOffset or 0 > 0
     item.barOffset = barOffset or nil
     item.barWidth = barWidth or nil
     item.barColor = barColor or nil
-    item.frozen = false
-    item.frozenValue = 0
     item.hex = false
 
     if bizstring.contains(name, "$") then
@@ -189,8 +193,6 @@ function KLib.Menu.Bitfield(name, address, size, values)
     item.max = #values or KLib.Memory.GetBits(size)
     item.values = values
     item.index = 1
-    item.frozen = false
-    item.frozenValue = 0
 
     KLib.Menu.Separator()
     
@@ -215,8 +217,6 @@ function KLib.Menu.Enum(name, address, size, values)
     item.size = size
     item.min, item.max = KLib.Memory.GetMinMax(size)
     item.values = values
-    item.frozen = false
-    item.frozenValue = 0
     
     return item
 end
@@ -229,6 +229,16 @@ function KLib.Menu.EnumGroup(amount, name, address, size, values)
     end
     
     return enums
+end
+
+function KLib.Menu.Find(page, text)
+    for i, v in ipairs(page.items) do
+        if v.tag ~= nil and bizstring.contains(v.tag, text) or v.text ~= nil and bizstring.contains(v.text, text) or v.name ~= nil and bizstring.contains(v.name, text) then
+            return v
+        end
+    end
+    
+    return nil
 end
 
 function KLib.Menu.Update()
@@ -293,6 +303,8 @@ function KLib.Menu.Update()
             if item.address then
                 address = page.offset and item.address + (page.offsetAmount * (KLib.Menu.OffsetIndex - 1)) or item.address
                 value = KLib.Memory.GetReader(item.size)(address)
+                
+                item.realAddress = address
             end
 
             if i == KLib.Menu.Index and item.frozen then
@@ -320,7 +332,7 @@ function KLib.Menu.Update()
                 
                 gui.pixelText(4, y, text, color, KLib.Color.Transparent)
 
-                if item.barOffset ~= nil and not (KLib.Menu.Typing and i == KLib.Menu.Index) then
+                if item.barVisible and not (KLib.Menu.Typing and i == KLib.Menu.Index) then
                     local length = ((item.barWidth - 2) / item.max) * value
                     local x = item.barOffset + 1
                     local x2 = x + length
@@ -379,7 +391,7 @@ function KLib.Menu.Input()
     end
 
     local function IsSeparator(item)
-        return item.type == "separator" or item.header ~= nil and item.header
+        return item.type == "separator" or item.type == "empty" or item.header ~= nil and item.header
     end
 
     if KLib.Input.Parse(KLib.Menu.Keys.Toggle) then
@@ -610,4 +622,8 @@ function KLib.Menu.Freeze()
             end
         end
     end
+end
+
+function KLib.Menu.GetOffset(page)
+    return (KLib.Menu.OffsetIndex - 1) * KLib.Menu.Pages[page or KLib.Menu.PageIndex].offsetAmount
 end

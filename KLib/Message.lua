@@ -9,7 +9,8 @@ KLib.Message =
     
     FadeTime = 60,
     
-    Messages = {}
+    Messages = {},
+    OverlayMessage = nil
 }
 
 function KLib.Message.Color(foreColor, backColor)
@@ -23,15 +24,30 @@ function KLib.Message.Font(size, family, style)
     KLib.Message.FontStyle = style or KLib.Message.FontStyle
 end
 
-function KLib.Message.Add(text, time)
+function KLib.Message.Add(text, foreColor, backColor, time)
     local message = {}
     
     message.text = text
+    message.foreColor = foreColor or KLib.Message.ForeColor
+    message.backColor = backColor or KLib.Message.BackColor
     message.timeMax = time or 300
     message.time = message.timeMax
     message.expired = false
     
     table.insert(KLib.Message.Messages, message)
+end
+
+function KLib.Message.Overlay(text, foreColor, backColor, time)
+    local message = {}
+    
+    message.text = text
+    message.foreColor = foreColor or KLib.Message.ForeColor
+    message.backColor = backColor or KLib.Message.BackColor
+    message.timeMax = time or 300
+    message.time = message.timeMax
+    message.expired = false
+    
+    KLib.Message.OverlayMessage = message
 end
 
 function KLib.Message.Update()
@@ -45,7 +61,7 @@ function KLib.Message.Update()
         local message = KLib.Message.Messages[i]
         
         if message.time >= -KLib.Message.FadeTime then
-            gui.drawText(0, y, message.text, (message.time < 0 and ModAlpha(KLib.Message.ForeColor, message.time) or KLib.Message.ForeColor), (message.time < 0 and ModAlpha(KLib.Message.BackColor, message.time) or KLib.Message.BackColor), KLib.Message.FontSize, KLib.Message.FontFamily, KLib.Message.FontStyle)
+            gui.drawText(0, y, message.text, (message.time < 0 and ModAlpha(message.foreColor, message.time) or message.foreColor), (message.time < 0 and ModAlpha(message.backColor, message.time) or message.backColor), KLib.Message.FontSize, KLib.Message.FontFamily, KLib.Message.FontStyle)
         else
             message.expired = true
         end
@@ -60,6 +76,22 @@ function KLib.Message.Update()
         
         if message ~= nil and message.expired then
             table.remove(KLib.Message.Messages, i)
+        end
+    end
+    
+    if KLib.Message.OverlayMessage ~= nil then
+        local message = KLib.Message.OverlayMessage
+        
+        if message.time >= -KLib.Message.FadeTime then
+            gui.drawText(0, 0, message.text, (message.time < 0 and ModAlpha(message.foreColor, message.time) or message.foreColor), (message.time < 0 and ModAlpha(message.backColor, message.time) or message.backColor), KLib.Message.FontSize, KLib.Message.FontFamily, KLib.Message.FontStyle)
+        else
+            message.expired = true
+        end
+    
+        message.time = message.time - 1
+        
+        if KLib.Message.OverlayMessage.expired then
+            KLib.Message.OverlayMessage = nil
         end
     end
 end
