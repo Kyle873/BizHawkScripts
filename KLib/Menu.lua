@@ -132,6 +132,7 @@ end
 function KLib.Menu.Text(text, color, header)
     local item = KLib.Menu.Item("text")
 
+    item.name = text
     item.text = text
     item.color = color or KLib.Menu.Colors.Text
     item.header = header or false

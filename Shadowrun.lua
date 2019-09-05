@@ -228,6 +228,7 @@ Address =
     GameState = 0xD981,
     MatrixState = 0xDF8A,
     MenuIndex = 0xF0DC,
+    InventoryIndex = 0x0000,
     RunnerIndex = 0xFC06,
     RunnerTotal = 0xDFC9,
     DebugMenu = 0xF101
@@ -446,13 +447,68 @@ ItemMax =
     0,        -- Rat Totem
     0,        -- Gator Totem
     0,        -- Bear Totem
-    0,        -- Armor (7)
+    0,        -- Armor Vest
+    0,        -- Armor Clothing
+    0,        -- Armor Jacket
+    0,        -- Vest with Plates
+    0,        -- Lined Duster
+    0,        -- Light Combat Armor
+    0         -- Heavy Combat Armor
+}
+
+ItemValue =
+{
+    [0] = 0,  -- Nothing/Melee
+    100,      -- Streetline Special
+    350,      -- Model 101T LP
+    300,      -- American L36 LP
+    675,      -- Security 500 LP
+    550,      -- Warhawk HP
+    630,      -- Max-Power HP
+    675,      -- Predator HP
+    2000,     -- AK-97 SMG
+    4500,     -- HK227-S SMG
+    1600,     -- Mach 22 SMG
+    2800,     -- Allegiance Shotgun
+    2000,     -- Roomsweeper Shotgun
+    600,      -- Frag Grenade
+    360,      -- Scatter Grenade
+    180,      -- Concussion Grenade
+    200,      -- Medkit
+    210,      -- Stim Patch
+    210,      -- Trauama Patch
+    650,      -- Fetish
+    50000,    -- MagLock Passkey
+    1000,     -- Electronic Kit
+    3000,     -- Smart Goggles
+    0,        -- Enchanted Dagger
+    80000,    -- Power Focus
+    0,        -- Spell Foci (14)
     0,
     0,
     0,
     0,
     0,
-    0
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    52500,    -- Protection Talisman
+    61250,    -- Combat Sense Spell Lock
+    0,        -- Rat Totem
+    0,        -- Gator Totem
+    0,        -- Bear Totem
+    200,      -- Armor Vest
+    500,      -- Armor Clothing
+    1080,     -- Armor Jacket
+    600,      -- Vest with Plates
+    700,      -- Lined Duster
+    10000,    -- Light Combat Armor
+    30000     -- Heavy Combat Armor
 }
 
 Attachment =
@@ -915,6 +971,7 @@ ShowDatafileValue = true
 ShowGhoulBountyCounter = true
 
 MaxNameLength = 12
+MaxItemSlots = 8
 MaxSpellSlots = 14
 MaxDataFiles = 5
 
@@ -924,7 +981,29 @@ BarWidth = 184
 CharacterNames = KLib.Table.Init2D(Address.Character.Max, "")
 PedNames = KLib.Table.Init2D(Address.Peds.Max, "")
 
-KarmaCost = 1000
+Shop =
+{
+    { 1, 12 },  -- Weapons
+    { 13, 15 }, -- Grenades
+    { 44, 50 }, -- Armor
+    { 16, 18 }, -- Medical
+    { 20, 22 }, -- Electronics
+    {           -- Magic
+        19, 24, 39, 40
+    },
+    
+    Attachments =
+    {
+        { 1, "SmartLink", 800 },
+        { 2, "Silencer", 500 },
+        { 4, "Sound Suppressor", 1500 },
+        { 8, "Laser Sight", 600 },
+        { 16, "Gas Vent II", 900 },
+        { 32, "Gas Vent III", 1400 }
+    },
+    
+    Karma = 1000
+}
 
 memory.usememorydomain("68K RAM")
 
@@ -959,12 +1038,6 @@ function CreateMenu()
     KLib.Menu.Separator()
     KLib.Menu.Text("Misc", KLib.Color.Blue, true)
     KLib.Menu.Enum("Debug Menu", Address.DebugMenu, "byte", { [0] = "Disabled", "Enabled" })
-    
-    KLib.Menu.Separator()
-    KLib.Menu.Text("Functions", KLib.Color.Blue, true)
-    KLib.Menu.Text("Sell Data Files").onUse = SellDatafiles
-    KLib.Menu.Text("Add CHERNOBYL Passcode").onUse = AddCHERNOBYLPasscode
-    KLib.Menu.Text("Buy Karma (" .. KarmaCost .. " Nuyen)").onUse = BuyKarma
 end
 
 function CreateBasicPage()
@@ -1000,6 +1073,9 @@ end
 function CreateInventoryPage()
     KLib.Menu.Offset(CharacterNames, Address.Character.Max, Address.Character.Offset)
     
+    KLib.Menu.SubPage("Shop", CreateShopPage, UpdateShopPage)
+    
+    KLib.Menu.Separator()
     KLib.Menu.Text("Equipped", KLib.Color.Red, true)
     KLib.Menu.Enum("Weapon", Address.Character.Equipped.Weapon, "byte", Weapon).onUpdate = function(self)
         if KLib.Memory.ReadByte(Address.Character.Equipped.WeaponType + KLib.Menu.GetOffset(), "byte") == 255 then
@@ -1022,6 +1098,144 @@ function CreateInventoryPage()
     KLib.Menu.Separator()
     KLib.Menu.Text("Weapon Attachments", KLib.Color.Green, true)
     KLib.Menu.BitfieldGroup(8, "Attachments", Address.Character.Inventory.Values, "byte", Attachment)
+end
+
+KLib.Monitor.Variable("Index", Address.InventoryIndex, "byte")
+
+function CreateShopPage()
+    local function BuyItem(type)
+        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
+        local cost = GetItemPrice(type)
+        local slot = GetEmptyItemSlot()
+        
+        if nuyen >= cost and slot ~= nil then
+            KLib.Memory.WriteByte(Address.Character.Inventory.Items + slot, type)
+            
+            if type >= 12 then
+                KLib.Memory.WriteByte(Address.Character.Inventory.Values + slot, ItemMax[type])
+            end
+            
+            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen - cost)
+            
+            KLib.Message.Add("Purchased " .. Item[type])
+        elseif slot == nil then
+            KLib.Message.Add("No free item slots!", KLib.Color.Red)
+        else
+            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
+        end
+    end
+    
+    local function BuyAttachment(type)
+        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
+        local slot = KLib.Memory.ReadByte(Address.InventoryIndex)
+        local address = Address.Character.Inventory.Values + slot
+        local value = KLib.Memory.ReadByte(address)
+        local cost = GetPriceMod(Shop.Attachments[type][3])
+        
+        if nuyen >= cost then
+            KLib.Memory.WriteByte(address, Shop.Attachments[type][1])
+            
+            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen - cost)
+            
+            KLib.Message.Add("Purchased " .. Shop.Attachments[type][2])
+        else
+            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
+        end
+    end
+    
+    local function BuyKarma()
+        local current = KLib.Memory.ReadByte(Address.RunnerIndex) - 1
+        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
+        local karma = KLib.Memory.ReadByte(Address.Character.Karma + (current * Address.Character.Offset))
+        local cost = GetPriceMod(Shop.Karma)
+        
+        if nuyen >= cost and karma < 255 then
+            nuyen = nuyen - cost
+            karma = karma + 1
+            
+            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen)
+            KLib.Memory.WriteByte(Address.Character.Karma, karma)
+            
+            KLib.Message.Add("+1 Karma (" .. nuyen .. " Nuyen Remaining)")
+        elseif karma == 255 then
+            KLib.Message.Add("Your Karma is already at the maximum!", KLib.Color.Red)
+        else
+            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
+        end
+    end
+
+    local function CreateCategory(index, name, color)   
+        local function CreateEntry(index)
+            local item = KLib.Menu.Text(Item[index])
+            
+            item.onUse = function()
+                BuyItem(index)
+            end
+            
+            item.itemID = index
+        end
+        
+        KLib.Menu.Text(name, color, true)
+        
+        if #Shop[index] > 2 then
+            for i = 1, #Shop[index] do
+                CreateEntry(Shop[index][i])
+            end
+        else
+            for i = Shop[index][1], Shop[index][2] do
+                CreateEntry(i)
+            end
+        end
+    end
+    
+    CreateCategory(1, "Weapons", KLib.Color.Red)
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Attachments", KLib.Color.Red, true)
+    for i, v in ipairs(Shop.Attachments) do
+        local item = KLib.Menu.Text(v[2])
+        
+        item.onUse = function()
+            BuyAttachment(i)
+        end
+        
+        item.attachmentID = i
+    end
+    
+    KLib.Menu.Separator()
+    CreateCategory(2, "Grenades", KLib.Color.Orange)
+    
+    KLib.Menu.Separator()
+    CreateCategory(3, "Armor", KLib.Color.Green)
+    
+    KLib.Menu.Separator()
+    CreateCategory(4, "Medical", KLib.Color.Green)
+    
+    KLib.Menu.Separator()
+    CreateCategory(5, "Electronics", KLib.Color.Cyan)
+    
+    KLib.Menu.Separator()
+    CreateCategory(6, "Magic", KLib.Color.Pink)
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Misc", KLib.Color.Blue, true)
+    KLib.Menu.Text("Karma").onUse = BuyKarma
+end
+
+function UpdateShopPage(page)
+    page.header = "Shop - " .. KLib.Memory.ReadIntBig(Address.Nuyen) .. " Nuyen"
+    
+    for i = 1, #page.items do
+        local item = page.items[i]
+        
+        if item.itemID ~= nil then
+            item.suffix = " - " .. GetItemPrice(item.itemID) .. " Nuyen"
+        elseif item.attachmentID ~= nil then
+            item.suffix = " - " .. GetPriceMod(Shop.Attachments[item.attachmentID][3]) .. " Nuyen"
+        elseif item.name == "Karma" then
+            item.suffix = " - " .. GetPriceMod(Shop.Karma) .. " Nuyen"
+        end
+    end
 end
 
 function CreateAttributesSkillsPage()
@@ -1064,7 +1278,7 @@ function CreateAttributesSkillsPage()
                 KLib.Memory.WriteByte(Address.Character.Attributes.Essence2 + KLib.Menu.GetOffset(), 0)
             end
             
-            KLib.Message.Add("Upgrade complete!")
+            KLib.Message.Add("Upgrade complete")
         elseif IsMax(index, value) then
             KLib.Message.Add("Already at maximum!", KLib.Color.Red)
         else
@@ -1424,6 +1638,11 @@ end
 
 function CreateSystemPage()
     KLib.Menu.Enum("Alert Level", Address.Cyberspace.AlertLevel, "byte", CyberspaceAlertLevel)
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Functions", KLib.Color.Blue, true)
+    KLib.Menu.Text("Sell Data Files").onUse = SellDatafiles
+    KLib.Menu.Text("Add CHERNOBYL Passcode").onUse = AddCHERNOBYLPasscode
 end
 
 function CreateNodesPage()
@@ -1507,26 +1726,6 @@ function AddCHERNOBYLPasscode()
     KLib.Memory.WriteByte(Address.Notebook.Clues + 8, flags)
     
     KLib.Message.Add("CHERNOBYL passcode has been added", KLib.Color.Cyan)
-end
-
-function BuyKarma()
-    local current = KLib.Memory.ReadByte(Address.RunnerIndex) - 1
-    local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
-    local karma = KLib.Memory.ReadByte(Address.Character.Karma + (current * Address.Character.Offset))
-    
-    if nuyen >= KarmaCost and karma < 255 then
-        nuyen = nuyen - KarmaCost
-        karma = karma + 1
-        
-        KLib.Memory.WriteIntBig(Address.Nuyen, nuyen)
-        KLib.Memory.WriteByte(Address.Character.Karma, karma)
-        
-        KLib.Message.Add("+1 Karma (" .. nuyen .. " Nuyen Remaining)")
-    elseif karma == 255 then
-        KLib.Message.Add("Your Karma is already at the maximum!", KLib.Color.Red)
-    else
-        KLib.Message.Add("Not enough nuyen!", KLib.Color.Red)
-    end
 end
 
 function GenerateRun(type, difficulty, johnson)
@@ -1756,6 +1955,36 @@ function GenerateRun(type, difficulty, johnson)
     end
     
     KLib.Message.Overlay(message)
+end
+
+function GetPriceMod(cost)
+    local negotiation = KLib.Memory.ReadByte(Address.Character.Skills.Negotiation)
+    
+    if negotiation > 2 then
+        cost = KLib.Math.Round(cost - (cost * ((negotiation - 2) * 0.03)))
+    end
+    
+    return cost
+end
+
+function GetItemPrice(type)
+    local cost = ItemValue[type]
+    
+    cost = GetPriceMod(cost)
+    
+    return cost
+end
+
+function GetEmptyItemSlot()
+    for i = 0, MaxItemSlots - 1 do
+        local item = KLib.Memory.ReadByte(Address.Character.Inventory.Items + i)
+        
+        if item == 0 then
+            return i
+        end
+    end
+    
+    return nil
 end
 
 function IsPaused()
