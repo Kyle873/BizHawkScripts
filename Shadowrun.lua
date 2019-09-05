@@ -43,19 +43,18 @@ Address =
         
         Race = 0x019A,
         Archetype = 0x019B,
-        Stance = 0x014D,
-        
-        Ammo = 0x014E,
-        Clips = 0x014F,
         Karma = 0x018D,
+        Cyberware = 0x0190,
+        
+        Stance = 0x014D,
+        Clips = 0x014F,
+        Ammo = 0x014E,
         
         Health =
         {
             Physical = 0x014C,
             Mental = 0x019C
         },
-        
-        Cyberware = 0x0190,
         
         Equipped =
         {
@@ -100,16 +99,8 @@ Address =
         }
     },
     
-    CriminalRecord = 0xFBFA,
     Nuyen = 0xFBFE,
     GroupItems = 0xFC24,
-    
-    Spellbook =
-    {
-        Max = 5,
-        Offset = 0x22,
-        Address = 0xF9FB
-    },
     
     Notebook =
     {
@@ -120,16 +111,61 @@ Address =
         Clues = 0xFC30
     },
     
-    Position =
+    Spellbook =
+    {
+        Max = 5,
+        Offset = 0x22,
+        Address = 0xF9FB
+    },
+    
+    Player =
     {
         X = 0x0100,
-        Y = 0x0104
+        Y = 0x0104,
+        
+        CriminalRecord = 0xFBFA
+    },
+    
+    CurrentRun =
+    {
+        Johnson = 0xFBEC,
+        RunType = 0xFBED,
+        Payment = 0xFBF4,
+        Karma = 0xFBF3,
+        Flags = 0xFC1C,
+        Counter = 0xFBF1,
+        
+        Area1 = 0xFBEE,
+        Building1 = 0xFBEF,
+        Area2 = 0xFBF1,
+        Building2 = 0xFBF2,
+        Other = 0xFBF0,
+        
+        Matrix =
+        {
+            Type = 0xFBEE,
+            System = 0xFBEF
+        }
     },
     
     Cyberdeck =
     {
         HaveDeck = 0x018F,
         Brand = 0xFBCB,
+        
+        Stats =
+        {
+            MPCP = 0xFBBE,
+            Hardening = 0xFBBF,
+            Memory = 0xFBC0,
+            Storage = 0xFBC2,
+            LoadIOSpeed = 0xFBC4,
+            Response = 0xFBC5,
+            Body = 0xFBC6,
+            Evasion = 0xFBC7,
+            Masking = 0xFBC8,
+            Sensor = 0xFBC9
+        },
         
         Programs =
         {
@@ -147,20 +183,6 @@ Address =
             Deception = 0xFBD5,
             Relocation = 0xFBD6,
             Analyze = 0xFBD7
-        },
-        
-        Stats =
-        {
-            MPCP = 0xFBBE,
-            Hardening = 0xFBBF,
-            Memory = 0xFBC0,
-            Storage = 0xFBC2,
-            LoadIOSpeed = 0xFBC4,
-            Response = 0xFBC5,
-            Body = 0xFBC6,
-            Evasion = 0xFBC7,
-            Masking = 0xFBC8,
-            Sensor = 0xFBC9
         },
         
         Datafiles =
@@ -201,28 +223,6 @@ Address =
         Y = 0x0404,
         Health = 0x044C,
         Name = 0x0458
-    },
-    
-    CurrentRun =
-    {
-        Johnson = 0xFBEC,
-        RunType = 0xFBED,
-        Payment = 0xFBF4,
-        Karma = 0xFBF3,
-        Flags = 0xFC1C,
-        Counter = 0xFBF1,
-        
-        Area1 = 0xFBEE,
-        Building1 = 0xFBEF,
-        Area2 = 0xFBF1,
-        Building2 = 0xFBF2,
-        Other = 0xFBF0,
-        
-        Matrix =
-        {
-            Type = 0xFBEE,
-            System = 0xFBEF
-        }
     },
     
     GameState = 0xD981,
@@ -1090,12 +1090,12 @@ end
 
 function CreatePlayerPage()
     KLib.Menu.Text("Position", KLib.Color.Yellow, true)
-    KLib.Menu.Field("X", Address.Position.X, "byte")
-    KLib.Menu.Field("Y", Address.Position.Y, "byte")
+    KLib.Menu.Field("X", Address.Player.X, "byte")
+    KLib.Menu.Field("Y", Address.Player.Y, "byte")
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Other", KLib.Color.Yellow, true)
-    KLib.Menu.Field("Criminal Record", Address.CriminalRecord, "byte", 0, 8)
+    KLib.Menu.Field("Criminal Record", Address.Player.CriminalRecord, "byte", 0, 8)
 end
 
 function CreateCurrentRunPage()
