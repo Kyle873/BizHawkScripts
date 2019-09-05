@@ -155,7 +155,7 @@ function KLib.Menu.Field(name, address, size, min, max, barOffset, barWidth, bar
     item.size = size
     item.min = min or nil
     item.max = max or nil
-    item.barVisible = barOffset or 0 > 0
+    item.barVisible = (barOffset or 0) > 0
     item.barOffset = barOffset or nil
     item.barWidth = barWidth or nil
     item.barColor = barColor or nil
