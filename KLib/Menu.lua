@@ -320,7 +320,13 @@ function KLib.Menu.Update()
             end
             
             if item.type == "text" then
-                gui.pixelText(4, y, item.text, (item.header and (bizstring.contains(item.text, "\r") and KLib.Color.Rainbow() or item.color) or color), KLib.Color.Transparent)
+                local text = item.text
+                
+                if item.suffix ~= nil then
+                    text = text .. item.suffix
+                end
+                
+                gui.pixelText(4, y, text, (item.header and (bizstring.contains(item.text, "\r") and KLib.Color.Rainbow() or item.color) or color), KLib.Color.Transparent)
             end
 
             if item.type == "field" then
@@ -349,6 +355,10 @@ function KLib.Menu.Update()
                 local text = ((i == KLib.Menu.Index and KLib.Menu.Typing) and Typing(item, y) or item.name .. ": " .. (item.values[item.index] ~= nil and item.values[item.index] or "Unknown"))
                 local x = 5
 
+                if item.suffix ~= nil then
+                    text = text .. item.suffix
+                end
+                
                 gui.pixelText(4, y, text, color, KLib.Color.Transparent)
 
                 if y + 18 < page.height then
