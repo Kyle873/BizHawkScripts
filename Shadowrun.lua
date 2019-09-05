@@ -1372,7 +1372,6 @@ function GetDatafilesValue()
     return total, values
 end
 
--- TODO: Improve output display by implementing a "large" message type.
 function SellDatafiles()
     local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
     local total = GetDatafilesValue()
