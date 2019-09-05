@@ -1618,9 +1618,9 @@ function CreateDeckStatsPage()
     KLib.Menu.Separator()
     KLib.Menu.Text("Stats", KLib.Color.Cyan, true)
     KLib.Menu.Field("Body", Address.Cyberdeck.Stats.Body, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Red)
-    KLib.Menu.Field("Evasion", Address.Cyberdeck.Stats.Body, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow)
-    KLib.Menu.Field("Masking", Address.Cyberdeck.Stats.Body, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Green)
-    KLib.Menu.Field("Sensor", Address.Cyberdeck.Stats.Body, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Blue)
+    KLib.Menu.Field("Evasion", Address.Cyberdeck.Stats.Evasion, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Yellow)
+    KLib.Menu.Field("Masking", Address.Cyberdeck.Stats.Masking, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Green)
+    KLib.Menu.Field("Sensor", Address.Cyberdeck.Stats.Sensor, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Blue)
     KLib.Menu.Field("Response", Address.Cyberdeck.Stats.Response, "byte", 0, 3, BarOffset, BarWidth, KLib.Color.Orange)
 end
 
