@@ -1613,7 +1613,7 @@ function CreateDeckStatsPage()
     KLib.Menu.Text("Memory/Storage", KLib.Color.Cyan, true)
     KLib.Menu.Field("Memory", Address.Cyberdeck.Stats.Memory, "u16_be", 0, 10000)
     KLib.Menu.Field("Storage", Address.Cyberdeck.Stats.Storage, "u16_be", 0, 10000)
-    KLib.Menu.Field("Load I/O Speed", Address.Cyberdeck.Stats.Memory, "byte", 0, 250)
+    KLib.Menu.Field("Load I/O Speed", Address.Cyberdeck.Stats.LoadIOSpeed, "byte", 0, 250)
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Stats", KLib.Color.Cyan, true)
