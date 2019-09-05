@@ -228,7 +228,7 @@ Address =
     GameState = 0xD981,
     MatrixState = 0xDF8A,
     MenuIndex = 0xF0DC,
-    InventoryIndex = 0x0000,
+    InventoryIndex = 0xF0D0,
     RunnerIndex = 0xFC06,
     RunnerTotal = 0xDFC9,
     DebugMenu = 0xF101
@@ -1036,7 +1036,13 @@ function CreateMenu()
     KLib.Menu.SubPage("Peds", CreatePedsPage)
     
     KLib.Menu.Separator()
-    KLib.Menu.Text("Misc", KLib.Color.Blue, true)
+    KLib.Menu.Text("Misc/Dev", KLib.Color.Blue, true)
+    KLib.Menu.Field("Game State", Address.GameState, "byte")
+    KLib.Menu.Field("Matrix State", Address.MatrixState, "byte")
+    KLib.Menu.Field("Menu Index", Address.MenuIndex, "byte")
+    KLib.Menu.Field("Inventory Index", Address.MatrixState, "u16_be")
+    KLib.Menu.Field("Runner Index", Address.RunnerIndex, "byte")
+    KLib.Menu.Field("Runner Total", Address.RunnerTotal, "byte")
     KLib.Menu.Enum("Debug Menu", Address.DebugMenu, "byte", { [0] = "Disabled", "Enabled" })
 end
 
@@ -1099,8 +1105,6 @@ function CreateInventoryPage()
     KLib.Menu.Text("Weapon Attachments", KLib.Color.Green, true)
     KLib.Menu.BitfieldGroup(8, "Attachments", Address.Character.Inventory.Values, "byte", Attachment)
 end
-
-KLib.Monitor.Variable("Index", Address.InventoryIndex, "byte")
 
 function CreateShopPage()
     local function BuyItem(type)
@@ -1985,6 +1989,13 @@ function GetEmptyItemSlot()
     end
     
     return nil
+end
+
+function GetInventoryIndex()
+    local row = KLib.Memory.ReadByte(Address.InventoryIndex)
+    local column = KLib.Memory.ReadByte(Address.InventoryIndex + 1)
+    
+    return KLib.Math.Clamp(row + (column * 2), 0, MaxItems - 1)
 end
 
 function IsPaused()
