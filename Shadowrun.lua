@@ -1208,46 +1208,54 @@ function CreateCurrentRunPage()
     end
 end
 
--- TODO: Basic/Moderate/Expert Ghoul/Bodyguard/Courier runs.
 function CreateGenerateRunPage()
-    KLib.Menu.Text("Ghoul Bounty").onUse = function()
-        GenerateRun(RunType.GhoulBounty)
+    KLib.Menu.Text("Basic Ghoul Bounty").onUse = function()
+        GenerateRun(RunType.GhoulBounty, 1)
     end
-    KLib.Menu.Text("Bodyguard").onUse = function()
-        GenerateRun(RunType.Bodyguard)
+    KLib.Menu.Text("Normal Ghoul Bounty").onUse = function()
+        GenerateRun(RunType.GhoulBounty, 2)
     end
-    KLib.Menu.Text("Courier").onUse = function()
-        GenerateRun(RunType.Courier)
+    KLib.Menu.Text("Basic Bodyguard").onUse = function()
+        GenerateRun(RunType.Bodyguard, 1)
+    end
+    KLib.Menu.Text("Normal Bodyguard").onUse = function()
+        GenerateRun(RunType.Bodyguard, 2)
+    end
+    KLib.Menu.Text("Basic Courier").onUse = function()
+        GenerateRun(RunType.Courier, 1)
+    end
+    KLib.Menu.Text("Normal Courier").onUse = function()
+        GenerateRun(RunType.Courier, 2)
     end
     KLib.Menu.Text("Enforcement").onUse = function()
-        GenerateRun(RunType.Enforcement, "Basic")
+        GenerateRun(RunType.Enforcement, 1)
     end
     KLib.Menu.Text("Simple Acquisition").onUse = function()
-        GenerateRun(RunType.Acquisition, "Simple")
+        GenerateRun(RunType.Acquisition, 1)
     end
     KLib.Menu.Text("Moderate Acquisition").onUse = function()
-        GenerateRun(RunType.Acquisition, "Moderate")
+        GenerateRun(RunType.Acquisition, 2)
     end
     KLib.Menu.Text("Expert Acquisition").onUse = function()
-        GenerateRun(RunType.Acquisition, "Expert")
+        GenerateRun(RunType.Acquisition, 3)
     end
     KLib.Menu.Text("Simple Extraction").onUse = function()
-        GenerateRun(RunType.Extraction, "Simple")
+        GenerateRun(RunType.Extraction, 1)
     end
-    KLib.Menu.Text("Moderate Acquisition").onUse = function()
-        GenerateRun(RunType.Extraction, "Moderate")
+    KLib.Menu.Text("Moderate Extraction").onUse = function()
+        GenerateRun(RunType.Extraction, 2)
     end
-    KLib.Menu.Text("Expert Acquisition").onUse = function()
-        GenerateRun(RunType.Extraction, "Expert")
+    KLib.Menu.Text("Expert Extraction").onUse = function()
+        GenerateRun(RunType.Extraction, 3)
     end
     KLib.Menu.Text("Simple Matrix Run").onUse = function()
-        GenerateRun(RunType.MatrixRun, "Simple")
+        GenerateRun(RunType.MatrixRun, 1)
     end
     KLib.Menu.Text("Moderate Matrix Run").onUse = function()
-        GenerateRun(RunType.MatrixRun, "Moderate")
+        GenerateRun(RunType.MatrixRun, 2)
     end
     KLib.Menu.Text("Expert Matrix Run").onUse = function()
-        GenerateRun(RunType.MatrixRun, "Expert")
+        GenerateRun(RunType.MatrixRun, 3)
     end
 end
 
@@ -1531,85 +1539,105 @@ function GenerateRun(type, difficulty, johnson)
     end
     
     local function CalculatePayment(type, negotiation, difficulty)
-        local payment = math.floor(math.random(0, negotiation / 2) * 5)
+        local payment = 0
+        local bonus = math.random(0, negotiation)
         local karma = 0
         
         if type == RunType.GhoulBounty then
-            payment = payment + 40
+            if difficulty == 1 then
+                payment = 20
+            else
+                payment = 40
+            end
             karma = 1
         elseif type == RunType.Bodyguard then
-            payment = payment + 200
+            if difficulty == 1 then
+                payment = 55
+            else
+                payment = 200
+            end
             karma = 1
         elseif type == RunType.Courier then
-            payment = payment + 180
+            if difficulty == 1 then
+                payment = 55
+            else
+                payment = 190
+            end
             karma = 1
         elseif type == RunType.Enforcement then
-            payment = payment + 200
+            payment = 230
             karma = 2
         elseif type == RunType.Acquisition or type == RunType.Extraction then
-            if difficulty == "Basic" then
-                payment = payment + 600
+            if difficulty == 1 then
+                payment = 600
                 karma = 2
-            elseif difficulty == "Moderate" then
-                payment = payment + 1000
+            elseif difficulty == 2 then
+                payment = 1400
                 karma = 4
-            elseif difficulty == "Expert" then
-                payment = payment + 4000
+            elseif difficulty == 3 then
+                payment = 3850
                 karma = 6
             end
         elseif type == RunType.MatrixRun then
-            if difficulty == "Basic" then
-                payment = payment + 400
+            if difficulty == 1 then
+                payment = 500
                 karma = 2
-            elseif difficulty == "Moderate" then
-                payment = payment + 2500
+            elseif difficulty == 2 then
+                payment = 2750
                 karma = 3
-            elseif difficulty == "Expert" then
-                payment = payment + 6000
+            elseif difficulty == 3 then
+                payment = 6100
                 karma = 5
             end
         end
         
-        if type >= RunType.Bodyguard and type < RunType.MatrixRun and not bit.check(KLib.Memory.ReadByte(Address.GroupItems), 6) then
-            payment = payment + 50 + math.random(0, 5) * 10
-        end
+        payment = KLib.Math.Round(payment + (payment * (bonus / 100)))
+        karma = KLib.Math.Round(karma + (karma * (bonus / 10)))
         
-        return payment, karma
+        return payment, karma, bonus
     end
     
-    local difficulties =
-    {
-        "Simple",
-        "Moderate",
-        "Expert"
-    }
-    
-    type = type or math.random(0, 3) -- #RunType - 1
-    difficulty = difficulty or math.random(1, #difficulties)
+    type = type or math.random(0, #RunType - 1)
+    difficulty = difficulty or math.random(1, 3)
     johnson = johnson or math.random(0, #Johnson - 2)
     
     local charisma = KLib.Memory.ReadByte(Address.Character.Attributes.Charisma)
     local negotiation = KLib.Memory.ReadByte(Address.Character.Skills.Negotiation)
     local payment = 0
     local karma = 0
+    local bonus = 0
     local area1 = 0
     local area2 = 0
     local building1 = 0
     local building2 = 0
     local other = 255
-    local message = "New Shadowrun!\n \n"
+    local message = "New Shadowrun!\n\n"
+    
+    if difficulty == 1 and type >= RunType.GhoulBounty and type <= RunType.Courier then
+        johnson = 0 -- Mr. Gunderson
+    end
     
     message = message .. "Johnson: " .. Johnson[johnson] .. "\n \n"
     message = message .. "Type: " .. tostring(RunType[type]) .. "\n"
     
     if type == RunType.GhoulBounty then
-        area1 = math.random(1, #Area - 2)
+        if difficulty == 1 then
+            area1 = 2 -- Redmond Barrens
+        else
+            area1 = math.random(1, #Area - 2)
+        end
         
         message = message .. "Area: " .. Area[area1] .. "\n"
     elseif type == RunType.Bodyguard or type == RunType.Courier then
         repeat
-            area1 = math.random(0, #Area - 2)
-            area2 = math.random(0, #Area - 2)
+            if difficulty == 1 then
+                area1 = 2 -- Redmond Barrens
+                area2 = area1
+            else
+                area1 = math.random(0, #Area - 2)
+                area2 = math.random(0, #Area - 2)
+            end
+            
             building1 = math.random(0, #Building[area1] - 1)
             building2 = math.random(0, #Building[area2] - 1)
         until BuildingValid(area1, area2, building1, building2)
@@ -1645,15 +1673,15 @@ function GenerateRun(type, difficulty, johnson)
     elseif type == RunType.Acquisition or type == RunType.Extraction then
         local targets = {}
         
-        if difficulty == "Basic" then
+        if difficulty == 1 then
             table.insert(targets, { 0, 5 } ) -- Fuchi - Downtown Seattle
             table.insert(targets, { 3, 2 } ) -- Fuchi - Penumbra Distract
             table.insert(targets, { 0, 4 } ) -- Mitsuhama - Downtown Seattle
             table.insert(targets, { 3, 3 } ) -- Mitsuhama - Penumbra Distract
-        elseif difficulty == "Moderate" then
+        elseif difficulty == 2 then
             table.insert(targets, { 1, 2 } ) -- Ares
             table.insert(targets, { 3, 6 } ) -- Lone Star
-        elseif difficulty == "Expert" then
+        elseif difficulty == 3 then
             table.insert(targets, { 5, 6 } ) -- Renraku
         end
         
@@ -1674,12 +1702,12 @@ function GenerateRun(type, difficulty, johnson)
     elseif type == RunType.MatrixRun then
         local targets = {}
         
-        if difficulty == "Basic" then
+        if difficulty == 1 then
             -- Unnamed Systems
             for i = 11, #System - 1 do
                 table.insert(targets, i)
             end
-        elseif difficulty == "Moderate" then
+        elseif difficulty == 2 then
             table.insert(targets, 1) -- Club Penumbra
             table.insert(targets, 2) -- Seattle General Hospital
             
@@ -1687,7 +1715,7 @@ function GenerateRun(type, difficulty, johnson)
             for i = 11, #System - 1 do
                 table.insert(targets, i)
             end
-        elseif difficulty == "Expert" then
+        elseif difficulty == 3 then
             -- Named Systems
             for i = 0, 9 do
                 table.insert(targets, i)
@@ -1701,10 +1729,11 @@ function GenerateRun(type, difficulty, johnson)
         message = message .. "Target System: " .. System[building1] .. "\n"
     end
     
-    payment, karma = CalculatePayment(type, negotiation, difficulty)
+    payment, karma, bonus = CalculatePayment(type, negotiation, difficulty)
     
     message = message .. " \nPayment: " .. tostring(payment) .. " Nuyen\n"
     message = message .. "Karma: " .. tostring(karma) .. "\n"
+    message = message .. "Bonus: " .. tostring(bonus) .. "%\n"
     
     KLib.Memory.WriteByte(Address.CurrentRun.Johnson, johnson)
     KLib.Memory.WriteByte(Address.CurrentRun.RunType, type)
