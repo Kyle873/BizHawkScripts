@@ -834,7 +834,7 @@ RunFlags =
     "Unknown",
     "Unknown",
     "Unknown",
-    "Matrix Run Complete"
+    "Run Complete"
 }
 
 Area =
@@ -1012,6 +1012,10 @@ Shop =
     Clip = 20,
     Karma = 1000
 }
+
+CurrentType = 0
+CurrentWeapon = 1
+CurrentSpell = 1
 
 memory.usememorydomain("68K RAM")
 
@@ -1350,7 +1354,7 @@ function CreateAttributesSkillsPage()
     KLib.Menu.Field("Essence", Address.Character.Attributes.Essence, "byte", 0, 6, BarOffset, BarWidth, KLib.Color.Pink).onUse = function()
         Upgrade(7)
     end
-    KLib.Menu.Field("Magic", Address.Character.Attributes.Magic, "byte", 0, 8, BarOffset, BarWidth, KLib.Color.Pink).onUse = function()
+    KLib.Menu.Field("Magic", Address.Character.Attributes.Magic, "byte", 0, 6, BarOffset, BarWidth, KLib.Color.Pink).onUse = function()
         Upgrade(8)
     end
     KLib.Menu.Field("Essence Factor", Address.Character.Attributes.Essence2, "byte", 0, 9)
@@ -1425,7 +1429,7 @@ function CreateSpellbooksPage()
     KLib.Menu.Separator()
     KLib.Menu.Text("Level", KLib.Color.Pink, true)
     for i = 0, MaxSpellSlots - 1 do
-        KLib.Menu.Field("Level " .. i + 1, Address.Spellbook.Address + (i * 2) + 2, "byte", 0, 8, BarOffset, BarWidth, KLib.Color.Pink)
+        KLib.Menu.Field("Level " .. i + 1, Address.Spellbook.Address + (i * 2) + 2, "byte", 0, 6, BarOffset, BarWidth, KLib.Color.Pink)
     end
     
     KLib.Menu.Separator()
@@ -2073,6 +2077,123 @@ function UpdateNames()
 end
 
 function Mods()
+    local function QuickSwap()
+        local function CalculateAmmo(oldType, newType)
+            local offset = KLib.Menu.GetOffset(KLib.Memory.ReadByte(Address.RunnerIndex))
+            local ammo = KLib.Memory.ReadByte(Address.Character.Ammo + offset)
+            local mult = ammo / ItemMax[oldType]
+            
+            KLib.Memory.WriteByte(Address.Character.Ammo + offset, KLib.Math.Round(ItemMax[newType] * mult))
+        end
+        
+        local offset = KLib.Menu.GetOffset(KLib.Memory.ReadByte(Address.RunnerIndex))
+        local slot = KLib.Memory.ReadByte(Address.Character.Equipped.WeaponSlot + offset)
+        local items = {}
+        local weapons = {}
+        local spells = {}
+        
+        for i = 0, MaxItemSlots - 1 do
+            local item = KLib.Memory.ReadByte(Address.Character.Inventory.Items + offset + i)
+            
+            if item > 0 and item < 12 then
+                table.insert(weapons, { i, item })
+            end
+            
+            table.insert(items, item)
+        end
+        
+        for i = 0, KLib.Memory.ReadByte(Address.Spellbook.Address) do
+            local spell = KLib.Memory.ReadByte(Address.Spellbook.Address + offset + (i * 2) + 1) + 1
+            
+            table.insert(spells, spell)
+        end
+        
+        if KLib.Input.ButtonPressed("P1 Up") then
+            local prevWeapon = CurrentWeapon
+            
+            if CurrentType == 0 then
+                CurrentWeapon = CurrentWeapon - 1
+            end
+            
+            if CurrentWeapon < 1 then
+                CurrentWeapon = #weapons
+            end
+            
+            if CurrentWeapon ~= prevWeapon then
+                CalculateAmmo(weapons[prevWeapon][2], weapons[CurrentWeapon][2])
+            end
+            
+            KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, weapons[CurrentWeapon][2])
+            KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, weapons[CurrentWeapon][1])
+            
+            KLib.Message.Overlay("Switched to " .. Item[items[CurrentWeapon]])
+            
+            CurrentType = 0
+        elseif KLib.Input.ButtonPressed("P1 Down") then
+            local prevWeapon = CurrentWeapon
+            
+            if CurrentType == 0 then
+                CurrentWeapon = CurrentWeapon + 1
+            end
+            
+            if CurrentWeapon > #weapons then
+                CurrentWeapon = 1
+            end
+            
+            if CurrentWeapon ~= prevWeapon then
+                CalculateAmmo(weapons[prevWeapon][2], weapons[CurrentWeapon][2])
+            end
+            
+            KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, weapons[CurrentWeapon][2])
+            KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, weapons[CurrentWeapon][1])
+            
+            KLib.Message.Overlay("Switched to " .. Item[items[CurrentWeapon]])
+            
+            CurrentType = 0
+        end
+        
+        if #spells > 0 then
+            if KLib.Input.ButtonPressed("P1 Left") then
+                if CurrentType == 1 then
+                    CurrentSpell = CurrentSpell - 1
+                end
+                
+                if CurrentSpell < 1 then
+                    CurrentSpell = #spells
+                end
+                
+                KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, spells[CurrentSpell])
+                KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, 255)
+                
+                KLib.Message.Overlay("Switched to " .. Spell[spells[CurrentSpell] - 1])
+                
+                CurrentType = 1
+            elseif KLib.Input.ButtonPressed("P1 Right") then
+                if CurrentType == 1 then
+                    CurrentSpell = CurrentSpell + 1
+                end
+                
+                if CurrentSpell > #spells then
+                    CurrentSpell = spells[1]
+                end
+                
+                KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, spells[CurrentSpell])
+                KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, 255)
+                
+                KLib.Message.Overlay("Switched to " .. Spell[spells[CurrentSpell] - 1])
+                
+                CurrentType = 1
+            end
+        end
+        
+        if KLib.Input.ButtonPressed("P1 X") then
+            KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, 0)
+            KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, 127)
+            
+            KLib.Message.Overlay("Switched to Melee")
+        end
+    end
+
     local function DrawNuyen()
         local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
         
@@ -2127,8 +2248,12 @@ function Mods()
         end
         
         if runType == RunType.GhoulBounty then
-            gui.pixelText(4, 4, count .. " / " .. total, color, KLib.Color.Transparent)
+            gui.pixelText(274, 212, count .. " / " .. total, color, KLib.Color.Transparent)
         end
+    end
+    
+    if KLib.Input.Joypad["P1 Y"] then
+        QuickSwap()
     end
     
     if KLib.Input.ButtonPressed("P1 Z") then
