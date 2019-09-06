@@ -59,7 +59,7 @@ Address =
         Equipped =
         {
             Weapon = 0x0157,
-            WeaponType = 0x0156,
+            WeaponSlot = 0x0156,
             Armor = 0x0176
         },
         
@@ -306,10 +306,17 @@ Weapon =
     "Electronic Kit",
 }
 
-WeaponType =
+WeaponSlot =
 {
-    [0] = "Weapon",
-    [2] = "Other",
+    [0] = "Slot 1",
+    "Slot 2",
+    "Slot 3",
+    "Slot 4",
+    "Slot 5",
+    "Slot 6",
+    "Slot 7",
+    "Slot 8",
+    
     [127] = "Melee",
     [255] = "Spell"
 }
@@ -1085,7 +1092,9 @@ function CreateInventoryPage()
     KLib.Menu.Separator()
     KLib.Menu.Text("Equipped", KLib.Color.Red, true)
     KLib.Menu.Enum("Weapon", Address.Character.Equipped.Weapon, "byte", Weapon).onUpdate = function(self)
-        if KLib.Memory.ReadByte(Address.Character.Equipped.WeaponType + KLib.Menu.GetOffset(), "byte") == 255 then
+        if KLib.Memory.ReadByte(Address.Character.Equipped.WeaponSlot + KLib.Menu.GetOffset(), "byte") == 255 then
+            self.values = {}
+            
             for i = 0, #Spell - 1 do
                 table.insert(self.values, i + 1, Spell[i])
             end
@@ -1093,7 +1102,7 @@ function CreateInventoryPage()
             self.values = Weapon
         end
     end
-    KLib.Menu.Enum("Weapon Type", Address.Character.Equipped.WeaponType, "byte", WeaponType)
+    KLib.Menu.Enum("Weapon Slot", Address.Character.Equipped.WeaponSlot, "byte", WeaponType)
     KLib.Menu.Enum("Armor", Address.Character.Equipped.Armor, "byte", Armor)
     
     KLib.Menu.Separator()
