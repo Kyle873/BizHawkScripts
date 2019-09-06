@@ -523,11 +523,11 @@ Attachment =
 
 SpellbookNames =
 {
+    "Joshua",
     "Ricky",
     "Trent",
     "Walking Bear",
-    "Freya",
-    "Joshua"
+    "Freya"
 }
 
 GroupItems =
@@ -1086,7 +1086,9 @@ function CreateInventoryPage()
     KLib.Menu.Text("Equipped", KLib.Color.Red, true)
     KLib.Menu.Enum("Weapon", Address.Character.Equipped.Weapon, "byte", Weapon).onUpdate = function(self)
         if KLib.Memory.ReadByte(Address.Character.Equipped.WeaponType + KLib.Menu.GetOffset(), "byte") == 255 then
-            self.values = Spell
+            for i = 0, #Spell - 1 do
+                table.insert(self.values, i + 1, Spell[i])
+            end
         else
             self.values = Weapon
         end
