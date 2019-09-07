@@ -144,7 +144,8 @@ Address =
         Matrix =
         {
             Type = 0xFBEE,
-            System = 0xFBEF
+            SystemName = 0xFBEF,
+            SystemID = 0xFBF0
         }
     },
     
@@ -427,8 +428,8 @@ ItemMax =
     6,        -- Scatter Grenade
     6,        -- Concussion Grenade
     6,        -- Medkit
-    6,        -- Stim Patch
-    6,        -- Trauama Patch
+    4,        -- Stim Patch
+    4,        -- Trauama Patch
     10,       -- Fetish
     5,        -- MagLock Passkey
     0,        -- Electronic Kit
@@ -463,61 +464,6 @@ ItemMax =
     0         -- Heavy Combat Armor
 }
 
-ItemValue =
-{
-    [0] = 0,  -- Nothing/Melee
-    100,      -- Streetline Special
-    350,      -- Model 101T LP
-    300,      -- American L36 LP
-    675,      -- Security 500 LP
-    550,      -- Warhawk HP
-    630,      -- Max-Power HP
-    675,      -- Predator HP
-    2000,     -- AK-97 SMG
-    4500,     -- HK227-S SMG
-    1600,     -- Mach 22 SMG
-    2800,     -- Allegiance Shotgun
-    2000,     -- Roomsweeper Shotgun
-    600,      -- Frag Grenade
-    360,      -- Scatter Grenade
-    180,      -- Concussion Grenade
-    200,      -- Medkit
-    210,      -- Stim Patch
-    210,      -- Trauama Patch
-    650,      -- Fetish
-    50000,    -- MagLock Passkey
-    1000,     -- Electronic Kit
-    3000,     -- Smart Goggles
-    0,        -- Enchanted Dagger
-    80000,    -- Power Focus
-    0,        -- Spell Foci (14)
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    52500,    -- Protection Talisman
-    61250,    -- Combat Sense Spell Lock
-    0,        -- Rat Totem
-    0,        -- Gator Totem
-    0,        -- Bear Totem
-    200,      -- Armor Vest
-    500,      -- Armor Clothing
-    1080,     -- Armor Jacket
-    600,      -- Vest with Plates
-    700,      -- Lined Duster
-    10000,    -- Light Combat Armor
-    30000     -- Heavy Combat Armor
-}
-
 Attachment =
 {
     "SmartLink",
@@ -530,11 +476,11 @@ Attachment =
 
 SpellbookNames =
 {
-    "Joshua",
     "Ricky",
     "Trent",
     "Walking Bear",
-    "Freya"
+    "Freya",
+    "Joshua"
 }
 
 GroupItems =
@@ -877,7 +823,7 @@ Building =
     },
     
     {
-        [0] = "Hollywood Correctional Facilities",
+        [0] = "Hollywood Correctional Facility",
         "Little Chiba",
         "Stoker's Coffin Motel",
         "Shiawase Nuke Plant",
@@ -945,37 +891,103 @@ Client =
 
 System =
 {
-    [0] = "Aztechnology",
-    "Club Penumbra",
-    "Seattle Gen. Hospital",
-    "Ares",
-    "Gates Undersound",
-    "Hollywood (Correctional Facilities)",
-    "Mitsuhama",
-    "Renraku",
-    "Fuchi",
-    "Lone Star",
-    "Ito's Passcode (Ito's System)",
-    "A local office",
-    "A corporate branch office",
-    "A small R&D firm",
-    "A new local company",
-    "A local retail business",
-    "A local corporate office",
-    "A local shipping warehouse",
-    "A legal firm",
-    "A local stuffer shack",
-    "A local SimSense company",
-    "A local coffin hotel",
-    "The Mayor's office",
-    "A SimSense corporation",
-    "UCAS Federal Government"
+    -- Internal ID List
+    ID =
+    {
+        [0] = "Unlisted",
+        "Unlisted",
+        "Unlisted",
+        "Unlisted",
+        "Unlisted",
+        "Unlisted",
+        "Unlisted",
+        "Aztechnology",
+        "Unlisted",
+        "Unlisted",
+        "Unlisted",
+        "Unlisted",
+        "Club Penumbra",
+        "Seattle Gen. Hospital",
+        "City Hall",
+        "Unlisted",
+        "UCAS Federal Government",
+        "Gates Undersound",
+        "Ito's System",
+        "Hollywood Correctional",
+        "Mitsuhama",
+        "Renraku",
+        "Fuchi",
+        "Lone Star",
+        "Ares"
+    },
+    
+    -- Name Lookup List
+    Name =
+    {
+        [0] = "Aztechnology",
+        "Club Penumbra",
+        "Seattle Gen. Hospital",
+        "Ares",
+        "Gates Undersound",
+        "Hollywood (Correctional Facility)",
+        "Mitsuhama",
+        "Renraku",
+        "Fuchi",
+        "Lone Star",
+        "Ito's Passcode (Ito's System)",
+        "A local office",
+        "A corporate branch office",
+        "A small R&D firm",
+        "A new local company",
+        "A local retail business",
+        "A local corporate office",
+        "A local shipping warehouse",
+        "A legal firm",
+        "A local stuffer shack",
+        "A local SimSense company",
+        "A local coffin hotel",
+        "The Mayor's office",
+        "A SimSense corporation",
+        "UCAS Federal Government"
+    },
+    
+    Lookup =
+    {
+        [0] = 7,   -- Aztechnology
+        [1] = 12,  -- Club Penumbra
+        [2] = 13,  -- Seattle Gen. Hospital
+        [3] = 24,  -- Ares
+        [4] = 17,  -- Gates Undersound
+        [5] = 19,  -- Hollywood Correctional Facility
+        [6] = 20,  -- Mitsuhama
+        [7] = 21,  -- Renraku
+        [8] = 22,  -- Fuchi
+        [9] = 23,  -- Lone Star
+        [10] = 18, -- Ito's Passcode (Ito's System)
+        [11] = 0,  -- A local office
+        [12] = 1,  -- A corporate branch office
+        [13] = 2,  -- A small R&D firm
+        [14] = 3,  -- A new local company
+        [15] = 4,  -- A local retail business
+        [16] = 5,  -- A local corporate office
+        [17] = 6,  -- A local shipping warehouse
+        [18] = 8,  -- A legal firm
+        [19] = 9,  -- A local stuffer shack
+        [20] = 10, -- A local SimSense company
+        [21] = 11, -- A local coffin hotel
+        [22] = 14, -- The Mayor's office
+        [23] = 15, -- A SimSense corporation
+        [24] = 16  -- UCAS Federal Government
+    }
 }
 
 ShowNuyen = true
 ShowStatusValues = true
 ShowDatafileValue = true
 ShowGhoulBountyCounter = true
+
+AutoSellDataFiles = true
+StaticNegotiation = true
 
 MaxNameLength = 12
 MaxItemSlots = 8
@@ -988,35 +1000,6 @@ BarWidth = 184
 CharacterNames = KLib.Table.Init2D(Address.Character.Max, "")
 PedNames = KLib.Table.Init2D(Address.Peds.Max, "")
 
-Shop =
-{
-    { 1, 12 },  -- Weapons
-    { 13, 15 }, -- Grenades
-    { 44, 50 }, -- Armor
-    { 16, 18 }, -- Medical
-    { 20, 22 }, -- Electronics
-    {           -- Magic
-        19, 24, 39, 40
-    },
-    
-    Attachments =
-    {
-        { 1, "SmartLink", 800 },
-        { 2, "Silencer", 500 },
-        { 4, "Sound Suppressor", 1500 },
-        { 8, "Laser Sight", 600 },
-        { 16, "Gas Vent II", 900 },
-        { 32, "Gas Vent III", 1400 }
-    },
-    
-    Clip = 20,
-    Karma = 1000
-}
-
-CurrentType = 0
-CurrentWeapon = 1
-CurrentSpell = 1
-
 memory.usememorydomain("68K RAM")
 
 function CreateMenu()
@@ -1026,7 +1009,7 @@ function CreateMenu()
     KLib.Menu.Page("Shadowrun\r")
     
     KLib.Menu.Text("Party", KLib.Color.Green, true)
-    KLib.Menu.SubPage("Basic", CreateBasicPage)
+    KLib.Menu.SubPage("Basic", CreateBasicPage, UpdateBasicPage)
     KLib.Menu.SubPage("Inventory", CreateInventoryPage)
     KLib.Menu.SubPage("Attributes/Skills", CreateAttributesSkillsPage, UpdateAttributesSkillsPage)
     KLib.Menu.SubPage("Group Items", CreateGroupItemsPage)
@@ -1063,7 +1046,24 @@ function CreateBasicPage()
     
     KLib.Menu.Enum("Race", Address.Character.Race, "byte", Race)
     KLib.Menu.Enum("Archetype", Address.Character.Archetype, "byte", Archetype)
-    KLib.Menu.Field("Karma", Address.Character.Karma, "byte")
+    KLib.Menu.Field("Karma", Address.Character.Karma, "byte").onUse = function()
+        local address = Address.Character.Karma + KLib.Menu.GetOffset()
+        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
+        local karma = KLib.Memory.ReadByte(address)
+        local cost = GetPrice(1000)
+        
+        if nuyen >= cost and karma < 255 then
+            nuyen = nuyen - cost
+            karma = karma + 1
+            
+            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen)
+            KLib.Memory.WriteByte(address, karma)
+        elseif karma == 255 then
+            KLib.Message.Add("Your Karma is already at the maximum!", KLib.Color.Red)
+        else
+            KLib.Message.Add("Not enough Nuyen! (" .. cost .. " needed)", KLib.Color.Red)
+        end
+    end
     KLib.Menu.Bitfield("Cyberware", Address.Character.Cyberware, "u16_be", Cyberware)
     
     KLib.Menu.Separator()
@@ -1088,10 +1088,12 @@ function CreateBasicPage()
     KLib.Menu.Field("Mental Health", Address.Character.Health.Mental, "byte", 0, 10, BarOffset, BarWidth, KLib.Color.Green)
 end
 
+function UpdateBasicPage()
+    gui.pixelText(214, 4, "Nuyen: " .. KLib.Memory.ReadIntBig(Address.Nuyen), KLib.Menu.Colors.Text, KLib.Color.Transparent)
+end
+
 function CreateInventoryPage()
     KLib.Menu.Offset(CharacterNames, Address.Character.Max, Address.Character.Offset)
-    
-    KLib.Menu.SubPage("Shop", CreateShopPage, UpdateShopPage)
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Equipped", KLib.Color.Red, true)
@@ -1106,7 +1108,7 @@ function CreateInventoryPage()
             self.values = Weapon
         end
     end
-    KLib.Menu.Enum("Weapon Slot", Address.Character.Equipped.WeaponSlot, "byte", WeaponType)
+    KLib.Menu.Enum("Weapon Slot", Address.Character.Equipped.WeaponSlot, "byte", WeaponSlot)
     KLib.Menu.Enum("Armor", Address.Character.Equipped.Armor, "byte", Armor)
     
     KLib.Menu.Separator()
@@ -1122,166 +1124,6 @@ function CreateInventoryPage()
     KLib.Menu.BitfieldGroup(8, "Attachments", Address.Character.Inventory.Values, "byte", Attachment)
 end
 
-function CreateShopPage()
-    local function BuyItem(type)
-        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
-        local cost = GetItemPrice(type)
-        local slot = GetEmptyItemSlot()
-        
-        if nuyen >= cost and slot ~= nil then
-            KLib.Memory.WriteByte(Address.Character.Inventory.Items + slot, type)
-            
-            if type >= 12 then
-                KLib.Memory.WriteByte(Address.Character.Inventory.Values + slot, ItemMax[type])
-            end
-            
-            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen - cost)
-            
-            KLib.Message.Add("Purchased " .. Item[type])
-        elseif slot == nil then
-            KLib.Message.Add("No free item slots!", KLib.Color.Red)
-        else
-            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
-        end
-    end
-    
-    local function BuyAttachment(type)
-        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
-        local slot = KLib.Memory.ReadByte(Address.InventoryIndex)
-        local address = Address.Character.Inventory.Values + slot
-        local value = KLib.Memory.ReadByte(address)
-        local cost = GetPriceMod(Shop.Attachments[type][3])
-        
-        if nuyen >= cost then
-            KLib.Memory.WriteByte(address, Shop.Attachments[type][1])
-            
-            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen - cost)
-            
-            KLib.Message.Add("Purchased " .. Shop.Attachments[type][2])
-        else
-            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
-        end
-    end
-    
-    local function BuyClip()
-        local current = KLib.Memory.ReadByte(Address.RunnerIndex) - 1
-        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
-        local clips = KLib.Memory.ReadByte(Address.Character.Clips + (current * Address.Character.Offset))
-        local cost = GetPriceMod(Shop.Clip)
-        
-        if nuyen >= cost and clips < 20 then
-            nuyen = nuyen - cost
-            clips = clips + 1
-            
-            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen)
-            KLib.Memory.WriteByte(Address.Character.Clips, clips)
-            
-            KLib.Message.Add("+1 Clip")
-        elseif clips >= 20 then
-            KLib.Message.Add("Your clips are already at the maximum!", KLib.Color.Red)
-        else
-            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
-        end
-    end
-    
-    local function BuyKarma()
-        local current = KLib.Memory.ReadByte(Address.RunnerIndex) - 1
-        local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
-        local karma = KLib.Memory.ReadByte(Address.Character.Karma + (current * Address.Character.Offset))
-        local cost = GetPriceMod(Shop.Karma)
-        
-        if nuyen >= cost and karma < 255 then
-            nuyen = nuyen - cost
-            karma = karma + 1
-            
-            KLib.Memory.WriteIntBig(Address.Nuyen, nuyen)
-            KLib.Memory.WriteByte(Address.Character.Karma, karma)
-            
-            KLib.Message.Add("+1 Karma")
-        elseif karma == 255 then
-            KLib.Message.Add("Your Karma is already at the maximum!", KLib.Color.Red)
-        else
-            KLib.Message.Add("Not enough Nuyen!", KLib.Color.Red)
-        end
-    end
-
-    local function CreateCategory(index, name, color)   
-        local function CreateEntry(index)
-            local item = KLib.Menu.Text(Item[index])
-            
-            item.onUse = function()
-                BuyItem(index)
-            end
-            
-            item.itemID = index
-        end
-        
-        KLib.Menu.Text(name, color, true)
-        
-        if #Shop[index] > 2 then
-            for i = 1, #Shop[index] do
-                CreateEntry(Shop[index][i])
-            end
-        else
-            for i = Shop[index][1], Shop[index][2] do
-                CreateEntry(i)
-            end
-        end
-    end
-    
-    CreateCategory(1, "Weapons", KLib.Color.Red)
-    
-    KLib.Menu.Separator()
-    KLib.Menu.Text("Attachments", KLib.Color.Red, true)
-    for i, v in ipairs(Shop.Attachments) do
-        local item = KLib.Menu.Text(v[2])
-        
-        item.onUse = function()
-            BuyAttachment(i)
-        end
-        
-        item.attachmentID = i
-    end
-    
-    KLib.Menu.Separator()
-    CreateCategory(2, "Grenades", KLib.Color.Orange)
-    
-    KLib.Menu.Separator()
-    CreateCategory(3, "Armor", KLib.Color.Green)
-    
-    KLib.Menu.Separator()
-    CreateCategory(4, "Medical", KLib.Color.Green)
-    
-    KLib.Menu.Separator()
-    CreateCategory(5, "Electronics", KLib.Color.Cyan)
-    
-    KLib.Menu.Separator()
-    CreateCategory(6, "Magic", KLib.Color.Pink)
-    
-    KLib.Menu.Separator()
-    KLib.Menu.Text("Misc", KLib.Color.Blue, true)
-    KLib.Menu.Text("Clip").onUse = BuyClip
-    KLib.Menu.Text("Karma").onUse = BuyKarma
-end
-
-function UpdateShopPage(page)
-    page.header = "Shop - " .. KLib.Memory.ReadIntBig(Address.Nuyen) .. " Nuyen"
-    
-    for i = 1, #page.items do
-        local item = page.items[i]
-        
-        if item.itemID ~= nil then
-            item.suffix = " - " .. GetItemPrice(item.itemID) .. " Nuyen"
-        elseif item.attachmentID ~= nil then
-            item.suffix = " - " .. GetPriceMod(Shop.Attachments[item.attachmentID][3]) .. " Nuyen"
-        elseif item.name == "Clip" then
-            item.suffix = " - " .. GetPriceMod(Shop.Clip) .. " Nuyen"
-        elseif item.name == "Karma" then
-            item.suffix = " - " .. GetPriceMod(Shop.Karma) .. " Nuyen"
-        end
-    end
-end
-
 function CreateAttributesSkillsPage()
     local function Upgrade(index)
         local function IsMax(index, value)
@@ -1291,6 +1133,10 @@ function CreateAttributesSkillsPage()
                 end
             elseif index == 7 then
                 if value >= 6 then
+                    return true
+                end
+            elseif index >= 11 and index <= 13 then
+                if value >= 13 then
                     return true
                 end
             elseif index > 8 then
@@ -1308,7 +1154,9 @@ function CreateAttributesSkillsPage()
         local value = KLib.Memory.ReadByte(valueAddress)
         local cost = 0
         
-        if index > 8 then
+        if index >= 11 and index <= 13 then
+            cost = math.ceil((value + 1) * 1.5)
+        elseif index > 8 then
             cost = (value + 1) * 2
         else
             cost = value + 1
@@ -1321,8 +1169,6 @@ function CreateAttributesSkillsPage()
             if index == 7 then
                 KLib.Memory.WriteByte(Address.Character.Attributes.Essence2 + KLib.Menu.GetOffset(), 0)
             end
-            
-            KLib.Message.Add("Upgrade complete")
         elseif IsMax(index, value) then
             KLib.Message.Add("Already at maximum!", KLib.Color.Red)
         else
@@ -1333,22 +1179,22 @@ function CreateAttributesSkillsPage()
     KLib.Menu.Offset(CharacterNames, Address.Character.Max, Address.Character.Offset)
     
     KLib.Menu.Text("Attributes", KLib.Color.Orange, true)
-    KLib.Menu.Field("Body", Address.Character.Attributes.Body, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Green).onUse = function()
+    KLib.Menu.Field("Body", Address.Character.Attributes.Body, "byte", 1, 6, BarOffset, BarWidth, KLib.Color.Green).onUse = function()
         Upgrade(0)
     end
-    KLib.Menu.Field("Quickness", Address.Character.Attributes.Quickness, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+    KLib.Menu.Field("Quickness", Address.Character.Attributes.Quickness, "byte", 1, 6, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
         Upgrade(1)
     end
-    KLib.Menu.Field("Strength", Address.Character.Attributes.Strength, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Red).onUse = function()
+    KLib.Menu.Field("Strength", Address.Character.Attributes.Strength, "byte", 1, 6, BarOffset, BarWidth, KLib.Color.Red).onUse = function()
         Upgrade(2)
     end
-    KLib.Menu.Field("Charisma", Address.Character.Attributes.Charisma, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
+    KLib.Menu.Field("Charisma", Address.Character.Attributes.Charisma, "byte", 1, 6, BarOffset, BarWidth, KLib.Color.Yellow).onUse = function()
         Upgrade(3)
     end
-    KLib.Menu.Field("Intelligence", Address.Character.Attributes.Intelligence, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Cyan).onUse = function()
+    KLib.Menu.Field("Intelligence", Address.Character.Attributes.Intelligence, "byte", 1, 6, BarOffset, BarWidth, KLib.Color.Cyan).onUse = function()
         Upgrade(4)
     end
-    KLib.Menu.Field("Willpower", Address.Character.Attributes.Willpower, "byte", 1, 8, BarOffset, BarWidth, KLib.Color.Blue).onUse = function()
+    KLib.Menu.Field("Willpower", Address.Character.Attributes.Willpower, "byte", 1, 6, BarOffset, BarWidth, KLib.Color.Blue).onUse = function()
         Upgrade(5)
     end
     KLib.Menu.Field("Essence", Address.Character.Attributes.Essence, "byte", 0, 6, BarOffset, BarWidth, KLib.Color.Pink).onUse = function()
@@ -1367,13 +1213,13 @@ function CreateAttributesSkillsPage()
     KLib.Menu.Field("Firearms", Address.Character.Skills.Firearms, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
         Upgrade(10)
     end
-    KLib.Menu.Field("  Pistols", Address.Character.Skills.Pistols, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+    KLib.Menu.Field("  Pistols", Address.Character.Skills.Pistols, "byte", 0, 13, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
         Upgrade(11)
     end
-    KLib.Menu.Field("  SMGS", Address.Character.Skills.SMGs, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+    KLib.Menu.Field("  SMGS", Address.Character.Skills.SMGs, "byte", 0, 13, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
         Upgrade(12)
     end
-    KLib.Menu.Field("  Shotguns", Address.Character.Skills.Shotguns, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
+    KLib.Menu.Field("  Shotguns", Address.Character.Skills.Shotguns, "byte", 0, 13, BarOffset, BarWidth, KLib.Color.Orange).onUse = function()
         Upgrade(13)
     end
     KLib.Menu.Field("Melee", Address.Character.Skills.Melee, "byte", 0, 12, BarOffset, BarWidth, KLib.Color.Red).onUse = function()
@@ -1399,8 +1245,38 @@ function CreateAttributesSkillsPage()
     end
 end
 
-function UpdateAttributesSkillsPage()
-    gui.pixelText(255, 4, "Karma: " .. KLib.Memory.ReadByte(Address.Character.Karma + KLib.Menu.GetOffset()), KLib.Menu.Colors.Text, KLib.Color.Transparent)
+function UpdateAttributesSkillsPage(page)
+    local body = KLib.Menu.Find(page, "Body")
+    local quickness = KLib.Menu.Find(page, "Quickness")
+    local strength = KLib.Menu.Find(page, "Strength")
+    local charisma = KLib.Menu.Find(page, "Charisma")
+    local intelligence = KLib.Menu.Find(page, "Intelligence")
+    local willpower = KLib.Menu.Find(page, "Willpower")
+    local race = KLib.Memory.ReadByte(Address.Character.Race + KLib.Menu.GetOffset())
+    
+    if race == 1 then     -- Elf
+        quickness.max = 7
+        charisma.max = 8
+    elseif race == 2 then -- Dwarf
+        body.max = 7
+        quickness.max = 5
+        strength.max = 8
+        willpower.max = 7
+    elseif race == 3 then -- Orc
+        body.max = 9
+        strength.max = 8
+        charisma.max = 5
+        intelligence.max = 5
+    elseif race == 4 then -- Troll
+        body.max = 11
+        quickness.max = 5
+        strength.max = 10
+        charisma.max = 4
+        intelligence.max = 4
+        willpower.max = 5
+    end
+    
+    gui.pixelText(256, 4, "Karma: " .. KLib.Memory.ReadByte(Address.Character.Karma + KLib.Menu.GetOffset()), KLib.Menu.Colors.Text, KLib.Color.Transparent)
 end
 
 function CreateGroupItemsPage()
@@ -1470,23 +1346,26 @@ function CreateGenerateRunPage()
     KLib.Menu.Text("Basic Ghoul Bounty").onUse = function()
         GenerateRun(RunType.GhoulBounty, 1)
     end
-    KLib.Menu.Text("Normal Ghoul Bounty").onUse = function()
-        GenerateRun(RunType.GhoulBounty, 2)
-    end
     KLib.Menu.Text("Basic Bodyguard").onUse = function()
         GenerateRun(RunType.Bodyguard, 1)
-    end
-    KLib.Menu.Text("Normal Bodyguard").onUse = function()
-        GenerateRun(RunType.Bodyguard, 2)
     end
     KLib.Menu.Text("Basic Courier").onUse = function()
         GenerateRun(RunType.Courier, 1)
     end
+    KLib.Menu.Text("Basic Enforcement").onUse = function()
+        GenerateRun(RunType.Enforcement, 1)
+    end
+    KLib.Menu.Text("Normal Ghoul Bounty").onUse = function()
+        GenerateRun(RunType.GhoulBounty, 2)
+    end
+    KLib.Menu.Text("Normal Bodyguard").onUse = function()
+        GenerateRun(RunType.Bodyguard, 2)
+    end
     KLib.Menu.Text("Normal Courier").onUse = function()
         GenerateRun(RunType.Courier, 2)
     end
-    KLib.Menu.Text("Enforcement").onUse = function()
-        GenerateRun(RunType.Enforcement, 1)
+    KLib.Menu.Text("Normal Enforcement").onUse = function()
+        GenerateRun(RunType.Enforcement, 2)
     end
     KLib.Menu.Text("Simple Acquisition").onUse = function()
         GenerateRun(RunType.Acquisition, 1)
@@ -1505,15 +1384,6 @@ function CreateGenerateRunPage()
     end
     KLib.Menu.Text("Expert Extraction").onUse = function()
         GenerateRun(RunType.Extraction, 3)
-    end
-    KLib.Menu.Text("Simple Matrix Run").onUse = function()
-        GenerateRun(RunType.MatrixRun, 1)
-    end
-    KLib.Menu.Text("Moderate Matrix Run").onUse = function()
-        GenerateRun(RunType.MatrixRun, 2)
-    end
-    KLib.Menu.Text("Expert Matrix Run").onUse = function()
-        GenerateRun(RunType.MatrixRun, 3)
     end
 end
 
@@ -1605,9 +1475,15 @@ function UpdateCurrentRunPage(page)
         
         index = index + 1
         
-        params[index].name = "System"
-        params[index].address = Address.CurrentRun.Matrix.System
-        params[index].values = System
+        params[index].name = "System Name"
+        params[index].address = Address.CurrentRun.Matrix.SystemName
+        params[index].values = System.Name
+        
+        index = index + 1
+        
+        params[index].name = "System ID"
+        params[index].address = Address.CurrentRun.Matrix.SystemID
+        params[index].values = System.ID
         
         index = index + 1
     end
@@ -1749,9 +1625,11 @@ function SellDatafiles()
         end
     end
     
-    KLib.Memory.WriteIntBig(Address.Nuyen, nuyen + total)
-    
-    KLib.Message.Add("+" .. total .. " Nuyen")
+    if total > 0 then
+        KLib.Memory.WriteIntBig(Address.Nuyen, nuyen + total)
+        
+        KLib.Message.Add("+" .. total .. " Nuyen")
+    end
 end
 
 function AddCHERNOBYLPasscode()
@@ -1784,29 +1662,40 @@ function GenerateRun(type, difficulty, johnson)
         local bonus = math.random(0, negotiation)
         local karma = 0
         
+        if StaticNegotiation then
+            bonus = negotiation
+        end
+        
         if type == RunType.GhoulBounty then
             if difficulty == 1 then
                 payment = 20
+                karma = 1
             else
                 payment = 40
+                karma = 2
             end
-            karma = 1
         elseif type == RunType.Bodyguard then
             if difficulty == 1 then
                 payment = 55
+                karma = 1
             else
                 payment = 200
+                karma = 2
             end
-            karma = 1
         elseif type == RunType.Courier then
             if difficulty == 1 then
                 payment = 55
+                karma = 1
             else
                 payment = 190
+                karma = 2
             end
-            karma = 1
         elseif type == RunType.Enforcement then
-            payment = 230
+            if difficulty == 1 then
+                payment = 115
+            else
+                payment = 230
+            end
             karma = 2
         elseif type == RunType.Acquisition or type == RunType.Extraction then
             if difficulty == 1 then
@@ -1818,17 +1707,6 @@ function GenerateRun(type, difficulty, johnson)
             elseif difficulty == 3 then
                 payment = 3850
                 karma = 6
-            end
-        elseif type == RunType.MatrixRun then
-            if difficulty == 1 then
-                payment = 500
-                karma = 2
-            elseif difficulty == 2 then
-                payment = 2750
-                karma = 3
-            elseif difficulty == 3 then
-                payment = 6100
-                karma = 5
             end
         end
         
@@ -1852,14 +1730,14 @@ function GenerateRun(type, difficulty, johnson)
     local building1 = 0
     local building2 = 0
     local other = 255
-    local message = "New Shadowrun!\n\n"
+    local message = ""
     
-    if difficulty == 1 and type >= RunType.GhoulBounty and type <= RunType.Courier then
+    if difficulty == 1 and type >= RunType.GhoulBounty and type <= RunType.Enforcement then
         johnson = 0 -- Mr. Gunderson
     end
     
-    message = message .. "Johnson: " .. Johnson[johnson] .. "\n \n"
-    message = message .. "Type: " .. tostring(RunType[type]) .. "\n"
+    message = message .. Johnson[johnson] .. "\n"
+    message = message .. tostring(RunType[type]) .. "\n\n"
     
     if type == RunType.GhoulBounty then
         if difficulty == 1 then
@@ -1868,7 +1746,7 @@ function GenerateRun(type, difficulty, johnson)
             area1 = math.random(1, #Area - 2)
         end
         
-        message = message .. "Area: " .. Area[area1] .. "\n"
+        message = message .. Area[area1] .. "\n"
     elseif type == RunType.Bodyguard or type == RunType.Courier then
         repeat
             if difficulty == 1 then
@@ -1887,12 +1765,12 @@ function GenerateRun(type, difficulty, johnson)
             other = math.random(0, #Client - 1)
         end
         
-        message = message .. "Pickup Area: " .. Area[area1] .. "\n"
-        message = message .. "Pickup Building: " .. Building[area1][building1] .. "\n"
-        message = message .. "Destination Area: " .. Area[area2] .. "\n"
-        message = message .. "Destination Building: " .. Building[area2][building2] .. "\n"
+        message = message .. Area[area1] .. "\n"
+        message = message .. Building[area1][building1] .. "\n"
+        message = message .. Area[area2] .. "\n"
+        message = message .. Building[area2][building2] .. "\n"
         if type == RunType.Bodyguard then
-            message = message .. "Client: " .. Client[other] .. "\n"
+            message = message .. Client[other] .. "\n"
         end
     elseif type == RunType.Enforcement then
         local targets =
@@ -1902,15 +1780,21 @@ function GenerateRun(type, difficulty, johnson)
             { 1, 9 }  -- Ork Gang
         }
         
-        local target = math.random(1, #targets)
+        local target = 0
+        
+        if difficulty == 1 then
+            target = 1
+        else
+            target = math.random(1, #targets)
+        end
         
         area1 = targets[target][1]
         building1 = targets[target][2]
         other = math.random(0, #EnforcementRunType - 1)
         
-        message = message .. "Destination Area: " .. Area[area1] .. "\n"
-        message = message .. "Destination Building: " .. Building[area1][building1] .. "\n"
-        message = message .. "Reason: " .. EnforcementRunType[other] .. "\n"
+        message = message .. Area[area1] .. "\n"
+        message = message .. Building[area1][building1] .. "\n"
+        message = message .. EnforcementRunType[other] .. "\n"
     elseif type == RunType.Acquisition or type == RunType.Extraction then
         local targets = {}
         
@@ -1935,46 +1819,18 @@ function GenerateRun(type, difficulty, johnson)
             other = math.random(0, #Client - 1)
         end
         
-        message = message .. "Destination Area: " .. Area[area1] .. "\n"
-        message = message .. "Destination Building: " .. Building[area1][building1] .. "\n"
+        message = message .. Area[area1] .. "\n"
+        message = message .. Building[area1][building1] .. "\n"
         if type == RunType.Acquisition then
-            message = message .. "Client: " .. Client[other] .. "\n"
+            message = message .. Client[other] .. "\n"
         end
-    elseif type == RunType.MatrixRun then
-        local targets = {}
-        
-        if difficulty == 1 then
-            -- Unnamed Systems
-            for i = 11, #System - 1 do
-                table.insert(targets, i)
-            end
-        elseif difficulty == 2 then
-            table.insert(targets, 1) -- Club Penumbra
-            table.insert(targets, 2) -- Seattle General Hospital
-            
-            -- Unnamed Systems
-            for i = 11, #System - 1 do
-                table.insert(targets, i)
-            end
-        elseif difficulty == 3 then
-            -- Named Systems
-            for i = 0, 9 do
-                table.insert(targets, i)
-            end                
-        end
-        
-        area1 = math.random(0, #MatrixRunType - 1)
-        building1 = targets[math.random(1, #targets)]
-        
-        message = message .. "Matrix Run Type: " .. MatrixRunType[area1] .. "\n"
-        message = message .. "Target System: " .. System[building1] .. "\n"
     end
     
     payment, karma, bonus = CalculatePayment(type, negotiation, difficulty)
     
-    message = message .. " \nPayment: " .. tostring(payment) .. " Nuyen\n"
-    message = message .. "Karma: " .. tostring(karma) .. "\n"
-    message = message .. "Bonus: " .. tostring(bonus) .. "%\n"
+    message = message .. "\n" .. tostring(payment) .. " Nuyen\n"
+    message = message .. tostring(karma) .. " Karma\n"
+    message = message .. tostring(bonus) .. "% Bonus"
     
     KLib.Memory.WriteByte(Address.CurrentRun.Johnson, johnson)
     KLib.Memory.WriteByte(Address.CurrentRun.RunType, type)
@@ -1988,31 +1844,15 @@ function GenerateRun(type, difficulty, johnson)
     KLib.Memory.WriteByte(Address.CurrentRun.Building2, building2)
     KLib.Memory.WriteByte(Address.CurrentRun.Other, other)
     
-    if type == RunType.MatrixRun then
-        local passcodes = KLib.Memory.ReadByte(Address.Notebook.Passcodes + 1)
-        
-        passcodes = bit.set(passcodes, 0)
-        
-        KLib.Memory.WriteByte(Address.Notebook.Passcodes + 1, passcodes)
-    end
-    
     KLib.Message.Overlay(message)
 end
 
-function GetPriceMod(cost)
+function GetPrice(cost)
     local negotiation = KLib.Memory.ReadByte(Address.Character.Skills.Negotiation)
     
     if negotiation > 2 then
         cost = KLib.Math.Round(cost - (cost * ((negotiation - 2) * 0.03)))
     end
-    
-    return cost
-end
-
-function GetItemPrice(type)
-    local cost = ItemValue[type]
-    
-    cost = GetPriceMod(cost)
     
     return cost
 end
@@ -2056,7 +1896,7 @@ function UpdateNames()
     end
 
     for i = 1, Address.Character.Max do
-        local name = ReadText(Address.Character.Name + KLib.Menu.GetOffset(), MaxNameLength)
+        local name = ReadText(Address.Character.Name + ((i - 1) * Address.Character.Offset), MaxNameLength)
         
         if string.len(name) > 0 then
             CharacterNames[i] = name
@@ -2077,123 +1917,6 @@ function UpdateNames()
 end
 
 function Mods()
-    local function QuickSwap()
-        local function CalculateAmmo(oldType, newType)
-            local offset = KLib.Menu.GetOffset(KLib.Memory.ReadByte(Address.RunnerIndex))
-            local ammo = KLib.Memory.ReadByte(Address.Character.Ammo + offset)
-            local mult = ammo / ItemMax[oldType]
-            
-            KLib.Memory.WriteByte(Address.Character.Ammo + offset, KLib.Math.Round(ItemMax[newType] * mult))
-        end
-        
-        local offset = KLib.Menu.GetOffset(KLib.Memory.ReadByte(Address.RunnerIndex))
-        local slot = KLib.Memory.ReadByte(Address.Character.Equipped.WeaponSlot + offset)
-        local items = {}
-        local weapons = {}
-        local spells = {}
-        
-        for i = 0, MaxItemSlots - 1 do
-            local item = KLib.Memory.ReadByte(Address.Character.Inventory.Items + offset + i)
-            
-            if item > 0 and item < 12 then
-                table.insert(weapons, { i, item })
-            end
-            
-            table.insert(items, item)
-        end
-        
-        for i = 0, KLib.Memory.ReadByte(Address.Spellbook.Address) do
-            local spell = KLib.Memory.ReadByte(Address.Spellbook.Address + offset + (i * 2) + 1) + 1
-            
-            table.insert(spells, spell)
-        end
-        
-        if KLib.Input.ButtonPressed("P1 Up") then
-            local prevWeapon = CurrentWeapon
-            
-            if CurrentType == 0 then
-                CurrentWeapon = CurrentWeapon - 1
-            end
-            
-            if CurrentWeapon < 1 then
-                CurrentWeapon = #weapons
-            end
-            
-            if CurrentWeapon ~= prevWeapon then
-                CalculateAmmo(weapons[prevWeapon][2], weapons[CurrentWeapon][2])
-            end
-            
-            KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, weapons[CurrentWeapon][2])
-            KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, weapons[CurrentWeapon][1])
-            
-            KLib.Message.Overlay("Switched to " .. Item[items[CurrentWeapon]])
-            
-            CurrentType = 0
-        elseif KLib.Input.ButtonPressed("P1 Down") then
-            local prevWeapon = CurrentWeapon
-            
-            if CurrentType == 0 then
-                CurrentWeapon = CurrentWeapon + 1
-            end
-            
-            if CurrentWeapon > #weapons then
-                CurrentWeapon = 1
-            end
-            
-            if CurrentWeapon ~= prevWeapon then
-                CalculateAmmo(weapons[prevWeapon][2], weapons[CurrentWeapon][2])
-            end
-            
-            KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, weapons[CurrentWeapon][2])
-            KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, weapons[CurrentWeapon][1])
-            
-            KLib.Message.Overlay("Switched to " .. Item[items[CurrentWeapon]])
-            
-            CurrentType = 0
-        end
-        
-        if #spells > 0 then
-            if KLib.Input.ButtonPressed("P1 Left") then
-                if CurrentType == 1 then
-                    CurrentSpell = CurrentSpell - 1
-                end
-                
-                if CurrentSpell < 1 then
-                    CurrentSpell = #spells
-                end
-                
-                KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, spells[CurrentSpell])
-                KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, 255)
-                
-                KLib.Message.Overlay("Switched to " .. Spell[spells[CurrentSpell] - 1])
-                
-                CurrentType = 1
-            elseif KLib.Input.ButtonPressed("P1 Right") then
-                if CurrentType == 1 then
-                    CurrentSpell = CurrentSpell + 1
-                end
-                
-                if CurrentSpell > #spells then
-                    CurrentSpell = spells[1]
-                end
-                
-                KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, spells[CurrentSpell])
-                KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, 255)
-                
-                KLib.Message.Overlay("Switched to " .. Spell[spells[CurrentSpell] - 1])
-                
-                CurrentType = 1
-            end
-        end
-        
-        if KLib.Input.ButtonPressed("P1 X") then
-            KLib.Memory.WriteByte(Address.Character.Equipped.Weapon + offset, 0)
-            KLib.Memory.WriteByte(Address.Character.Equipped.WeaponSlot + offset, 127)
-            
-            KLib.Message.Overlay("Switched to Melee")
-        end
-    end
-
     local function DrawNuyen()
         local nuyen = KLib.Memory.ReadIntBig(Address.Nuyen)
         
@@ -2215,8 +1938,8 @@ function Mods()
             local clips = KLib.Memory.ReadByte(Address.Character.Clips + (i * Address.Character.Offset))
             
             gui.drawRectangle(280, 23 + (i * offset), 32, 33, KLib.Color.Transparent, KLib.Color.Make(0, 0, 0, 128))
-            gui.pixelText(280, 25 + (i * offset), physical, KLib.Color.Make(34, 204, 34), KLib.Color.Transparent)
-            gui.pixelText(280, 35 + (i * offset), mental, KLib.Color.Make(204, 136, 204), KLib.Color.Transparent)
+            gui.pixelText(280, 25 + (i * offset), physical, KLib.Color.Make(204, 136, 204), KLib.Color.Transparent)
+            gui.pixelText(280, 35 + (i * offset), mental, KLib.Color.Make(34, 204, 34), KLib.Color.Transparent)
             gui.pixelText(280, 45 + (i * offset), karma, KLib.Color.Yellow, KLib.Color.Transparent)
             gui.pixelText(298, 45 + (i * offset), clips, KLib.Color.Orange, KLib.Color.Transparent)
         end
@@ -2252,14 +1975,6 @@ function Mods()
         end
     end
     
-    if KLib.Input.Joypad["P1 Y"] then
-        QuickSwap()
-    end
-    
-    if KLib.Input.ButtonPressed("P1 Z") then
-        SellDatafiles()
-    end
-    
     if KLib.Input.Parse("@NumberPad0") then
         ShowNuyen = not ShowNuyen
     end
@@ -2277,6 +1992,10 @@ function Mods()
     end
     
     if not KLib.Menu.Open then
+        if KLib.Input.ButtonPressed("P1 Z") or AutoSellDataFiles then
+            SellDatafiles()
+        end
+        
         if ShowNuyen then
             DrawNuyen()
         end
