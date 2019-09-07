@@ -54,7 +54,13 @@ function KLib.Input.MousePressed(click)
 end
 
 function KLib.Input.BlockJoypad()
-    joypad.set(joypad.get())
+    local joy = joypad.get()
+    
+    for k, v in pairs(joy) do
+        v = false
+    end
+    
+    joypad.set(joy)
 end
 
 function KLib.Input.ParseString(text)
