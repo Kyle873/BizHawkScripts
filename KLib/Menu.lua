@@ -98,6 +98,8 @@ function KLib.Menu.SubPage(name, create, onUpdate, data, width, height)
     KLib.Menu.Text(name).onUse = function()
         KLib.Menu.Switch(page)
     end
+	
+	return page
 end
 
 function KLib.Menu.Offset(titles, max, amount)
@@ -365,7 +367,8 @@ function KLib.Menu.Update()
                 if y + 18 < page.height then
                     for j = 1, item.max do
                         local color = KLib.Color.Red
-
+                        local width = 5
+                        
                         if bit.check(value, j - 1) then
                             color = KLib.Color.Green
                         end
@@ -374,9 +377,9 @@ function KLib.Menu.Update()
                             color = KLib.Color.Pulse(color, 64, 8)
                         end
 
-                        gui.drawRectangle(x, y + 9, 6, 6, color, color)
+                        gui.drawRectangle(x, y + 9, width, 6, color, color)
 
-                        x = x + 8
+                        x = x + width + 2
                     end
                 end
             end

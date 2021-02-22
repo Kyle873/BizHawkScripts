@@ -27,6 +27,151 @@ Address =
     EnemyState = 0x23EAA
 }
 
+Items =
+{
+	[0x00] = "Nothing",
+	[0x01] = "Knife",
+	[0x02] = "Handgun",
+	[0x03] = "Handgun",
+	[0x04] = "Shotgun",
+	[0x05] = "Magnum",
+	[0x06] = "Grenade Launcher",
+	[0x07] = "Grenade Launcher",
+	[0x08] = "Grenade Launcher",
+	[0x09] = "Grenade Launcher",
+	[0x0A] = "Rocket Launcher",
+	[0x0B] = "Gatling Gun",
+	[0x0C] = "Mine Thrower",
+	[0x0D] = "Eagle 6.0",
+	[0x0E] = "Assault Rifle",
+	[0x0F] = "Assault Rifle",
+	[0x10] = "Western Custom",
+	[0x11] = "Sigpro E.",
+	[0x12] = "M 92F E.",
+	[0x13] = "Benelli M35 E.",
+	[0x14] = "Mine Thrower E.",
+	[0x15] = "Hand Gun Bullets",
+	[0x16] = "Magnum Bullets",
+	[0x17] = "Shotgun Shells",
+	[0x18] = "Grenade Rounds",
+	[0x19] = "Flame Rounds",
+	[0x1A] = "Acid Rounds",
+	[0x1B] = "Freeze Rounds",
+	[0x1C] = "Mine Thrower Rounds",
+	[0x1D] = "Assault Rifle Bullets",
+	[0x1E] = "Hand Gun Bullets E.",
+	[0x1F] = "Shotgun Shells E",
+	[0x20] = "First Aid Spray",
+	[0x21] = "Green Herb",
+	[0x22] = "Blue Herb",
+	[0x23] = "Red Herb",
+	[0x24] = "2 Green Herb Mixture",
+	[0x25] = "2 Green Herb Mixture",
+	[0x26] = "Blue Green Herb Mix",
+	[0x27] = "Red Green Herb Mix",
+	[0x28] = "3 Green Herb Mix",
+	[0x29] = "2 Green 1 Blue Herb Mix",
+	[0x2A] = "1 Green 1 Red 1 Blue Mix",
+	[0x2B] = "Crank",
+	[0x2C] = "*Botu",
+	[0x2D] = "*Botu",
+	[0x2E] = "*Botu",
+	[0x2F] = "Jill's STARS Card",
+	[0x30] = "*Botu",
+	[0x31] = "Battery",
+	[0x32] = "Fire Hose",
+	[0x33] = "Power Cord",
+	[0x34] = "Fuse",
+	[0x35] = "*Botu",
+	[0x36] = "Oil Additive",
+	[0x37] = "Card Case",
+	[0x38] = "Brad's STARS Card",
+	[0x39] = "Machine Oil",
+	[0x3A] = "Mixed Oil",
+	[0x3B] = "*Botu",
+	[0x3C] = "Wrench",
+	[0x3D] = "Iron Pipe",
+	[0x3E] = "*Botu",
+	[0x3F] = "Fire Hose",
+	[0x40] = "Tape Recorder",
+	[0x41] = "Lighter Oil",
+	[0x42] = "Lighter",
+	[0x43] = "Lighter",
+	[0x44] = "Green Gem",
+	[0x45] = "Blue Gem",
+	[0x46] = "Amber Ball",
+	[0x47] = "Obsidian Ball",
+	[0x48] = "Crystal Ball",
+	[0x49] = "*Botu",
+	[0x4A] = "*Botu",
+	[0x4B] = "*Botu",
+	[0x4C] = "Gold Gear",
+	[0x4D] = "Silver Gear",
+	[0x4E] = "Chronos Gear",
+	[0x4F] = "Bronze Book",
+	[0x50] = "Bronze Compass",
+	[0x51] = "Vaccine Medium",
+	[0x52] = "Vaccine Base",
+	[0x53] = "*Botu",
+	[0x54] = "*Botu",
+	[0x55] = "Vaccine",
+	[0x56] = "*Botu",
+	[0x57] = "*Botu",
+	[0x58] = "Medium Base",
+	[0x59] = "Eagle Parts A",
+	[0x5A] = "Eagle Parts B",
+	[0x5B] = "M37 Parts A",
+	[0x5C] = "M37 Parts B",
+	[0x5D] = "*Botu",
+	[0x5E] = "Chronos Chain",
+	[0x5F] = "Rusted Hex Crank",
+	[0x60] = "Card Key",
+	[0x61] = "Gun Powder A",
+	[0x62] = "Gun Powder B",
+	[0x63] = "Gun Powder C",
+	[0x64] = "Gun Powder AA",
+	[0x65] = "Gun Powder BB",
+	[0x66] = "Gun Powder AC",
+	[0x67] = "Gun Powder BC",
+	[0x68] = "Gun Powder CC",
+	[0x69] = "Gun Powder AAA",
+	[0x6A] = "Gun Powder AAB",
+	[0x6B] = "Gun Powder BBA",
+	[0x6C] = "Gun Powder BBB",
+	[0x6D] = "Gun Powder CCC",
+	[0x6E] = "Infinite Bullets Kit",
+	[0x6F] = "Water Sample",
+	[0x70] = "System Disk",
+	[0x71] = "*Dummy Key",
+	[0x72] = "Lockpick",
+	[0x73] = "Warehouse Key",
+	[0x74] = "Sickroom Key",
+	[0x75] = "Emblem Key",
+	[0x76] = "*Botu (A Set Of Keys)",
+	[0x77] = "Clock Tower Key",
+	[0x78] = "Clock Tower Key 2",
+	[0x79] = "Chronos Key",
+	[0x7A] = "*Botu",
+	[0x7B] = "Park Key",
+	[0x7C] = "Park Key 2",
+	[0x7D] = "Park Key 3",
+	[0x7E] = "Facility Key",
+	[0x7F] = "Facility Key 2",
+	[0x82] = "Reloading Tool"
+}
+
+ItemFlags =
+{
+	"Unknown",
+	"Unknown",
+	"Unknown",
+	"Unknown",
+	"Unknown",
+	"Unknown",
+	"Unknown",
+	"Unknown"
+}
+
 WeaponAmmoTypes =
 {
     [1] = 0,   -- Knife
@@ -55,107 +200,46 @@ Debug = false
 EnemyFrozen = false
 ItemCopy = {}
 
+MaxItemSize = 4
+MaxInventory = 10
+MaxStorage = 64
+
 HealthPrev = 0
 HealthTimer = 0
 HealthTimerBase = 60 * 15
 HealthTimerMax = HealthTimerBase
-HealthTimerMult = 1
+HealthTimerMult = 0
 
-function Input()
-    if not MenuOpen() then
-        if KLib.Input.Joypad["P1 L1"] then
-            -- Save
-            if KLib.Input.ButtonPressed("P1 Triangle") then
-                KLib.Memory.WriteShort(0xD1D18, 0x13CC)
-                KLib.Memory.WriteShort(0xD1D1A, 0x8005)
-            end
+ItemGenEnabled = true
+ItemGenReady = false
+ItemGenTimer = 0
+ItemGenTimerMax = 60 * 60 * 2
 
-            -- Storage
-            if KLib.Input.ButtonPressed("P1 Square") then
-                KLib.Memory.WriteShort(0xD1F2C, 0x0200)
-                KLib.Memory.WriteShort(0xE01C4, 0x0002)
-            end
+function CreateMenu()
+    KLib.Menu.Color(KLib.Color.White, KLib.Color.Make(0, 0, 0, 192))
+    
+    KLib.Menu.Page("Resident Evil 3\r")
+    
+	KLib.Menu.SubPage("Inventory", CreateInventoryPage)
+	KLib.Menu.SubPage("Storage", CreateStoragePage)
+end
 
-            -- Freeze/Unfreeze Enemies
-            if KLib.Input.ButtonPressed("P1 Cross") then
-                EnemyFrozen = not EnemyFrozen
+function CreateInventoryPage()
+    KLib.Menu.Offset(nil, MaxInventory, MaxItemSize)
+	
+    KLib.Menu.Enum("ID", Address.Items, "byte", Items)
+    KLib.Menu.Field("Quantity", Address.Items + 1, "byte")
+    KLib.Menu.Bitfield("Flags", Address.Items + 2, "byte", ItemFlags)
+    KLib.Menu.Field("Fraction", Address.Items + 3, "byte")
+end
 
-                if EnemyFrozen then
-                    KLib.Memory.WriteShort(Address.EnemyState, 0x2400)
-                else
-                    KLib.Memory.WriteShort(Address.EnemyState, 0x0040)
-                end
-            end
-        end
-
-        -- Rapid Fire
-        if KLib.Input.Joypad["P1 R1"] and KLib.Input.Joypad["P1 R2"] then
-            KLib.Memory.WriteByte(Address.FireTimer, 0x1E02)
-        end
-    end
-
-    -- Item Box Editor
-    if MenuOpen() then
-        local index = KLib.Memory.ReadByte(Address.StorageIndex)
-        local address = Address.Storage + (index * 4)
-        local item = KLib.Memory.ReadByte(address)
-        local quantity = KLib.Memory.ReadByte(address + 1)
-        local flags = KLib.Memory.ReadByte(address + 2)
-        local fraction = KLib.Memory.ReadByte(address + 3)
-
-        if Debug then
-            gui.drawText(6, 0, index .. " | " .. string.format("%0X", address) .. " | " .. item .. " | " .. quantity .. " | " .. flags .. " | " .. fraction)
-        end
-
-        if KLib.Input.Joypad["P1 Square"] then
-            if KLib.Input.ButtonPressed("P1 Left") then
-                KLib.Memory.WriteByte(address, item - 1)
-            end
-
-            if KLib.Input.ButtonPressed("P1 Right") then
-                KLib.Memory.WriteByte(address, item + 1)
-            end
-
-            if KLib.Input.ButtonPressed("P1 L2") then
-                KLib.Memory.WriteByte(address + 1, quantity - 1)
-            end
-
-            if KLib.Input.ButtonPressed("P1 R2") then
-                KLib.Memory.WriteByte(address + 1, quantity + 1)
-            end
-
-            if KLib.Input.ButtonPressed("P1 Select") then
-                KLib.Memory.WriteInt(address, 0)
-            end
-        end
-
-        if KLib.Input.Joypad["P1 Circle"] then
-            if KLib.Input.ButtonPressed("P1 Left") then
-                KLib.Memory.WriteByte(address + 2, flags - 1)
-            end
-
-            if KLib.Input.ButtonPressed("P1 Right") then
-                KLib.Memory.WriteByte(address + 2, flags + 1)
-            end
-
-            if KLib.Input.ButtonPressed("P1 L2") then
-                ItemCopy = { item, quantity, flags, fraction }
-            end
-
-            if KLib.Input.ButtonPressed("P1 R2") then
-                for i = 0, 3 do
-                    KLib.Memory.WriteByte(address + i, ItemCopy[i + 1])
-                end
-            end
-
-            if KLib.Input.ButtonPressed("P1 Select") then
-                KLib.Memory.WriteByte(address, math.random(97, 98))
-                KLib.Memory.WriteByte(address + 1, 1)
-                KLib.Memory.WriteByte(address + 2, 0)
-                KLib.Memory.WriteByte(address + 3, 0)
-            end
-        end
-    end
+function CreateStoragePage()
+    KLib.Menu.Offset(nil, MaxStorage, MaxItemSize)
+	
+    KLib.Menu.Enum("ID", Address.Storage, "byte", Items)
+    KLib.Menu.Field("Quantity", Address.Storage + 1, "byte")
+    KLib.Menu.Bitfield("Flags", Address.Storage + 2, "byte", ItemFlags)
+    KLib.Menu.Field("Fraction", Address.Storage + 3, "byte")
 end
 
 function Draw()
@@ -310,7 +394,36 @@ function Mods()
             HealthPrev = health
         end
     end
-
+	
+	local function ItemGen()
+		if ItemGenTimer >= ItemGenTimerMax then
+			ItemGenReady = true
+		elseif not MenuOpen() then
+			ItemGenTimer = ItemGenTimer + 1
+		end
+		
+		if ItemGenReady and MenuOpen() then
+			local slot = GetFreeStorageSlot()
+			local item, amount = GetBonusItem()
+			
+			if slot ~= nil then
+				KLib.Memory.WriteByte(Address.Storage + (slot * MaxItemSize), item)
+				KLib.Memory.WriteByte(Address.Storage + (slot * MaxItemSize) + 1, amount)
+				KLib.Memory.WriteByte(Address.Storage + (slot * MaxItemSize) + 2, 0)
+				KLib.Memory.WriteByte(Address.Storage + (slot * MaxItemSize) + 3, 0)
+				
+				ItemGenTimer = 0
+				ItemGenReady = false
+                
+				KLib.Message.Add("Synthesized " .. Items[item] .. " (Slot " .. slot + 1 .. ")")
+			else
+                KLib.Message.Add("Storage is full!")
+			end
+		end
+		
+		gui.drawRectangle(8, client.bufferheight() - 1, (ItemGenTimer / ItemGenTimerMax) * (client.bufferwidth() - 16), 2, ItemGenReady and KLib.Color.Rainbow(64 * 10) or KLib.Color.White)
+	end
+	
     -- Secret Mode
     -- KLib.Memory.WriteShort(Address.StartFlags, 0xFFE0)
 
@@ -329,7 +442,43 @@ function Mods()
     KLib.Memory.WriteShort(Address.MixSkill + 10, 500)
     KLib.Memory.WriteShort(Address.MixSkill + 12, 500)
 
-    HealthRegen()
+    if not MenuOpen() then
+        if KLib.Input.Joypad["P1 L1"] then
+            -- Save
+            if KLib.Input.ButtonPressed("P1 Triangle") then
+                KLib.Memory.WriteShort(0xD1D18, 0x13CC)
+                KLib.Memory.WriteShort(0xD1D1A, 0x8005)
+            end
+
+            -- Storage
+            if KLib.Input.ButtonPressed("P1 Square") then
+                KLib.Memory.WriteShort(0xD1F2C, 0x0200)
+                KLib.Memory.WriteShort(0xE01C4, 0x0002)
+            end
+
+            -- Freeze/Unfreeze Enemies
+            if KLib.Input.ButtonPressed("P1 Cross") then
+                EnemyFrozen = not EnemyFrozen
+
+                if EnemyFrozen then
+                    KLib.Memory.WriteShort(Address.EnemyState, 0x2400)
+                else
+                    KLib.Memory.WriteShort(Address.EnemyState, 0x0040)
+                end
+            end
+        end
+
+        -- Rapid Fire
+        if KLib.Input.Joypad["P1 R1"] and KLib.Input.Joypad["P1 R2"] then
+            KLib.Memory.WriteByte(Address.FireTimer, 0x1E02)
+        end
+    end
+
+	HealthRegen()
+	
+	if ItemGenEnabled then
+		ItemGen()
+	end
 end
 
 function MenuOpen()
@@ -400,10 +549,33 @@ function CalculateAmmo()
     return total, totalStorage
 end
 
+function GetFreeStorageSlot()
+	for i = 0, MaxInventory - 1 do
+		if KLib.Memory.ReadByte(Address.Storage + (i * MaxItemSize)) == 0 then
+			return i
+		end
+	end
+	
+	return nil
+end
+
+function GetBonusItem()
+	local items =
+	{
+		33, 97, 98
+	}
+	
+	local item = items[math.random(1, #items)]
+	local amount = 1
+	
+	return item, amount
+end
+
+CreateMenu()
+
 while true do
     KLib.Update()
 
-    Input()
     Draw()
     Mods()
 

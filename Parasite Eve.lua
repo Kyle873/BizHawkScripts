@@ -404,6 +404,8 @@ EquipmentFlags =
     "Unknown"
 }
 
+EquipmentPage = nil
+
 MaxItems = 50
 MaxEquipment = 128
 MaxItemStorage = 100
@@ -415,6 +417,7 @@ ShowPE = true
 PERegen = true
 BPGeneration = true
 EquipmentCrafting = true
+AutoDiscardJunk = false
 PEThresholdTimer = 0
 PEThresholdTimerMax = 60 * 5
 PERegenTimer = 0
@@ -422,10 +425,11 @@ PERegenTimerMax = 60
 BPGenTimer = 0
 BPGenTimerMax = 60 * 60 * 5
 BPGenLevelThreshold = 98
-BPGenMaxLevelAmount = 1000
+BPGenMaxLevelAmount = 5000
 BPGenAccum = 0
 CurrentEXP = 0
 PrevEXP = 999999
+BattleEXP = 0
 
 KLib.Message.Color(KLib.Color.Yellow, KLib.Color.Transparent)
 
@@ -435,17 +439,14 @@ function CreateMenu()
     KLib.Menu.Page("Parasite Eve\r")
     
     KLib.Menu.SubPage("Stats", CreateStatsPage)
-    KLib.Menu.SubPage("Items", CreateItemsPage, nil, { type = "inventory", address = Address.Items, max = MaxItems })
-    KLib.Menu.SubPage("Equipment", CreateEquipmentPage, UpdateEquipmentPage)
-    KLib.Menu.SubPage("Item Storage", CreateItemsPage, nil, { type = "item_storage", address = Address.ItemStorage, max = MaxItemStorage })
-    KLib.Menu.SubPage("Equipment Storage", CreateItemsPage, nil, { type = "equipment_storage", address = Address.EquipmentStorage, max = MaxEquipmentStorage })
+    KLib.Menu.SubPage("Items", CreateItemsPage, UpdateItemsPage, { type = "inventory", address = Address.Items, max = MaxItems })
+    EquipmentPage = KLib.Menu.SubPage("Equipment", CreateEquipmentPage, UpdateEquipmentPage)
+    KLib.Menu.SubPage("Item Storage", CreateItemsPage, UpdateItemsPage, { type = "item_storage", address = Address.ItemStorage, max = MaxItemStorage })
+    KLib.Menu.SubPage("Equipment Storage", CreateItemsPage, UpdateItemsPage, { type = "equipment_storage", address = Address.EquipmentStorage, max = MaxEquipmentStorage })
     KLib.Menu.SubPage("Crates", CreateCratesPage)
     KLib.Menu.SubPage("Battle", CreateBattlePage)
     KLib.Menu.SubPage("World", CreateWorldPage)
     KLib.Menu.SubPage("BP Shop", CreateBPShopPage, UpdateBPShopPage)
-    
-    KLib.Menu.Separator()
-    
 end
 
 function CreateStatsPage()
@@ -514,11 +515,11 @@ function CreateItemsPage(data)
     end
     
     local function UseItem(self)
-        if data.type == "inventory" then
-            TransferItem("inventory", self.address)
-        else
-            TransferItem("storage", self.address)
-        end
+		if data.type == "inventory" then
+			TransferItem("inventory", self.address)
+		else
+			TransferItem("storage", self.address)
+		end
     end
     
     for i = 0, data.max - 1 do
@@ -528,6 +529,19 @@ function CreateItemsPage(data)
         item.onUpdate = UpdateItem
         item.onUse = UseItem
     end
+end
+
+function UpdateItemsPage(page)
+	if KLib.Input.Parse("@X1 X") then
+		local item = page.items[KLib.Menu.Index]
+		local id = KLib.Memory.ReadByte(item.address)
+		local type = KLib.Memory.ReadByte(item.address + 1)
+		
+		if type == 1 and (KLib.Menu.Index % 2) == 0 then
+			KLib.Menu.Switch(EquipmentPage)
+			KLib.Menu.OffsetIndex = id + 1
+		end
+	end
 end
 
 function CreateEquipmentPage()
@@ -812,7 +826,10 @@ function Mods()
         end
         
         KLib.Memory.WriteShort(Address.Junk, junk + total)
-        KLib.Message.Add("Discarded " .. total .. " Junk (" .. junk + total .. " Total)")
+		
+		if total > 0 then
+			KLib.Message.Add("Discarded " .. total .. " Junk (" .. junk + total .. " Total)")
+		end
     end
     
     local function DrawPE()
@@ -836,6 +853,13 @@ function Mods()
         end
     end
     
+	local function DrawStats()
+        local color = KLib.Color.Orange
+		
+		gui.drawText(4, 4, "Test", color, KLib.Color.Transparent, nil, nil, nil, "left")
+		
+	end
+	
     local function RegenPE()
         local PE = KLib.Memory.ReadShort(Address.PE)
         local maxPE = KLib.Memory.ReadShort(Address.MaxPE)
@@ -866,7 +890,14 @@ function Mods()
         
         if level < BPGenLevelThreshold then
             if CurrentEXP > PrevEXP then
-                local bonus = math.floor((CurrentEXP - PrevEXP) / 10)
+				local divider = 2
+				
+				-- You're generally this level when you reach the Museum (the real grinding spot)
+				if level + 1 >= 28 then
+					divider = 4
+				end
+				
+				local bonus = math.floor((CurrentEXP - PrevEXP) / divider)
                 
                 if bonus <= 0 then
                     bonus = 1
@@ -947,8 +978,8 @@ function Mods()
             DiscardJunk()
         end
         
-        if KLib.Input.ButtonPressed("P1 R1") then
-            CraftEquipment()
+        if KLib.Input.Joypad["P1 R1"] then
+            DrawStats()
         end
     end
     
@@ -967,6 +998,10 @@ function Mods()
     if EquipmentCrafting then
         CraftEquipment()
     end
+	
+	if AutoDiscardJunk then
+		DiscardJunk()
+	end
 end
 
 CreateMenu()

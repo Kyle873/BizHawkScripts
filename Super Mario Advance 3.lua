@@ -32,7 +32,7 @@ Items =
 
 memory.usememorydomain("IWRAM")
 
-KLib.Monitor.Variable("Form", Address.Form, "byte")
+-- KLib.Monitor.Variable("Form", Address.Form, "byte")
 
 function CreateMenu()
     KLib.Menu.Color(KLib.Color.White, KLib.Color.Make(0, 0, 0, 192))

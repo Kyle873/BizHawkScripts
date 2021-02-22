@@ -76,7 +76,7 @@ Address =
         MysteryEgg = 0x7EE012,
         LambsLure = 0x7EE012,
         LuckyJewel = 0x7EE014
-    },
+    }
 }
 
 Characters =

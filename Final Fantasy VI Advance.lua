@@ -2,12 +2,6 @@ dofile("KLib/KLib.lua")
 
 Address =
 {
-    Gil = 0x001860,
-    Steps = 0x001866,
-    Time = 0x00021B,
-    
-    MenuIndex = 0x020C34,
-    
     Character =
     {
         Base = 0x001600,
@@ -41,15 +35,32 @@ Address =
         }
     },
     
-    PartyBlock = 0x001850,
-    
     Items =
     {
+        Gil = 0x001860,
         Base = 0x039010,
         Quantity = 0x039130,
         Key = 0x001EBA,
         Magicite = 0x039000
     },
+    
+    Abilities =
+    {
+        Bushido = 0x001CF7,
+        Blitz = 0x001D28,
+        Lore = 0x001D29,
+        Rage = 0x001D2C,
+        Dance = 0x001D4C
+    },
+    
+    WorldFlags = 0x0011DF,
+    
+    Bestiary = 0x239800,
+    
+    Steps = 0x001866,
+    Time = 0x00021B,
+    
+    MenuIndex = 0x020C34
 }
 
 Characters =
@@ -69,7 +80,9 @@ Characters =
     [0x0C] = "Gogo",
     [0x0D] = "Umaro",
     [0x0E] = "Guest 1",
-    [0x0F] = "Guest 2"
+    [0x0F] = "Guest 2",
+    [0x20] = "Wedge",
+    [0x21] = "Biggs"
 }
 
 Items =
@@ -334,73 +347,63 @@ Items =
 
 KeyItems =
 {
-    {
-        "Cider",
-        "Old Clock Key",
-        "Fish",
-        "Fish",
-        "Fish",
-        "Fish",
-        "Lump of Metal",
-        "Lola's Letter",
-        "Coral",
-        "Books",
-        "Emperor's Letter",
-        "Rust-Rid",
-        "Autograph",
-        "Manicure",
-        "Opera Record",
-        "Magnifying Glass"
-    },
-    
-    {
-        "Rare Stone",
-        "Odd Picture",
-        "Ordinary Picture",
-        "Pendant",
-        "Stone Tablet",
-        "Master's Crown"
-    }
+    "Cider",
+    "Old Clock Key",
+    "Fish",
+    "Fish",
+    "Fish",
+    "Fish",
+    "Lump of Metal",
+    "Lola's Letter",
+    "Coral",
+    "Books",
+    "Emperor's Letter",
+    "Rust-Rid",
+    "Autograph",
+    "Manicure",
+    "Opera Record",
+    "Magnifying Glass",
+    "Rare Stone",
+    "Odd Picture",
+    "Ordinary Picture",
+    "Pendant",
+    "Stone Tablet",
+    "Master's Crown"
 }
 
 Magicite =
 {
-    {
-        "Ramuh",
-        "Ifrit",
-        "Shiva",
-        "Siren",
-        "Midgardsormr",
-        "Catoblepas",
-        "Maduin",
-        "Bismarck",
-        "Cait Sith",
-        "Quetzalli",
-        "Valigarmanda",
-        "Odin",
-        "Raiden",
-        "Bahamut",
-        "Alexander",
-        "Crusader"
-    },
-    
-    {
-        "Ragnarok",
-        "Kirin",
-        "Zona Seeker",
-        "Carbuncle",
-        "Phantom",
-        "Seraph",
-        "Golem",
-        "Unicorn",
-        "Fenrir",
-        "Lakshmi",
-        "Phoenix",
-        "Leviathan",
-        "Cactuar",
-        "Diabolos",
-        "Gilgamesh"
-    }
+    "Ramuh",
+    "Ifrit",
+    "Shiva",
+    "Siren",
+    "Midgardsormr",
+    "Catoblepas",
+    "Maduin",
+    "Bismarck",
+    "Cait Sith",
+    "Quetzalli",
+    "Valigarmanda",
+    "Odin",
+    "Raiden",
+    "Bahamut",
+    "Alexander",
+    "Crusader",
+    "Ragnarok",
+    "Kirin",
+    "Zona Seeker",
+    "Carbuncle",
+    "Phantom",
+    "Seraph",
+    "Golem",
+    "Unicorn",
+    "Fenrir",
+    "Lakshmi",
+    "Phoenix",
+    "Leviathan",
+    "Cactuar",
+    "Diabolos",
+    "Gilgamesh"
 }
 
 Espers =
@@ -472,11 +475,21 @@ Commands =
     [0x1D] = "Magitek"
 }
 
-memory.usememorydomain("Combined WRAM")
+WorldFlags =
+{
+    "Unknown",
+    "Sprint Shoes",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Unknown",
+    "Moogle Charm",
+    "Unknown"
+}
 
-KLib.Monitor.Variable(nil, 0x0011DF, "byte")
-KLib.Monitor.Variable(nil, 0x001E87, "byte")
-KLib.Monitor.Variable(nil, 0x001F6E, "byte")
+MaxItems = 288
+
+memory.usememorydomain("Combined WRAM")
 
 function CreateMenu()
     KLib.Menu.Color(KLib.Color.White, KLib.Color.Make(32, 32, 128, 192))
@@ -485,15 +498,10 @@ function CreateMenu()
     
     KLib.Menu.SubPage("Characters", CreateCharacterPage)
     KLib.Menu.SubPage("Items", CreateItemsPage)
-    
+    KLib.Menu.SubPage("Abilities", CreateAbilitiesPage)
+    KLib.Menu.SubPage("World", CreateWorldPage)
     KLib.Menu.Separator()
-    KLib.Menu.Text("Misc/Debugging", KLib.Color.Pink, true)
-    KLib.Menu.Field("Time (Hours)", Address.Time, "byte", 0, 99)
-    KLib.Menu.Field("Time (Minutes)", Address.Time + 1, "byte", 0, 59)
-    KLib.Menu.Field("Time (Seconds)", Address.Time + 2, "byte", 0, 59)
-    KLib.Menu.Field("Time (Centiseconds)", Address.Time + 3, "byte", 0, 59)
-    KLib.Menu.Field("Steps", Address.Steps, "u16_le", 0, 9999999)
-    KLib.Menu.Field("Main Menu Index", Address.MenuIndex, "byte")
+    KLib.Menu.SubPage("Misc/Debug", CreateMiscPage)
 end
 
 function CreateCharacterPage()
@@ -505,12 +513,12 @@ function CreateCharacterPage()
     KLib.Menu.Text("Basic", KLib.Color.Green, true)
     KLib.Menu.Enum("ID", Address.Character.Base + Address.Character.Offset.ID, "byte", Characters)
     KLib.Menu.Field("Level", Address.Character.Base + Address.Character.Offset.Level, "byte", 1, 99, barOffset, barWidth, KLib.Color.White)
-    KLib.Menu.Field("Current HP", Address.Character.Base + Address.Character.Offset.CurrentHP, "s16_le", 0, 9999, barOffset, barWidth, KLib.Color.Green)
-    KLib.Menu.Field("Max HP", Address.Character.Base + Address.Character.Offset.MaxHP, "s16_le", 0, 9999, barOffset, barWidth, KLib.Color.Green)
-    KLib.Menu.Field("Current MP", Address.Character.Base + Address.Character.Offset.CurrentMP, "s16_le", 0, 999, barOffset, barWidth, KLib.Color.Cyan)
-    KLib.Menu.Field("Max MP", Address.Character.Base + Address.Character.Offset.MaxMP, "s16_le", 0, 999, barOffset, barWidth, KLib.Color.Cyan)
+    KLib.Menu.Field("Current HP", Address.Character.Base + Address.Character.Offset.CurrentHP, "u16_le", 0, 9999, barOffset, barWidth, KLib.Color.Green)
+    KLib.Menu.Field("Max HP", Address.Character.Base + Address.Character.Offset.MaxHP, "u16_le", 0, 9999, barOffset, barWidth, KLib.Color.Green)
+    KLib.Menu.Field("Current MP", Address.Character.Base + Address.Character.Offset.CurrentMP, "u16_le", 0, 999, barOffset, barWidth, KLib.Color.Cyan)
+    KLib.Menu.Field("Max MP", Address.Character.Base + Address.Character.Offset.MaxMP, "u16_le", 0, 999, barOffset, barWidth, KLib.Color.Cyan)
     KLib.Menu.Field("Experience", Address.Character.Base + Address.Character.Offset.Experience, "u24_le", 0, 9999999)
-    KLib.Menu.Bitfield("Status", Address.Character.Base + Address.Character.Offset.Status, "s16_le", {})
+    KLib.Menu.Bitfield("Status", Address.Character.Base + Address.Character.Offset.Status, "u16_le", {})
     
     KLib.Menu.Separator()
     KLib.Menu.Text("Commands", KLib.Color.Orange, true)
@@ -528,43 +536,71 @@ function CreateCharacterPage()
     KLib.Menu.Separator()
     KLib.Menu.Text("Equipment", KLib.Color.Cyan, true)
     KLib.Menu.Enum("Esper", Address.Character.Base + Address.Character.Offset.Esper, "byte", Espers)
-    KLib.Menu.Field("Right Hand", Address.Character.Base + Address.Character.Offset.RightHand, "byte")
-    KLib.Menu.Field("Left Hand", Address.Character.Base + Address.Character.Offset.LeftHand, "byte")
-    KLib.Menu.Field("Head", Address.Character.Base + Address.Character.Offset.Head, "byte")
-    KLib.Menu.Field("Body", Address.Character.Base + Address.Character.Offset.Body, "byte")
-    KLib.Menu.Field("Relic 1", Address.Character.Base + Address.Character.Offset.Relic1, "byte")
-    KLib.Menu.Field("Relic 2", Address.Character.Base + Address.Character.Offset.Relic2, "byte")
+    KLib.Menu.Enum("Right Hand", Address.Character.Base + Address.Character.Offset.RightHand, "byte", Items)
+    KLib.Menu.Enum("Left Hand", Address.Character.Base + Address.Character.Offset.LeftHand, "byte", Items)
+    KLib.Menu.Enum("Head", Address.Character.Base + Address.Character.Offset.Head, "byte", Items)
+    KLib.Menu.Enum("Body", Address.Character.Base + Address.Character.Offset.Body, "byte", Items)
+    KLib.Menu.Enum("Relic 1", Address.Character.Base + Address.Character.Offset.Relic1, "byte", Items)
+    KLib.Menu.Enum("Relic 2", Address.Character.Base + Address.Character.Offset.Relic2, "byte", Items)
 end
 
 function CreateItemsPage()
-    local max = 36
-    
-    KLib.Menu.Field("Gil", Address.Gil, "u24_le", 0, 9999999)
+    KLib.Menu.Field("Gil", Address.Items.Gil, "u24_le", 0, 9999999)
     
     KLib.Menu.Separator()
-    KLib.Menu.Text("Items", KLib.Color.Cyan, true)
     KLib.Menu.SubPage("Items", function()
-            KLib.Menu.Offset(nil, 8, 36)
-            KLib.Menu.EnumGroup(36, "Item", Address.Items.Base, "byte", Items)
+            KLib.Menu.EnumGroup(MaxItems, "Item", Address.Items.Base, "byte", Items)
         end)
     KLib.Menu.SubPage("Quantities", function()
-            KLib.Menu.Offset(nil, 8, 36)
-            KLib.Menu.FieldGroup(36, "Quantity", Address.Items.Quantity, "byte")
+            KLib.Menu.FieldGroup(MaxItems, "Quantity", Address.Items.Quantity, "byte")
         end)
     
     KLib.Menu.Separator()
-    KLib.Menu.Text("Key Items", KLib.Color.Yellow, true)
-    KLib.Menu.BitfieldGroup(2, "Key Items", Address.Items.Key, "s16_le", KeyItems)
+    KLib.Menu.Bitfield("Key Items", Address.Items.Key, "u32_le", KeyItems)
     
     KLib.Menu.Separator()
-    KLib.Menu.Text("Magicite", KLib.Color.Pink, true)
-    KLib.Menu.BitfieldGroup(2, "Magicite", Address.Items.Magicite, "s16_le", Magicite)
+    KLib.Menu.Bitfield("Magicite", Address.Items.Magicite, "u32_le", Magicite)
+end
+
+function CreateMiscPage()
+    KLib.Menu.Text("Misc", KLib.Color.Blue, true)
+    KLib.Menu.Field("Steps", Address.Steps, "u16_le", 0, 9999999)
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Time", KLib.Color.Blue, true)
+    KLib.Menu.Field("Time (Hours)", Address.Time, "byte", 0, 99)
+    KLib.Menu.Field("Time (Minutes)", Address.Time + 1, "byte", 0, 59)
+    KLib.Menu.Field("Time (Seconds)", Address.Time + 2, "byte", 0, 59)
+    KLib.Menu.Field("Time (Centiseconds)", Address.Time + 3, "byte", 0, 59)
+    
+    KLib.Menu.Separator()
+    KLib.Menu.Text("Debug", KLib.Color.Blue, true)
+    KLib.Menu.Field("Main Menu Index", Address.MenuIndex, "byte")
+end
+
+function CreateAbilitiesPage()
+    KLib.Menu.Bitfield("Bushido", Address.Abilities.Bushido, "byte", {})
+    KLib.Menu.Bitfield("Blitz", Address.Abilities.Blitz, "byte", {})
+    KLib.Menu.Bitfield("Lore", Address.Abilities.Lore, "byte", {})
+    KLib.Menu.Bitfield("Rage", Address.Abilities.Rage, "byte", {})
+    KLib.Menu.Bitfield("Dance", Address.Abilities.Dance, "byte", {})
+end
+
+function CreateWorldPage()
+    KLib.Menu.Bitfield("Flags", Address.WorldFlags, "byte", WorldFlags)
+end
+
+function Mods()
+    -- Save Anywhere
+    KLib.Memory.WriteByte(0x001EB7, 0x86)
 end
 
 CreateMenu()
 
 while true do
     KLib.Update()
+    
+    Mods()
     
     emu.frameadvance()
     
